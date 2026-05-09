@@ -1,147 +1,162 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<title>AI API Relay Docs</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>API Documentation</title>
 
 <style>
 body{
-  font-family:Arial;
-  background:#0f172a;
+  margin:0;
+  background:#081120;
   color:white;
-  padding:40px;
-  line-height:1.7;
+  font-family:Arial;
+}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:40px 20px;
 }
 
 .card{
-  background:#1e293b;
-  padding:24px;
-  border-radius:16px;
-  margin-bottom:20px;
+  background:#0d1728;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:30px;
+  margin-bottom:25px;
 }
 
-code,pre{
-  background:#020617;
-  padding:12px;
-  border-radius:10px;
-  display:block;
-  overflow:auto;
-  color:#38bdf8;
-}
-
-h1,h2{
+h1{
   margin-top:0;
 }
 
-a{
-  color:#38bdf8;
+code{
+  display:block;
+  background:black;
+  padding:18px;
+  border-radius:12px;
+  overflow:auto;
+  margin-top:15px;
+  color:#00ff88;
+}
+
+.small{
+  color:#9ca3af;
 }
 </style>
 </head>
 <body>
 
-<h1>AI API Documentation</h1>
+<div class="container">
 
-<div class="card">
+  <div class="card">
+    <h1>AI API Relay Docs</h1>
+    <p class="small">
+      OpenAI-compatible API endpoint.
+    </p>
+  </div>
 
-<h2>Base URL</h2>
+  <div class="card">
+    <h2>Base URL</h2>
 
 <code>
-http://localhost:3000
+http://localhost:3000/v1
 </code>
 
-</div>
+  </div>
 
-<div class="card">
+  <div class="card">
+    <h2>Authentication</h2>
 
-<h2>Authentication</h2>
-
-<p>
-Use your API Key in Authorization header:
-</p>
-
-<pre>
+<code>
 Authorization: Bearer YOUR_API_KEY
-</pre>
+</code>
 
-</div>
+  </div>
 
-<div class="card">
-
-<h2>Chat Completions</h2>
+  <div class="card">
+    <h2>Chat Completions</h2>
 
 <code>
 POST /v1/chat/completions
 </code>
 
-</div>
+  </div>
 
-<div class="card">
+  <div class="card">
+    <h2>cURL Example</h2>
 
-<h2>Example Request</h2>
-
-<pre>
+<code>
 curl http://localhost:3000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "messages": [
+    "model":"gpt-4o-mini",
+    "messages":[
       {
-        "role": "user",
-        "content": "hello"
+        "role":"user",
+        "content":"Hello!"
       }
     ]
   }'
-</pre>
+</code>
 
-</div>
+  </div>
 
-<div class="card">
+  <div class="card">
+    <h2>Python Example</h2>
 
-<h2>Example Response</h2>
+<code>
+from openai import OpenAI
 
-<pre>
-{
-  "choices": [
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="http://localhost:3000/v1"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {
+            "role":"user",
+            "content":"Hello!"
+        }
+    ]
+)
+
+print(response.choices[0].message.content)
+</code>
+
+  </div>
+
+  <div class="card">
+    <h2>JavaScript Example</h2>
+
+<code>
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "YOUR_API_KEY",
+  baseURL: "http://localhost:3000/v1"
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
     {
-      "message": {
-        "role": "assistant",
-        "content": "Hello!"
-      }
+      role: "user",
+      content: "Hello!"
     }
   ]
-}
-</pre>
+});
 
-</div>
+console.log(response.choices[0].message.content);
+</code>
 
-<div class="card">
-
-<h2>Supported Models</h2>
-
-<ul>
-<li>gpt-4o-mini</li>
-<li>deepseek-chat</li>
-</ul>
-
-</div>
-
-<div class="card">
-
-<h2>Error Codes</h2>
-
-<ul>
-<li>401 Unauthorized</li>
-<li>402 Insufficient Balance</li>
-<li>403 API Key Disabled</li>
-<li>404 API Key Not Found</li>
-</ul>
+  </div>
 
 </div>
 
 </body>
 </html>
-```
