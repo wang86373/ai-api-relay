@@ -112,7 +112,7 @@
       try {
         msg.innerText = "Creating your API key...";
 
-        const res = await fetch("/register", {
+        const res = await fetch("https://ai-api-relay-production-1ab2.up.railway.app/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
