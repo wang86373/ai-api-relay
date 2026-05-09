@@ -41,6 +41,27 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+function checkAdmin(req, res) {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (!process.env.ADMIN_SECRET) {
+    return res.status(500).json({
+      error: {
+        message: "ADMIN_SECRET is not configured"
+      }
+    });
+  }
+
+  if (adminKey !== process.env.ADMIN_SECRET) {
+    return res.status(404).json({
+      error: {
+        message: "Not found"
+      }
+    });
+  }
+
+  return null;
+}
 
 const deepseek =
   process.env.DEEPSEEK_API_KEY
@@ -58,16 +79,9 @@ app.get("/", (req, res) => {
 });
 
 app.post("/admin/create-key", async (req, res) => {
+  const denied = checkAdmin(req, res);
+if (denied) return;
   try {
-    const adminKey = req.headers["x-admin-key"];
-
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-          message: "Unauthorized"
-        }
-      });
-    }
 
     const ownerName = req.body.owner_name || "user";
 
@@ -181,16 +195,9 @@ app.post("/admin/recharge", async (req, res) => {
 });
 
 app.get("/admin/keys", async (req, res) => {
+  const denied = checkAdmin(req, res);
+if (denied) return;
   try {
-    const adminKey = req.headers["x-admin-key"];
-
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-          message: "Unauthorized"
-        }
-      });
-    }
 
     const { data, error } = await supabase
       .from("api_keys")
