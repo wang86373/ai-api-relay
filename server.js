@@ -638,11 +638,11 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       (completion.usage?.total_tokens || 0) * selectedModel.pricePerToken;
 
     await supabase
-      .from("api_keys")
-      .update({
-        balance: Math.max(0, Number(keyData.balance) - cost)
-      })
-      .eq("id", keyData.id);
+  .from("users")
+  .update({
+    balance: Math.max(0, Number(userData.balance || 0) - cost)
+  })
+  .eq("email", keyData.email);
 
     return res.json(completion);
   } catch (err) {
