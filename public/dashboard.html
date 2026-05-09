@@ -211,7 +211,9 @@ async function loadLogs() {
 loadLogs();
 
     function copyKey() {
-      navigator.clipboard.writeText(apiKey);
+    navigator.clipboard.writeText(
+    document.getElementById("apiKeyText").value
+);
       document.getElementById("msg").innerText = "API key copied.";
     }
 
