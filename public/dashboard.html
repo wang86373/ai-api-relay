@@ -263,8 +263,9 @@ loadLogs();
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        api_key: apiKey
-      })
+  api_key: apiKey,
+  email: localStorage.getItem("email")
+})
     });
 
     const data = await res.json();

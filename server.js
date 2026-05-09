@@ -650,7 +650,7 @@ app.use(express.static("public"));
 app.post("/create-checkout-session", async (req, res) => {
   try {
 
-    const { api_key } = req.body;
+    const { api_key, email } = req.body;
 
     if (!api_key) {
       return res.status(400).json({
@@ -676,6 +676,7 @@ app.post("/create-checkout-session", async (req, res) => {
         }
       ],
 
+      customer_email: email,
       mode: "payment",
 
         success_url:
