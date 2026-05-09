@@ -306,15 +306,7 @@ const { data: userData, error: userError } = await supabase
   .eq("email", keyData.user_email)
   .single();
 
-if (userError || !userData) {
-  return res.status(404).json({
-    error: {
-      message: "User not found"
-    }
-  });
-}
-
-if (Number(userData.balance || 0) <= 0) {
+if (Number(keyData.balance || 0) <= 0) {
   return res.status(402).json({
     error: {
       message: "Insufficient balance"
@@ -567,12 +559,6 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       .eq("is_active", true)
       .single();
 
-      const { data: userData, error: userError } = await supabase
-  .from("users")
-  .select("*")
-  .eq("email", keyData.user_email)
-  .single();
-
 if (keyError || !keyData) {
       return res.status(401).json({
         error: {
@@ -581,15 +567,7 @@ if (keyError || !keyData) {
       });
     }
 
-if (userError || !userData) {
-  return res.status(404).json({
-    error: {
-      message: "User not found"
-    }
-  });
-}
-
-    if (Number(userData.balance || 0) <= 0) {
+    if (Number(keyData.balance || 0) <= 0) {
       return res.status(402).json({
         error: {
           message: "Insufficient balance"
@@ -654,7 +632,7 @@ if (userError || !userData) {
     await supabase
   .from("users")
   .update({
-    balance: Math.max(0, Number(userData.balance || 0) - cost)
+    balance: Math.max(0, Number(keyData.balance || 0) - cost)
   })
   .eq("email", keyData.user_email);
 
