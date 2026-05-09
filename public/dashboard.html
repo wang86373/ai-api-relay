@@ -101,7 +101,7 @@
 
     <div class="card">
       <h2>Your API Key</h2>
-      <div class="api-box" id="apiKeyText"></div>
+      <input class="api-box" id="apiKeyText" />
 
       <button onclick="copyKey()">Copy API Key</button>
       <button onclick="testApi()">Test API</button>
@@ -145,7 +145,7 @@ if (!apiKey) {
 }
 
 document.getElementById("emailText").innerText = email ? "Account: " + email : "";
-document.getElementById("apiKeyText").innerText = apiKey || "";
+document.getElementById("apiKeyText").value = apiKey;
 
 async function loadAccount() {
   try {
