@@ -300,6 +300,28 @@ app.post("/admin/recharge", async (req, res) => {
       });
     }
 
+const { data: userData, error: userError } = await supabase
+  .from("users")
+  .select("*")
+  .eq("email", keyData.email)
+  .single();
+
+if (userError || !userData) {
+  return res.status(404).json({
+    error: {
+      message: "User not found"
+    }
+  });
+}
+
+if (Number(userData.balance || 0) <= 0) {
+  return res.status(402).json({
+    error: {
+      message: "Insufficient balance"
+    }
+  });
+}
+
     const newBalance = Number(keyData.balance) + Number(amount);
 
     const { data, error } = await supabase
