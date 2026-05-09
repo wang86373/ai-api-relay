@@ -38,21 +38,21 @@ app.post("/stripe/webhook", express.raw({ type: "application/json" }), async (re
       console.log("Stripe paid:", userEmail, amount);
 
       if (userEmail && amount > 0) {
-        const { data: user, error: userError } = await supabase
-          .from("users")
-          .select("balance")
-          .eq("email", userEmail)
-          .single();
+        const { data: keyData, error: keyError } = await supabase
+     .from("api_keys")
+     .select("*")
+     .eq("user_email", userEmail)
+     .single();
 
-        if (userError || !user) {
+        if (keyError || !keyData) {
           console.error("User not found:", userEmail);
         } else {
-          const newBalance = Number(user.balance || 0) + amount;
+          const newBalance = Number(keyData.balance || 0) + amount;
 
           const { error: updateError } = await supabase
-            .from("users")
+            .from("api_keys")
             .update({ balance: newBalance })
-            .eq("email", userEmail);
+            .eq("user_email", userEmail);
 
           if (updateError) {
             console.error("Balance update failed:", updateError);
@@ -299,12 +299,6 @@ app.post("/admin/recharge", async (req, res) => {
         }
       });
     }
-
-const { data: userData, error: userError } = await supabase
-  .from("users")
-  .select("*")
-  .eq("email", keyData.user_email)
-  .single();
 
 if (Number(keyData.balance || 0) <= 0) {
   return res.status(402).json({
@@ -630,11 +624,14 @@ if (keyError || !keyData) {
       (completion.usage?.total_tokens || 0) * selectedModel.pricePerToken;
 
     await supabase
-  .from("users")
+  .from("api_keys")
   .update({
-    balance: Math.max(0, Number(keyData.balance || 0) - cost)
+    balance: Math.max(
+      0,
+      Number(keyData.balance || 0) - cost
+    )
   })
-  .eq("email", keyData.user_email);
+  .eq("api_key", apiKey);
 
     return res.json(completion);
   } catch (err) {
