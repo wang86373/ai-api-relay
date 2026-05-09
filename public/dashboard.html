@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>AI API Dashboard</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
+  padding:40px;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:#3b82f6;
+  color:white;
+  cursor:pointer;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+td,th{
+  border-bottom:1px solid #334155;
+  padding:12px;
+  text-align:left;
+}
+</style>
+</head>
+<body>
+
+<h1>AI API Dashboard</h1>
+
+<div class="card">
+
+<h2>Load API Key</h2>
+
+<input
+  id="apiKey"
+  placeholder="Enter API Key"
+/>
+
+<button onclick="loadData()">
+Load
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Account Info</h2>
+
+<div id="account">
+No data
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Usage Logs</h2>
+
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Total Tokens</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody id="logs">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Test API</h2>
+
+<input
+  id="testPrompt"
+  placeholder="Type a message, e.g. hello"
+/>
+
+<button onclick="testApi()">
+Send
+</button>
+
+<pre id="testResult">
+No result
+</pre>
+
+</div>
+
+<script>
+
+async function loadData(){
+
+  const apiKey =
+    document.getElementById("apiKey").value;
+
+  const accountRes =
+    await fetch("/key/" + apiKey);
+
+  const accountData =
+    await accountRes.json();
+
+  document.getElementById("account").innerHTML = `
+    <p><b>Owner:</b> ${accountData.owner_name}</p>
+    <p><b>Balance:</b> ${accountData.balance}</p>
+    <p><b>Status:</b> ${accountData.is_active}</p>
+  `;
+
+  const logsRes =
+    await fetch("/logs/" + apiKey);
+
+  const logsData =
+    await logsRes.json();
+
+  let html = "";
+
+  logsData.logs.forEach(log => {
+
+    html += `
+      <tr>
+        <td>${log.model}</td>
+        <td>${log.total_tokens}</td>
+        <td>${log.created_at}</td>
+      </tr>
+    `;
+
+  });
+
+  document.getElementById("logs").innerHTML =
+    html;
+   
+    }
+
+async function testApi(){
+
+  const apiKey =
+    document.getElementById(
+      "apiKey"
+    ).value;
+
+  const prompt =
+    document.getElementById(
+      "testPrompt"
+    ).value;
+
+  const res =
+    await fetch("/v1/chat/completions", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type":
+          "application/json",
+
+        "Authorization":
+          "Bearer " + apiKey
+      },
+
+      body: JSON.stringify({
+  messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
+
+  const data = await res.json();
+
+  document.getElementById(
+    "testResult"
+  ).textContent =
+    JSON.stringify(data, null, 2);
+
+    await loadData();
+
+}
+
+</script>
+
+</body>
+</html>

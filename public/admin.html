@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard</title>
+<style>
+body{font-family:Arial;background:#0f172a;color:white;padding:40px}
+.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px}
+input{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}
+button{padding:12px 20px;border:none;border-radius:10px;background:#22c55e;color:white;cursor:pointer}
+pre{background:#020617;padding:15px;border-radius:10px;overflow:auto}
+</style>
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<div class="card">
+
+<h2>Admin Login</h2>
+<input id="loginSecret" placeholder="Admin Secret" />
+
+<button onclick="adminLogin()">
+Login
+</button>
+
+<p id="loginStatus">
+Not logged in
+</p>
+
+</div>
+
+<div class="card">
+  <h2>Create API Key</h2>
+  <input id="ownerName" placeholder="Owner Name, e.g. customer2" />
+  <button onclick="createKey()">Create Key</button>
+</div>
+
+<div class="card">
+  <h2>Recharge</h2>
+  <input id="rechargeKey" placeholder="User API Key" />
+  <input id="amount" placeholder="Amount, e.g. 50" />
+  <button onclick="recharge()">Recharge</button>
+</div>
+<div class="card">
+
+<h2>Disable API Key</h2>
+
+<input
+  id="disableApiKey"
+  placeholder="API Key"
+/>
+
+<button onclick="disableKey()">
+Disable Key
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Enable API Key</h2>
+
+<input
+  id="enableApiKey"
+  placeholder="API Key"
+/>
+
+<button onclick="enableKey()">
+Enable Key
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Delete API Key</h2>
+
+<input
+  id="deleteApiKey"
+  placeholder="API Key"
+/>
+
+<button onclick="deleteKey()">
+Delete Key
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Search API Key</h2>
+
+<input
+  id="searchApiKey"
+  placeholder="API Key"
+/>
+
+<button onclick="searchKey()">
+Search Key
+</button>
+
+<pre id="searchResult">
+No data
+</pre>
+
+</div>
+
+<div class="card">
+
+<h2>All API Keys</h2>
+
+<button onclick="loadKeys()">
+Load All Keys
+</button>
+
+<pre id="allKeys">
+No data
+</pre>
+
+</div>
+
+<div class="card">
+  <h2>Result</h2>
+  <pre id="result">No result</pre>
+</div>
+
+<script>
+let savedAdminKey = "";
+function adminLogin(){
+
+  savedAdminKey =
+    document.getElementById(
+      "loginSecret"
+    ).value;
+
+  if (!savedAdminKey) {
+
+    document.getElementById(
+      "loginStatus"
+    ).textContent =
+      "Please enter admin secret";
+
+    return;
+  }
+
+  document.getElementById(
+    "loginStatus"
+  ).textContent =
+    "Logged in";
+
+}
+function requireLogin(){
+
+  if (!savedAdminKey) {
+
+    document.getElementById(
+      "result"
+    ).textContent =
+      "Please login first";
+
+    return false;
+  }
+
+  return true;
+}
+async function searchKey(){
+
+  if (!requireLogin()) return;
+
+  const apiKey =
+    document.getElementById(
+      "searchApiKey"
+    ).value;
+
+  const res =
+    await fetch("/key/" + apiKey);
+
+  const data = await res.json();
+
+  document.getElementById(
+    "searchResult"
+  ).textContent =
+    JSON.stringify(data, null, 2);
+
+}
+async function createKey(){
+  if (!requireLogin()) return;
+  const res = await fetch("/admin/create-key", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-key": savedAdminKey
+    },
+    body: JSON.stringify({
+      owner_name: document.getElementById("ownerName").value
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("result").textContent =
+    JSON.stringify(data, null, 2);
+}
+
+async function recharge(){
+  if (!requireLogin()) return;
+  const res = await fetch("/admin/recharge", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-key": savedAdminKey
+    },
+    body: JSON.stringify({
+      api_key: document.getElementById("rechargeKey").value,
+      amount: Number(document.getElementById("amount").value)
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("result").textContent =
+    JSON.stringify(data, null, 2);
+}
+async function loadKeys(){
+
+  if (!requireLogin()) return;
+
+  const res = await fetch("/admin/keys", {
+    headers: {
+      "x-admin-key":
+       savedAdminKey
+    }
+  });
+
+  const data = await res.json();
+
+  document.getElementById("allKeys").textContent =
+    JSON.stringify(data, null, 2);
+
+}
+async function disableKey(){
+
+  if (!requireLogin()) return;
+
+  const res =
+    await fetch("/admin/disable-key", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+
+        "x-admin-key": savedAdminKey
+      },
+
+      body: JSON.stringify({
+        api_key:
+          document.getElementById(
+            "disableApiKey"
+          ).value
+      })
+    });
+
+  const data = await res.json();
+
+  document.getElementById("result").textContent =
+    JSON.stringify(data, null, 2);
+
+}
+async function enableKey(){
+
+  if (!requireLogin()) return;
+
+  const res =
+    await fetch("/admin/enable-key", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+
+        "x-admin-key": savedAdminKey
+      },
+
+      body: JSON.stringify({
+        api_key:
+          document.getElementById(
+            "enableApiKey"
+          ).value
+      })
+    });
+
+  const data = await res.json();
+
+  document.getElementById("result").textContent =
+    JSON.stringify(data, null, 2);
+
+}
+async function deleteKey(){
+
+  if (!requireLogin()) return;
+
+  const res =
+    await fetch("/admin/delete-key", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+
+        "x-admin-key": savedAdminKey
+      },
+
+      body: JSON.stringify({
+        api_key:
+          document.getElementById(
+            "deleteApiKey"
+          ).value
+      })
+    });
+
+  const data = await res.json();
+
+  document.getElementById("result").textContent =
+    JSON.stringify(data, null, 2);
+
+}
+</script>
+
+</body>
+</html>
