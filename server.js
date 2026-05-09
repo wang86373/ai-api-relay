@@ -79,8 +79,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/admin/create-key", async (req, res) => {
-  const denied = checkAdmin(req, res);
-if (denied) return;
+if (!checkAdmin(req, res)) return;
   try {
 
     const ownerName = req.body.owner_name || "user";
@@ -124,17 +123,10 @@ if (denied) return;
 });
 
 app.post("/admin/recharge", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
   try {
-    const adminKey = req.headers["x-admin-key"];
-
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-                    message: "Unauthorized"
-        }
-      });
-    }
-
+  
     const { api_key, amount } = req.body;
 
     if (!api_key || !amount || Number(amount) <= 0) {
@@ -227,16 +219,9 @@ if (denied) return;
 });
 
 app.post("/admin/disable-key", async (req, res) => {
-  try {
-    const adminKey = req.headers["x-admin-key"];
+  if (!checkAdmin(req, res)) return;
 
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-          message: "Unauthorized"
-        }
-      });
-    }
+  try {
 
     const { api_key } = req.body;
 
@@ -281,16 +266,9 @@ app.post("/admin/disable-key", async (req, res) => {
 });
 
 app.post("/admin/enable-key", async (req, res) => {
-  try {
-    const adminKey = req.headers["x-admin-key"];
+  if (!checkAdmin(req, res)) return;
 
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-          message: "Unauthorized"
-        }
-      });
-    }
+  try {
 
     const { api_key } = req.body;
 
@@ -335,16 +313,9 @@ app.post("/admin/enable-key", async (req, res) => {
 });
 
 app.post("/admin/delete-key", async (req, res) => {
-  try {
-    const adminKey = req.headers["x-admin-key"];
+  if (!checkAdmin(req, res)) return;
 
-    if (adminKey !== process.env.ADMIN_SECRET) {
-      return res.status(401).json({
-        error: {
-          message: "Unauthorized"
-        }
-      });
-    }
+  try {
 
     const { api_key } = req.body;
 
@@ -561,6 +532,61 @@ return res.json(completion);
         message: err.message || "Internal server error"
       }
     });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  try {
+
+    const email = req.body.email;
+
+    if (!email) {
+      return res.status(400).json({
+        error: {
+          message: "Email required"
+        }
+      });
+    }
+
+    const newApiKey =
+      "sk_" +
+      Math.random().toString(36).slice(2) +
+      Math.random().toString(36).slice(2);
+
+    const { data, error } = await supabase
+      .from("api_keys")
+      .insert([
+        {
+          api_key: newApiKey,
+          owner_name: email,
+          user_email: email,
+          balance: 5,
+          is_active: true
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(500).json({
+        error
+      });
+    }
+
+    res.json({
+      success: true,
+      api_key: newApiKey,
+      balance: 5
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+    
   }
 });
 
