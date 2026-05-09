@@ -573,6 +573,14 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
   .eq("email", keyData.user_email)
   .single();
 
+if (keyError || !keyData) {
+      return res.status(401).json({
+        error: {
+          message: "Invalid API key"
+        }
+      });
+    }
+
 if (userError || !userData) {
   return res.status(404).json({
     error: {
@@ -581,15 +589,7 @@ if (userError || !userData) {
   });
 }
 
-    if (keyError || !keyData) {
-      return res.status(401).json({
-        error: {
-          message: "Invalid API key"
-        }
-      });
-    }
-
-    if (Number(keyData.balance) <= 0) {
+    if (Number(userData.balance || 0) <= 0) {
       return res.status(402).json({
         error: {
           message: "Insufficient balance"
