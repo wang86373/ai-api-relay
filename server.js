@@ -303,7 +303,7 @@ app.post("/admin/recharge", async (req, res) => {
 const { data: userData, error: userError } = await supabase
   .from("users")
   .select("*")
-  .eq("email", keyData.email)
+  .eq("email", keyData.user_email)
   .single();
 
 if (userError || !userData) {
@@ -570,7 +570,7 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       const { data: userData, error: userError } = await supabase
   .from("users")
   .select("*")
-  .eq("email", keyData.email)
+  .eq("email", keyData.user_email)
   .single();
 
 if (userError || !userData) {
@@ -656,7 +656,7 @@ if (userError || !userData) {
   .update({
     balance: Math.max(0, Number(userData.balance || 0) - cost)
   })
-  .eq("email", keyData.email);
+  .eq("email", keyData.user_email);
 
     return res.json(completion);
   } catch (err) {
