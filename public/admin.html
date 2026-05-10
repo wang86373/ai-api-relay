@@ -163,6 +163,9 @@ async function loadKeys() {
 <button onclick="toggleKey(${k.id}, ${!k.is_active})">
   ${k.is_active ? "Disable" : "Enable"}
 </button>
+<button onclick="rechargeKey('${k.api_key}')">
+  Recharge
+</button>
       </div>
     `).join("");
 
@@ -200,6 +203,34 @@ async function toggleKey(keyId, isActive) {
   }
 
   alert("Updated.");
+  loadKeys();
+}
+
+async function rechargeKey(apiKey) {
+  const amount = prompt("Recharge amount:");
+
+  if (!amount) return;
+
+  const res = await fetch(API_BASE + "/admin/recharge", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-key": getAdminKey()
+    },
+    body: JSON.stringify({
+      api_key: apiKey,
+      amount: Number(amount)
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error?.message || "Recharge failed");
+    return;
+  }
+
+  alert("Balance updated.");
   loadKeys();
 }
 
