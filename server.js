@@ -13,62 +13,7 @@ const { createClient } = require("@supabase/supabase-js");
 const app = express();
 
 app.post("/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
-  const sig = req.headers["stripe-signature"];
-
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error("Webhook signature error:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-
-      const userEmail = session.customer_email;
-      const amount = session.amount_total / 100;
-
-      console.log("Stripe paid:", userEmail, amount);
-
-      if (userEmail && amount > 0) {
-        const { data: keyData, error: keyError } = await supabase
-     .from("api_keys")
-     .select("*")
-     .eq("user_email", userEmail)
-     .single();
-
-        if (keyError || !keyData) {
-          console.error("User not found:", userEmail);
-        } else {
-          const newBalance = Number(keyData.balance || 0) + amount;
-
-          const { error: updateError } = await supabase
-            .from("api_keys")
-            .update({ balance: newBalance })
-            .eq("user_email", userEmail);
-
-          if (updateError) {
-            console.error("Balance update failed:", updateError);
-          } else {
-            console.log("Balance updated:", userEmail, newBalance);
-          }
-        }
-      }
-    }
-
-    res.json({ received: true });
-
-  } catch (err) {
-    console.error("Webhook handler error:", err);
-    res.status(500).json({ error: "Webhook handler failed" });
-  }
+  return res.json({ received: true });
 });
 
 app.use(cors());
