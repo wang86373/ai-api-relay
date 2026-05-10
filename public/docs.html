@@ -61,7 +61,7 @@ code{
     <h2>Base URL</h2>
 
 <code>
-http://localhost:3000/v1
+https://ai-api-relay.onrender.com/v1
 </code>
 
   </div>
@@ -88,7 +88,7 @@ POST /v1/chat/completions
     <h2>cURL Example</h2>
 
 <code>
-curl http://localhost:3000/v1/chat/completions \
+curl https://ai-api-relay.onrender.com/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
@@ -112,7 +112,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="YOUR_API_KEY",
-    base_url="http://localhost:3000/v1"
+    base_url="https://ai-api-relay.onrender.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -130,7 +130,16 @@ print(response.choices[0].message.content)
 
   </div>
 
-  <div class="card">
+    <div class="card">
+  <h2>Supported Models</h2>
+
+<code>
+gpt-4o-mini
+gpt-4.1-mini
+gpt-4.1
+</code>
+
+</div>
     <h2>JavaScript Example</h2>
 
 <code>
@@ -138,7 +147,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "YOUR_API_KEY",
-  baseURL: "http://localhost:3000/v1"
+  baseURL: "https://ai-api-relay.onrender.com/v1"
 });
 
 const response = await client.chat.completions.create({
@@ -156,6 +165,21 @@ console.log(response.choices[0].message.content);
 
   </div>
 
+</div>
+
+<div class="card">
+  <h2>Pricing</h2>
+
+<code>
+Input Tokens: billed automatically
+Output Tokens: billed automatically
+
+Recharge methods:
+- Stripe
+- USDT (TRC20)
+</code>
+
+</div>
 </div>
 
 </body>
