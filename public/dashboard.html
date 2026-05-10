@@ -257,14 +257,13 @@ loadLogs();
 
   try {
 
-    const res = await fetch("/create-checkout-session", {
+    const res = await fetch("https://ai-api-relay-production-1ab2.up.railway.app/create-checkout-session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-  api_key: apiKey,
-  email: localStorage.getItem("email")
+  api_key: apiKey
 })
     });
 
