@@ -399,6 +399,7 @@ loadUsdtHistory();
         }
 
         msg.innerText = data.choices?.[0]?.message?.content || "API working.";
+        loadAccount();
 
       } catch (err) {
         msg.innerText = err.message;
