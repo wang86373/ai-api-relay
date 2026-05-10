@@ -88,10 +88,7 @@ function createApiKey() {
 }
 
 app.get("/", (req, res) => {
-  res.json({
-    status: "ok",
-    name: "AI API Relay"
-  });
+  res.redirect("/register.html");
 });
 
 app.post("/register", async (req, res) => {
