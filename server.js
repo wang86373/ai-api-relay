@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 console.log("CURRENT SERVER.JS LOADED");
-console.log("OPENAI KEY:", process.env.OPENAI_API_KEY);
 
 const express = require("express");
 const rateLimit = require("express-rate-limit");
