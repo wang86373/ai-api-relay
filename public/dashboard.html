@@ -125,6 +125,14 @@
   <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
 </select>
 
+<div
+  id="modelPrice"
+  class="muted"
+  style="margin-top:8px;margin-bottom:14px;"
+>
+  Price: GPT-4o-mini
+</div>
+
       <input class="api-box" id="apiKeyText" />
 
       <button onclick="copyKey()">Copy API Key</button>
@@ -417,6 +425,25 @@ loadUsdtHistory();
 );
       document.getElementById("msg").innerText = "API key copied.";
     }
+
+    const modelPrices = {
+  "gpt-4o-mini": "$0.01 / 1K tokens",
+  "deepseek-chat": "$0.005 / 1K tokens",
+  "claude-3-5-sonnet": "$0.02 / 1K tokens"
+};
+
+function updateModelPrice() {
+  const model = document.getElementById("modelSelect").value;
+
+  document.getElementById("modelPrice").innerText =
+    "Price: " + modelPrices[model];
+}
+
+document
+  .getElementById("modelSelect")
+  .addEventListener("change", updateModelPrice);
+
+updateModelPrice();
 
     async function testApi() {
       const msg = document.getElementById("msg");
