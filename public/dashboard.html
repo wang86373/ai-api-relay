@@ -109,6 +109,13 @@
       <p class="muted">Your API usage will automatically deduct from this balance.</p>
     </div>
 
+<div class="card">
+  <h2>Usage Summary</h2>
+  <div id="usageSummary">
+    Loading usage summary...
+  </div>
+</div>
+
     <div class="card">
       <h2>Your API Key</h2>
       <input class="api-box" id="apiKeyText" />
@@ -314,6 +321,41 @@ async function loadLogs() {
 }
 
 loadLogs();
+
+async function loadUsageSummary() {
+  try {
+
+    const res = await fetch(
+      "https://ai-api-relay.onrender.com/logs/" +
+      encodeURIComponent(apiKey)
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.logs) {
+      return;
+    }
+
+    const totalRequests = data.logs.length;
+
+    const totalTokens = data.logs.reduce((sum, log) => {
+      return sum + Number(log.total_tokens || 0);
+    }, 0);
+
+    document.getElementById("usageSummary").innerHTML = `
+      <p>Total Requests: ${totalRequests}</p>
+      <p>Total Tokens: ${totalTokens}</p>
+    `;
+
+  } catch (err) {
+
+    document.getElementById("usageSummary").innerHTML =
+      "Failed to load usage summary";
+
+  }
+}
+
+loadUsageSummary();
 
 async function loadUsdtHistory() {
   try {
