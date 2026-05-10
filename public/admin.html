@@ -1,331 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin Dashboard</title>
-<style>
-body{font-family:Arial;background:#0f172a;color:white;padding:40px}
-.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px}
-input{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}
-button{padding:12px 20px;border:none;border-radius:10px;background:#22c55e;color:white;cursor:pointer}
-pre{background:#020617;padding:15px;border-radius:10px;overflow:auto}
-</style>
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <title>Admin - USDT Payments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<h1>Admin Dashboard</h1>
-
-<div class="card">
-
-<h2>Admin Login</h2>
-<input id="loginSecret" placeholder="Admin Secret" />
-
-<button onclick="adminLogin()">
-Login
-</button>
-
-<p id="loginStatus">
-Not logged in
-</p>
-
-</div>
-
-<div class="card">
-  <h2>Create API Key</h2>
-  <input id="ownerName" placeholder="Owner Name, e.g. customer2" />
-  <button onclick="createKey()">Create Key</button>
-</div>
-
-<div class="card">
-  <h2>Recharge</h2>
-  <input id="rechargeKey" placeholder="User API Key" />
-  <input id="amount" placeholder="Amount, e.g. 50" />
-  <button onclick="recharge()">Recharge</button>
-</div>
-<div class="card">
-
-<h2>Disable API Key</h2>
-
-<input
-  id="disableApiKey"
-  placeholder="API Key"
-/>
-
-<button onclick="disableKey()">
-Disable Key
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Enable API Key</h2>
-
-<input
-  id="enableApiKey"
-  placeholder="API Key"
-/>
-
-<button onclick="enableKey()">
-Enable Key
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Delete API Key</h2>
-
-<input
-  id="deleteApiKey"
-  placeholder="API Key"
-/>
-
-<button onclick="deleteKey()">
-Delete Key
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Search API Key</h2>
-
-<input
-  id="searchApiKey"
-  placeholder="API Key"
-/>
-
-<button onclick="searchKey()">
-Search Key
-</button>
-
-<pre id="searchResult">
-No data
-</pre>
-
-</div>
-
-<div class="card">
-
-<h2>All API Keys</h2>
-
-<button onclick="loadKeys()">
-Load All Keys
-</button>
-
-<pre id="allKeys">
-No data
-</pre>
-
-</div>
-
-<div class="card">
-  <h2>Result</h2>
-  <pre id="result">No result</pre>
-</div>
-
-<script>
-let savedAdminKey = "";
-function adminLogin(){
-
-  savedAdminKey =
-    document.getElementById(
-      "loginSecret"
-    ).value;
-
-  if (!savedAdminKey) {
-
-    document.getElementById(
-      "loginStatus"
-    ).textContent =
-      "Please enter admin secret";
-
-    return;
-  }
-
-  document.getElementById(
-    "loginStatus"
-  ).textContent =
-    "Logged in";
-
-}
-function requireLogin(){
-
-  if (!savedAdminKey) {
-
-    document.getElementById(
-      "result"
-    ).textContent =
-      "Please login first";
-
-    return false;
-  }
-
-  return true;
-}
-async function searchKey(){
-
-  if (!requireLogin()) return;
-
-  const apiKey =
-    document.getElementById(
-      "searchApiKey"
-    ).value;
-
-  const res =
-    await fetch("/key/" + apiKey);
-
-  const data = await res.json();
-
-  document.getElementById(
-    "searchResult"
-  ).textContent =
-    JSON.stringify(data, null, 2);
-
-}
-async function createKey(){
-  if (!requireLogin()) return;
-  const res = await fetch("/admin/create-key", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-key": savedAdminKey
-    },
-    body: JSON.stringify({
-      owner_name: document.getElementById("ownerName").value
-    })
-  });
-
-  const data = await res.json();
-  document.getElementById("result").textContent =
-    JSON.stringify(data, null, 2);
-}
-
-async function recharge(){
-  if (!requireLogin()) return;
-  const res = await fetch("/admin/recharge", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-key": savedAdminKey
-    },
-    body: JSON.stringify({
-      api_key: document.getElementById("rechargeKey").value,
-      amount: Number(document.getElementById("amount").value)
-    })
-  });
-
-  const data = await res.json();
-  document.getElementById("result").textContent =
-    JSON.stringify(data, null, 2);
-}
-async function loadKeys(){
-
-  if (!requireLogin()) return;
-
-  const res = await fetch("/admin/keys", {
-    headers: {
-      "x-admin-key":
-       savedAdminKey
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 40px;
     }
-  });
 
-  const data = await res.json();
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
 
-  document.getElementById("allKeys").textContent =
-    JSON.stringify(data, null, 2);
+    .card {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 22px;
+    }
 
-}
-async function disableKey(){
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #020617;
+      color: white;
+      margin-top: 8px;
+      box-sizing: border-box;
+    }
 
-  if (!requireLogin()) return;
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
 
-  const res =
-    await fetch("/admin/disable-key", {
+    button:hover {
+      background: #1d4ed8;
+    }
 
-      method: "POST",
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
 
-      headers: {
-        "Content-Type": "application/json",
+    th, td {
+      border-bottom: 1px solid #334155;
+      padding: 10px;
+      text-align: left;
+      word-break: break-all;
+    }
 
-        "x-admin-key": savedAdminKey
-      },
+    th {
+      color: #93c5fd;
+    }
 
-      body: JSON.stringify({
-        api_key:
-          document.getElementById(
-            "disableApiKey"
-          ).value
-      })
-    });
+    .pending {
+      color: #facc15;
+      font-weight: bold;
+    }
 
-  const data = await res.json();
+    .confirmed {
+      color: #22c55e;
+      font-weight: bold;
+    }
 
-  document.getElementById("result").textContent =
-    JSON.stringify(data, null, 2);
+    .msg {
+      margin-top: 12px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
 
-}
-async function enableKey(){
+<body>
+  <div class="container">
 
-  if (!requireLogin()) return;
+    <div class="card">
+      <h1>USDT Payment Admin</h1>
+      <p>Enter your ADMIN_SECRET to manage USDT payment requests.</p>
 
-  const res =
-    await fetch("/admin/enable-key", {
+      <input id="adminKey" placeholder="ADMIN_SECRET" />
+      <button onclick="loadPayments()">Load Payments</button>
 
-      method: "POST",
+      <div class="msg" id="msg"></div>
+    </div>
 
-      headers: {
-        "Content-Type": "application/json",
+    <div class="card">
+      <h2>Payment Requests</h2>
+      <div id="paymentsBox">No data loaded.</div>
+    </div>
 
-        "x-admin-key": savedAdminKey
-      },
+  </div>
 
-      body: JSON.stringify({
-        api_key:
-          document.getElementById(
-            "enableApiKey"
-          ).value
-      })
-    });
+  <script>
+    const API_BASE = "https://ai-api-relay.onrender.com";
 
-  const data = await res.json();
+    function getAdminKey() {
+      return document.getElementById("adminKey").value.trim();
+    }
 
-  document.getElementById("result").textContent =
-    JSON.stringify(data, null, 2);
+    async function loadPayments() {
+      const msg = document.getElementById("msg");
+      const box = document.getElementById("paymentsBox");
 
-}
-async function deleteKey(){
+      msg.innerText = "Loading...";
 
-  if (!requireLogin()) return;
+      try {
+        const res = await fetch(API_BASE + "/admin/usdt-payments", {
+          method: "GET",
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
 
-  const res =
-    await fetch("/admin/delete-key", {
+        const data = await res.json();
 
-      method: "POST",
+        if (!res.ok) {
+          msg.innerText = data.error?.message || "Failed to load payments";
+          return;
+        }
 
-      headers: {
-        "Content-Type": "application/json",
+        msg.innerText = "Loaded.";
 
-        "x-admin-key": savedAdminKey
-      },
+        if (!data.payments || data.payments.length === 0) {
+          box.innerHTML = "No payment requests.";
+          return;
+        }
 
-      body: JSON.stringify({
-        api_key:
-          document.getElementById(
-            "deleteApiKey"
-          ).value
-      })
-    });
+        box.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>API Key</th>
+                <th>Amount</th>
+                <th>Tx Hash</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.payments.map(p => `
+                <tr>
+                  <td>${p.id}</td>
+                  <td>${p.api_key}</td>
+                  <td>${p.amount}</td>
+                  <td>${p.tx_hash || ""}</td>
+                  <td class="${p.status}">${p.status}</td>
+                  <td>${new Date(p.created_at).toLocaleString()}</td>
+                  <td>
+                    ${
+                      p.status === "confirmed"
+                        ? "Confirmed"
+                        : `<button onclick="confirmPayment(${p.id})">Confirm</button>`
+                    }
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
 
-  const data = await res.json();
+      } catch (err) {
+        msg.innerText = err.message;
+      }
+    }
 
-  document.getElementById("result").textContent =
-    JSON.stringify(data, null, 2);
+    async function confirmPayment(paymentId) {
+      const ok = confirm("Confirm this USDT payment?");
+      if (!ok) return;
 
-}
-</script>
+      const msg = document.getElementById("msg");
+      msg.innerText = "Confirming...";
 
+      try {
+        const res = await fetch(API_BASE + "/admin/confirm-usdt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": getAdminKey()
+          },
+          body: JSON.stringify({
+            payment_id: paymentId
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          msg.innerText = data.error?.message || "Confirm failed";
+          return;
+        }
+
+        msg.innerText = "Confirmed. New balance: $" + Number(data.balance || 0).toFixed(4);
+        loadPayments();
+
+      } catch (err) {
+        msg.innerText = err.message;
+      }
+    }
+  </script>
 </body>
 </html>
