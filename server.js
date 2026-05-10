@@ -750,6 +750,40 @@ app.post("/admin/confirm-usdt", async (req, res) => {
   }
 });
 
+app.get("/admin/usdt-payments", async (req, res) => {
+
+  if (!checkAdmin(req, res)) return;
+
+  try {
+
+    const { data, error } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    res.json({
+      payments: data
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+
+  }
+});
+
 app.post("/create-checkout-session", async (req, res) => {
   try {
 
