@@ -45,6 +45,13 @@ const deepseek = process.env.DEEPSEEK_API_KEY
     })
   : null;
 
+  const anthropic = process.env.ANTHROPIC_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      baseURL: "https://api.anthropic.com/v1/"
+    })
+  : null;
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
@@ -554,7 +561,15 @@ if (keyError || !keyData) {
           upstreamModel: "deepseek-chat",
           pricePerToken: 0.000005
         }
-      })
+      }),
+
+      ...(anthropic && {
+  "claude-3-5-sonnet": {
+    client: anthropic,
+    upstreamModel: "claude-3-5-sonnet-20241022",
+    pricePerToken: 0.00002
+  }
+})
     };
 
     const selectedModel = modelConfig[model];
