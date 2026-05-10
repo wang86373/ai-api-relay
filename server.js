@@ -643,6 +643,41 @@ app.post("/usdt/submit", async (req, res) => {
   }
 });
 
+app.get("/usdt/history/:apiKey", async (req, res) => {
+  try {
+
+    const apiKey = req.params.apiKey;
+
+    const { data, error } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .eq("api_key", apiKey)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    res.json({
+      success: true,
+      payments: data
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+
+  }
+});
+
 app.get("/admin/usdt-payments", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
