@@ -102,6 +102,12 @@
     </div>
 
     <div class="card">
+  <h2>API Keys</h2>
+  <button onclick="loadKeys()">Load API Keys</button>
+  <div id="keysBox">No keys loaded.</div>
+</div>
+
+    <div class="card">
       <h2>Payment Requests</h2>
       <div id="paymentsBox">No data loaded.</div>
     </div>
@@ -114,6 +120,52 @@
     function getAdminKey() {
       return document.getElementById("adminKey").value.trim();
     }
+
+async function loadKeys() {
+  const box = document.getElementById("keysBox");
+
+  box.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch(
+      API_BASE + "/admin/keys",
+      {
+        headers: {
+          "x-admin-key": getAdminKey()
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = data.error?.message || "Failed";
+      return;
+    }
+
+    if (!data.keys || data.keys.length === 0) {
+      box.innerHTML = "No API keys";
+      return;
+    }
+
+    box.innerHTML = data.keys.map(k => `
+      <div style="
+        padding:12px;
+        margin-bottom:12px;
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:12px;
+      ">
+        <div><b>Email:</b> ${k.email}</div>
+        <div><b>Balance:</b> $${k.balance}</div>
+        <div><b>API Key:</b> ${k.api_key}</div>
+        <div><b>Active:</b> ${k.is_active}</div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    box.innerHTML = err.message;
+  }
+}
 
     async function loadPayments() {
       const msg = document.getElementById("msg");

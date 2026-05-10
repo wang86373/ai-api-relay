@@ -575,12 +575,12 @@ if (keyError || !keyData) {
     const selectedModel = modelConfig[model];
 
     if (!selectedModel) {
-      return res.status(400).json({
-        error: {
-          message: "Unsupported model"
-        }
-      });
+  return res.status(400).json({
+    error: {
+      message: "Model not supported"
     }
+  });
+}
 
     const completion = await selectedModel.client.chat.completions.create({
       model: selectedModel.upstreamModel,
