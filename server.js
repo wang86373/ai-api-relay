@@ -220,6 +220,40 @@ app.get("/admin/keys", async (req, res) => {
   }
 });
 
+app.post("/admin/toggle-key", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { key_id, is_active } = req.body;
+
+    const { error } = await supabase
+      .from("api_keys")
+      .update({
+        is_active
+      })
+      .eq("id", key_id);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.post("/admin/recharge", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 

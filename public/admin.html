@@ -159,12 +159,48 @@ async function loadKeys() {
         <div><b>Balance:</b> $${k.balance}</div>
         <div><b>API Key:</b> ${k.api_key}</div>
         <div><b>Active:</b> ${k.is_active}</div>
+
+<button onclick="toggleKey(${k.id}, ${!k.is_active})">
+  ${k.is_active ? "Disable" : "Enable"}
+</button>
       </div>
     `).join("");
 
   } catch (err) {
     box.innerHTML = err.message;
   }
+}
+
+async function toggleKey(keyId, isActive) {
+  const ok = confirm(
+    isActive
+      ? "Enable this API key?"
+      : "Disable this API key?"
+  );
+
+  if (!ok) return;
+
+  const res = await fetch(API_BASE + "/admin/toggle-key", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-key": getAdminKey()
+    },
+    body: JSON.stringify({
+      key_id: keyId,
+      is_active: isActive
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error?.message || "Failed");
+    return;
+  }
+
+  alert("Updated.");
+  loadKeys();
 }
 
     async function loadPayments() {
