@@ -131,7 +131,7 @@
       <button onclick="stripeCheckout()">
   Pay with Stripe
 </button>
-      <button onclick="alert('USDT payment coming soon')">Pay with USDT</button>
+      <button onclick="usdtPayment()">Pay with USDT</button>
     </div>
 
     <div class="card">
@@ -151,6 +151,46 @@ if (!apiKey) {
 
 document.getElementById("emailText").innerText = email ? "Account: " + email : "";
 document.getElementById("apiKeyText").value = apiKey;
+
+async function usdtPayment() {
+
+  const amount = prompt("Enter USDT amount");
+
+  if (!amount) return;
+
+  const tx_hash = prompt("Enter transaction hash");
+
+  if (!tx_hash) return;
+
+  try {
+
+    const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        api_key: apiKey,
+        amount,
+        tx_hash
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error?.message || "Submit failed");
+      return;
+    }
+
+    alert("USDT payment submitted successfully");
+
+  } catch (err) {
+
+    alert("USDT submit failed");
+
+  }
+}
 
 async function loadAccount() {
   try {
