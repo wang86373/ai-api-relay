@@ -592,6 +592,164 @@ if (keyError || !keyData) {
 
 app.use(express.static("public"));
 
+app.post("/usdt/submit", async (req, res) => {
+  try {
+
+    const {
+      api_key,
+      amount,
+      tx_hash
+    } = req.body;
+
+    if (!api_key || !amount || !tx_hash) {
+      return res.status(400).json({
+        error: {
+          message: "Missing fields"
+        }
+      });
+    }
+
+    const { error } = await supabase
+      .from("usdt_payments")
+      .insert([
+        {
+          api_key,
+          amount,
+          tx_hash,
+          status: "pending"
+        }
+      ]);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+
+  }
+});
+
+app.get("/admin/usdt-payments", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    res.json({
+      success: true,
+      payments: data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
+app.post("/admin/confirm-usdt", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+
+    const { payment_id } = req.body;
+
+    const { data: payment, error: paymentError } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .eq("id", payment_id)
+      .single();
+
+    if (paymentError || !payment) {
+      return res.status(404).json({
+        error: {
+          message: "Payment not found"
+        }
+      });
+    }
+
+    if (payment.status === "confirmed") {
+      return res.status(400).json({
+        error: {
+          message: "Already confirmed"
+        }
+      });
+    }
+
+    const { data: keyData, error: keyError } = await supabase
+      .from("api_keys")
+      .select("*")
+      .eq("api_key", payment.api_key)
+      .single();
+
+    if (keyError || !keyData) {
+      return res.status(404).json({
+        error: {
+          message: "API key not found"
+        }
+      });
+    }
+
+    const newBalance =
+      Number(keyData.balance || 0) + Number(payment.amount);
+
+    await supabase
+      .from("api_keys")
+      .update({
+        balance: newBalance
+      })
+      .eq("id", keyData.id);
+
+    await supabase
+      .from("usdt_payments")
+      .update({
+        status: "confirmed"
+      })
+      .eq("id", payment.id);
+
+    res.json({
+      success: true,
+      balance: newBalance
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+
+  }
+});
+
 app.post("/create-checkout-session", async (req, res) => {
   try {
 
