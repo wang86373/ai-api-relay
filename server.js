@@ -483,6 +483,24 @@ app.get("/logs/:apiKey", async (req, res) => {
   }
 });
 
+app.get("/v1/models", async (req, res) => {
+  res.json({
+    object: "list",
+    data: [
+      {
+        id: "gpt-4o-mini",
+        object: "model",
+        owned_by: "ai-api-relay"
+      },
+      {
+        id: "deepseek-chat",
+        object: "model",
+        owned_by: "ai-api-relay"
+      }
+    ]
+  });
+});
+
 app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
   try {
     const auth = req.headers.authorization || "";
