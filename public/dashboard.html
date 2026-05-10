@@ -163,6 +163,24 @@
     "
   />
 
+  <button onclick="copyUsdtAddress()">
+  Copy USDT Address
+</button>
+
+<div style="margin-top:14px;">
+  <img
+    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+    alt="USDT TRC20 QR Code"
+    style="
+      background:white;
+      padding:10px;
+      border-radius:12px;
+      width:220px;
+      height:220px;
+    "
+  />
+</div>
+
   <p class="muted" style="margin-top:10px;">
     Send USDT via TRC20 network only.
   </p>
@@ -410,6 +428,11 @@ loadUsdtHistory();
     alert("Stripe checkout failed");
 
   }
+}
+
+function copyUsdtAddress() {
+  navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
+  alert("USDT address copied.");
 }
 
     function logout() {
