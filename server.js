@@ -700,16 +700,19 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       messages
     });
 
-    await supabase.from("usage_logs").insert({
-      api_key: apiKey,
-      model,
-      prompt_tokens: completion.usage?.prompt_tokens || 0,
-      completion_tokens: completion.usage?.completion_tokens || 0,
-      total_tokens: completion.usage?.total_tokens || 0
-    });
-
     const cost =
       (completion.usage?.total_tokens || 0) * selectedModel.pricePerToken;
+
+    await supabase.from("api_usage").insert({
+      email: keyData.email,
+      api_key: apiKey,
+      model,
+
+      prompt_tokens: completion.usage?.prompt_tokens || 0,
+      completion_tokens: completion.usage?.completion_tokens || 0,
+      total_tokens: completion.usage?.total_tokens || 0,
+      cost
+    });
 
     await supabase
       .from("api_keys")
