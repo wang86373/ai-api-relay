@@ -368,10 +368,10 @@
         </div>
 
         <div class="api-actions">
-        <input class="api-box" id="apiKeyText" />
-      
-        <button onclick="copyKey()">Copy API Key</button>
-        <button onclick="testApi()">Test API</button>
+          <input class="api-box" id="apiKeyText" />
+
+          <button onclick="copyKey()">Copy API Key</button>
+          <button onclick="testApi()">Test API</button>
         </div>
 
         <div class="msg" id="msg"></div>
@@ -780,7 +780,25 @@
     document.getElementById("createKeyBtn").onclick = createApiKey;
 
     function revealApiKey(btn, apiKey) {
-      btn.parentElement.parentElement.querySelector(".real-key").innerText = apiKey;
+
+      const text =
+        btn.parentElement.parentElement.querySelector(".real-key");
+
+      if (btn.innerText === "Reveal") {
+
+        text.innerText = apiKey;
+
+        btn.innerText = "Hide";
+
+      } else {
+
+        text.innerText =
+          apiKey.slice(0, 12) + "********";
+
+        btn.innerText = "Reveal";
+
+      }
+
     }
 
     async function deleteApiKey(apiKey) {
