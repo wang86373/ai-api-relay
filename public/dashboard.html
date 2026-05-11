@@ -351,13 +351,22 @@
 
     <div class="card">
       <div class="section-label">Security</div>
-      <h2>API Keys</h2>
+      <div id="toggleKeysBtn" style="
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:24px;
+  ">
+        <h2 style="margin:0;">API Keys</h2>
+        <span id="keysArrow">▼</span>
+      </div>
 
       <button id="createKeyBtn">
         Create New API Key
       </button>
 
-      <div id="apiKeyList" class="key-list"></div>
+      <div id="apiKeyList" class="key-list" style="display:block;"></div>
 
       <div class="card">
         <h2>Your API Key</h2>
@@ -403,7 +412,7 @@
     </div>
 
     <div class="card" id="rechargeSection">
-  <h2>Recharge</h2>
+      <h2>Recharge</h2>
       <div style="
   background: rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.08);
@@ -807,6 +816,25 @@
       navigator.clipboard.writeText(apiKey);
       alert("API key copied.");
     }
+
+    document.getElementById("toggleKeysBtn").onclick = function () {
+
+      const list = document.getElementById("apiKeyList");
+      const arrow = document.getElementById("keysArrow");
+
+      if (list.style.display === "none") {
+
+        list.style.display = "block";
+        arrow.innerText = "▼";
+
+      } else {
+
+        list.style.display = "none";
+        arrow.innerText = "▶";
+
+      }
+
+    };
 
     document.getElementById("revealKeyBtn").onclick = function () {
 
