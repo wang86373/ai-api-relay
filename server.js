@@ -10,13 +10,15 @@ const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
-
 app.post("/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   return res.json({ received: true });
 });
 
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
+function generateApiKey() {
+  return "sk-" + Math.random().toString(36).substring(2) + Date.now();
+}
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error("Missing Supabase ENV");
@@ -30,6 +32,84 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+app.post("/create-api-key", async (req, res) => {
+  try {
+
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email required"
+      });
+    }
+
+    const apiKey = generateApiKey();
+
+    const { error } = await supabase
+      .from("api_keys")
+      .insert([
+        {
+          email,
+          api_key: apiKey,
+          is_active: true
+        }
+      ]);
+
+    if (error) {
+      throw error;
+    }
+
+    return res.json({
+      success: true,
+      apiKey
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: "Failed to create api key"
+    });
+  }
+});
+
+app.post("/get-api-keys", async (req, res) => {
+  try {
+
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email required"
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("api_keys")
+      .select("api_key, is_active, created_at")
+      .eq("email", email)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return res.json({
+      success: true,
+      keys: data
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: "Failed to get api keys"
+    });
+  }
+});
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -39,16 +119,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const deepseek = process.env.DEEPSEEK_API_KEY
   ? new OpenAI({
-      apiKey: process.env.DEEPSEEK_API_KEY,
-      baseURL: "https://api.deepseek.com"
-    })
+    apiKey: process.env.DEEPSEEK_API_KEY,
+    baseURL: "https://api.deepseek.com"
+  })
   : null;
 
-  const anthropic = process.env.ANTHROPIC_API_KEY
+const anthropic = process.env.ANTHROPIC_API_KEY
   ? new OpenAI({
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      baseURL: "https://api.anthropic.com/v1/"
-    })
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    baseURL: "https://api.anthropic.com/v1/"
+  })
   : null;
 
 const apiLimiter = rateLimit({
@@ -282,13 +362,13 @@ app.post("/admin/recharge", async (req, res) => {
       });
     }
 
-if (Number(keyData.balance || 0) <= 0) {
-  return res.status(402).json({
-    error: {
-      message: "Insufficient balance"
+    if (Number(keyData.balance || 0) <= 0) {
+      return res.status(402).json({
+        error: {
+          message: "Insufficient balance"
+        }
+      });
     }
-  });
-}
 
     const newBalance = Number(keyData.balance) + Number(amount);
 
@@ -553,7 +633,7 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       .eq("is_active", true)
       .single();
 
-if (keyError || !keyData) {
+    if (keyError || !keyData) {
       return res.status(401).json({
         error: {
           message: "Invalid API key"
@@ -597,23 +677,23 @@ if (keyError || !keyData) {
       }),
 
       ...(anthropic && {
-  "claude-3-5-sonnet": {
-    client: anthropic,
-    upstreamModel: "claude-3-5-sonnet-20241022",
-    pricePerToken: 0.00002
-  }
-})
+        "claude-3-5-sonnet": {
+          client: anthropic,
+          upstreamModel: "claude-3-5-sonnet-20241022",
+          pricePerToken: 0.00002
+        }
+      })
     };
 
     const selectedModel = modelConfig[model];
 
     if (!selectedModel) {
-  return res.status(400).json({
-    error: {
-      message: "Model not supported"
+      return res.status(400).json({
+        error: {
+          message: "Model not supported"
+        }
+      });
     }
-  });
-}
 
     const completion = await selectedModel.client.chat.completions.create({
       model: selectedModel.upstreamModel,
@@ -632,14 +712,14 @@ if (keyError || !keyData) {
       (completion.usage?.total_tokens || 0) * selectedModel.pricePerToken;
 
     await supabase
-  .from("api_keys")
-  .update({
-    balance: Math.max(
-      0,
-      Number(keyData.balance || 0) - cost
-    )
-  })
-  .eq("api_key", apiKey);
+      .from("api_keys")
+      .update({
+        balance: Math.max(
+          0,
+          Number(keyData.balance || 0) - cost
+        )
+      })
+      .eq("api_key", apiKey);
 
     return res.json(completion);
   } catch (err) {
@@ -913,12 +993,12 @@ app.post("/create-checkout-session", async (req, res) => {
 
       mode: "payment",
 
-        success_url:
-  "https://ai-api-relay-production-1ab2.up.railway.app/stripe/success?session_id={CHECKOUT_SESSION_ID}",
+      success_url:
+        "https://ai-api-relay-production-1ab2.up.railway.app/stripe/success?session_id={CHECKOUT_SESSION_ID}",
 
-cancel_url:
-  "https://ai-api-relay-production-1ab2.up.railway.app/dashboard.html?canceled=1",
-  
+      cancel_url:
+        "https://ai-api-relay-production-1ab2.up.railway.app/dashboard.html?canceled=1",
+
       metadata: {
         api_key
       }

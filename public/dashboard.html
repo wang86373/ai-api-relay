@@ -109,6 +109,31 @@
       <p class="muted">Your API usage will automatically deduct from this balance.</p>
     </div>
 
+    <div class="card">
+  <h2>API Keys</h2>
+
+  <button id="createKeyBtn">
+    Create New API Key
+  </button>
+
+  <div id="apiKeyBox" style="
+    margin-top:20px;
+    padding:15px;
+    background:#111827;
+    border-radius:10px;
+    word-break:break-all;
+    display:none;
+  ">
+    <div id="apiKeyText"></div>
+
+    <button id="copyKeyBtn" style="
+      margin-top:10px;
+    ">
+      Copy API Key
+    </button>
+  </div>
+</div>
+
 <div class="card">
   <h2>Usage Summary</h2>
   <div id="usageSummary">
@@ -523,6 +548,78 @@ function copyUsdtAddress() {
       localStorage.removeItem("balance");
       window.location.href = "/register.html";
     }
+
+async function createApiKey() {
+  const email = localStorage.getItem("email");
+
+  if (!email) {
+    alert("Please login first.");
+    return;
+  }
+
+  const res = await fetch("/create-api-key", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Failed to create API key");
+    return;
+  }
+
+  document.getElementById("apiKeyText").innerText = data.apiKey;
+  document.getElementById("apiKeyBox").style.display = "block";
+}
+
+document.getElementById("createKeyBtn").onclick = createApiKey;
+
+document.getElementById("copyKeyBtn").onclick = function () {
+  const key = document.getElementById("apiKeyText").innerText;
+  navigator.clipboard.writeText(key);
+  alert("API Key copied.");
+};
+
+async function loadApiKeys() {
+
+  const email = localStorage.getItem("email");
+
+  if (!email) return;
+
+  try {
+
+    const res = await fetch("/get-api-keys", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    if (data.keys && data.keys.length > 0) {
+
+      document.getElementById("apiKeyText").innerText =
+        data.keys[0].api_key;
+
+      document.getElementById("apiKeyBox").style.display =
+        "block";
+    }
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+loadApiKeys();
+
   </script>
 
 </body>
