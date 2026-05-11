@@ -778,7 +778,10 @@
     }
 
     document.getElementById("createKeyBtn").onclick = createApiKey;
-
+    function copyApiKey(apiKey) {
+      navigator.clipboard.writeText(apiKey);
+      alert("API key copied.");
+    }
     function revealApiKey(btn, apiKey) {
 
       const text =
@@ -889,9 +892,9 @@
 
    <div class="key-actions">
 
-  <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
-    Copy
-  </button>
+  <button onclick="copyApiKey('${keyObj.api_key}')">
+  Copy
+</button>
 
   <button onclick="revealApiKey(this, '${keyObj.api_key}')">
     Reveal
