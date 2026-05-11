@@ -530,14 +530,6 @@ app.post("/admin/recharge", async (req, res) => {
       });
     }
 
-    if (Number(keyData.balance || 0) <= 0) {
-      return res.status(402).json({
-        error: {
-          message: "Insufficient balance"
-        }
-      });
-    }
-
     const newBalance = Number(keyData.balance) + Number(amount);
 
     const { data, error } = await supabase
