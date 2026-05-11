@@ -6,86 +6,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      padding: 40px;
-    }
+    body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#1e3a8a 0%,#0f172a 35%),
+    #020617;
+  color:white;
+  padding:40px;
+  min-height:100vh;
+}
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
+.container{
+  max-width:1100px;
+  margin:auto;
+}
 
-    .card {
-      background: #111827;
-      border: 1px solid #1e293b;
-      border-radius: 18px;
-      padding: 28px;
-      margin-bottom: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    }
+.card{
+  background:rgba(15,23,42,0.82);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:24px;
+  padding:30px;
+  margin-bottom:26px;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
 
-    h1 {
-      margin-top: 0;
-    }
+h1,h2{
+  margin-top:0;
+  letter-spacing:-0.02em;
+}
 
-    .muted {
-      color: #94a3b8;
-    }
+h1{
+  font-size:42px;
+  margin-bottom:8px;
+}
 
-    .api-box {
-      background: #020617;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 16px;
-      word-break: break-all;
-      font-family: monospace;
-      margin-top: 12px;
-      color: white;
-      border: none;
-      outline: none;
-      width: 100%;
-      font-size: 16px;
-    }
+h2{
+  font-size:28px;
+  margin-bottom:20px;
+}
 
-    button {
-      padding: 12px 16px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 14px;
-      margin-right: 10px;
-    }
+.muted{
+  color:#94a3b8;
+  font-size:15px;
+}
 
-    button:hover {
-      background: #1d4ed8;
-    }
+.balance{
+  font-size:56px;
+  font-weight:800;
+  margin:12px 0;
+  background:linear-gradient(90deg,#4ade80,#22c55e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-    .danger {
-      background: #dc2626;
-    }
+button{
+  padding:14px 22px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:14px;
+  margin-right:10px;
+  transition:all .2s ease;
+  box-shadow:0 6px 18px rgba(37,99,235,.35);
+}
 
-    .danger:hover {
-      background: #b91c1c;
-    }
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 24px rgba(37,99,235,.45);
+}
 
-    .balance {
-      font-size: 36px;
-      font-weight: bold;
-      margin: 10px 0;
-      color: #22c55e;
-    }
+.danger{
+  background:linear-gradient(135deg,#dc2626,#ef4444);
+  box-shadow:0 6px 18px rgba(220,38,38,.35);
+}
 
-    .msg {
-      margin-top: 12px;
-      color: #cbd5e1;
-    }
+.danger:hover{
+  box-shadow:0 12px 24px rgba(220,38,38,.45);
+}
+
+.api-box{
+  background:#020617;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  padding:18px;
+  word-break:break-all;
+  font-family:monospace;
+  margin-top:16px;
+  color:#f8fafc;
+  font-size:15px;
+}
+
+.msg{
+  margin-top:14px;
+  color:#cbd5e1;
+  font-size:15px;
+}
+
+a{
+  color:#60a5fa;
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
   </style>
 </head>
 
