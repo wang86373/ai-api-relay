@@ -111,6 +111,49 @@ app.post("/get-api-keys", async (req, res) => {
   }
 });
 
+app.post("/delete-api-key", async (req, res) => {
+
+  try {
+
+    const { api_key } = req.body;
+
+    if (!api_key) {
+
+      return res.status(400).json({
+        error: "API key required"
+      });
+
+    }
+
+    const { error } = await supabase
+      .from("api_keys")
+      .delete()
+      .eq("api_key", api_key);
+
+    if (error) {
+
+      return res.status(500).json({
+        error: error.message
+      });
+
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: "Delete failed"
+    });
+
+  }
+
+});
+
 app.post("/usage-stats", async (req, res) => {
   try {
     const { email } = req.body;

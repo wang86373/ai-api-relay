@@ -796,6 +796,46 @@
 
     };
 
+    async function deleteApiKey(apiKey) {
+
+      const ok = confirm("Delete this API key?");
+
+      if (!ok) return;
+
+      try {
+
+        const res = await fetch("/delete-api-key", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+
+          alert(data.error || "Delete failed");
+
+          return;
+
+        }
+
+        alert("API key deleted");
+
+        loadApiKeys();
+
+      } catch (err) {
+
+        alert("Delete failed");
+
+      }
+
+    }
+
     async function loadApiKeys() {
 
       const email = localStorage.getItem("email");
@@ -845,6 +885,10 @@
       <div class="key-actions">
         <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
           Copy
+        </button>
+
+        <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">
+         Delete
         </button>
       </div>
 
