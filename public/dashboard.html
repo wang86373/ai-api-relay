@@ -117,6 +117,48 @@ a{
 a:hover{
   text-decoration:underline;
 }
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
+}
+
+.brand{
+  font-size:22px;
+  font-weight:800;
+}
+
+.tagline{
+  color:#94a3b8;
+  margin-top:4px;
+  font-size:14px;
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.hero{
+  margin-bottom:30px;
+}
+
+.hero h1{
+  font-size:64px;
+  margin-bottom:14px;
+  line-height:1;
+}
+
+.hero p{
+  color:#94a3b8;
+  font-size:20px;
+  max-width:700px;
+  line-height:1.6;
+}
+
   </style>
 </head>
 
@@ -124,13 +166,25 @@ a:hover{
 
   <div class="container">
 
+    <div class="topbar">
+  <div>
+    <div class="brand">AI API Relay</div>
+    <div class="tagline">OpenAI-compatible API infrastructure</div>
+  </div>
+
+  <div class="nav">
+    <a href="/docs.html">Docs</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Developer Dashboard</h1>
+  <p>Manage API keys, monitor usage, and track balance in one place.</p>
+</div>
+
     <div class="card">
-      <h1>AI API Relay Dashboard</h1>
-      <p>
-  <a href="/docs.html" style="color:#60a5fa;">
-    View API Documentation
-  </a>
-</p>
+      
       <p class="muted" id="emailText"></p>
     </div>
 
