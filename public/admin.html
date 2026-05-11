@@ -187,6 +187,9 @@
 <button onclick="loadLogs('${k.api_key}')">
   View Logs
 </button>
+<button onclick="deleteKey('${k.api_key}')">
+  Delete
+</button>
       </div>
     `).join("");
 
@@ -194,6 +197,46 @@
         box.innerHTML = err.message;
       }
     }
+
+    async function deleteKey(apiKey) {
+
+  const ok = confirm(
+    "Delete this API key permanently?"
+  );
+
+  if (!ok) return;
+
+  try {
+
+    const res = await fetch(
+      API_BASE + "/admin/delete-key",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": getAdminKey()
+        },
+        body: JSON.stringify({
+          api_key: apiKey
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error?.message || "Delete failed");
+      return;
+    }
+
+    alert("API key deleted");
+
+    loadKeys();
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
 
     async function loadLogs(apiKey) {
 

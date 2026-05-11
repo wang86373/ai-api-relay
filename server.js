@@ -502,6 +502,46 @@ app.post("/admin/toggle-key", async (req, res) => {
   }
 });
 
+app.post("/admin/delete-key", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { key_id } = req.body;
+
+    if (!key_id) {
+      return res.status(400).json({
+        error: {
+          message: "key_id is required"
+        }
+      });
+    }
+
+    const { error } = await supabase
+      .from("api_keys")
+      .delete()
+      .eq("id", key_id);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.post("/admin/recharge", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
