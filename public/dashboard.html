@@ -339,62 +339,49 @@
         Create New API Key
       </button>
 
-      <div id="apiKeyBox" class="key-card" style="display:none;">
-        <div id="apiKeyText"></div>
+      <div id="apiKeyList" class="key-list"></div>
 
-        <button id="copyKeyBtn" style="
-      margin-top:10px;
-      ">
-          Copy API Key
-        </button>
-        <button id="revealKeyBtn">
-          Reveal Key
-        </button>
+      <div class="card">
+        <h2>Your API Key</h2>
+
+        <select id="modelSelect" class="api-box" style="margin-bottom:12px;">
+          <option value="gpt-4o-mini">gpt-4o-mini</option>
+          <option value="deepseek-chat">deepseek-chat</option>
+          <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+        </select>
+
+        <div id="modelPrice" class="muted" style="margin-top:8px;margin-bottom:14px;">
+          Price: GPT-4o-mini
+        </div>
+
+        <input class="api-box" id="apiKeyText" />
+
+        <button onclick="copyKey()">Copy API Key</button>
+        <button onclick="testApi()">Test API</button>
+
+        <div class="msg" id="msg"></div>
       </div>
+
     </div>
-    <div id="apiKeyList" class="key-list"></div>
 
     <div class="card">
-      <h2>Your API Key</h2>
+      <h2>Usage Logs</h2>
 
-      <select id="modelSelect" class="api-box" style="margin-bottom:12px;">
-        <option value="gpt-4o-mini">gpt-4o-mini</option>
-        <option value="deepseek-chat">deepseek-chat</option>
-        <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-      </select>
-
-      <div id="modelPrice" class="muted" style="margin-top:8px;margin-bottom:14px;">
-        Price: GPT-4o-mini
+      <div id="logsContainer">
+        Loading logs...
       </div>
-
-      <input class="api-box" id="apiKeyText" />
-
-      <button onclick="copyKey()">Copy API Key</button>
-      <button onclick="testApi()">Test API</button>
-
-      <div class="msg" id="msg"></div>
     </div>
 
-  </div>
-
-  <div class="card">
-    <h2>Usage Logs</h2>
-
-    <div id="logsContainer">
-      Loading logs...
+    <div class="card">
+      <h2>USDT Payment History</h2>
+      <div id="usdtHistoryContainer">
+        Loading USDT history...
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h2>USDT Payment History</h2>
-    <div id="usdtHistoryContainer">
-      Loading USDT history...
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Recharge</h2>
-    <div style="
+    <div class="card">
+      <h2>Recharge</h2>
+      <div style="
   background: rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.08);
   border-radius:12px;
@@ -402,15 +389,15 @@
   margin-bottom:16px;
 ">
 
-      <div style="margin-bottom:8px;">
-        <b>USDT Network:</b> TRC20
-      </div>
+        <div style="margin-bottom:8px;">
+          <b>USDT Network:</b> TRC20
+        </div>
 
-      <div style="margin-bottom:8px;">
-        <b>Wallet Address:</b>
-      </div>
+        <div style="margin-bottom:8px;">
+          <b>Wallet Address:</b>
+        </div>
 
-      <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
+        <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
       width:100%;
       background:#081226;
       color:#00ff99;
@@ -420,38 +407,38 @@
       font-size:14px;
     " />
 
-      <button onclick="copyUsdtAddress()">
-        Copy USDT Address
-      </button>
+        <button onclick="copyUsdtAddress()">
+          Copy USDT Address
+        </button>
 
-      <div style="margin-top:14px;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-          alt="USDT TRC20 QR Code" style="
+        <div style="margin-top:14px;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+            alt="USDT TRC20 QR Code" style="
       background:white;
       padding:10px;
       border-radius:12px;
       width:220px;
       height:220px;
     " />
+        </div>
+
+        <p class="muted" style="margin-top:10px;">
+          Send USDT via TRC20 network only.
+        </p>
+
       </div>
+      <p class="muted">Stripe and USDT payment will be added next.</p>
 
-      <p class="muted" style="margin-top:10px;">
-        Send USDT via TRC20 network only.
-      </p>
-
+      <button onclick="stripeCheckout()">
+        Pay with Stripe
+      </button>
+      <button onclick="usdtPayment()">Pay with USDT</button>
     </div>
-    <p class="muted">Stripe and USDT payment will be added next.</p>
 
-    <button onclick="stripeCheckout()">
-      Pay with Stripe
-    </button>
-    <button onclick="usdtPayment()">Pay with USDT</button>
-  </div>
-
-  <div class="card">
-    <h2>Account</h2>
-    <button class="danger" onclick="logout()">Logout</button>
-  </div>
+    <div class="card">
+      <h2>Account</h2>
+      <button class="danger" onclick="logout()">Logout</button>
+    </div>
 
   </div>
 
@@ -878,14 +865,20 @@
         </div>
       </div>
 
-      <div class="key-meta">
-        ${keyObj.api_key.slice(0, 12)}********
-      </div>
+      <div class="key-meta real-key">
+  ${keyObj.api_key.slice(0, 12)}********
+</div>
 
       <div class="key-actions">
         <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
           Copy
         </button>
+
+        <button onclick="
+this.parentElement.parentElement.querySelector('.real-key').innerText='${keyObj.api_key}'
+">
+  Reveal
+</button>
 
         <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">
          Delete
