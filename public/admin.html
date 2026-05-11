@@ -107,6 +107,11 @@
       <h2>API Keys</h2>
       <button onclick="loadKeys()">Load API Keys</button>
       <div id="keysBox">No keys loaded.</div>
+      <h2 style="margin-top:40px;">Usage Logs</h2>
+
+      <div id="logsBox">
+        No logs loaded.
+      </div>
     </div>
 
     <div class="card">
@@ -169,8 +174,8 @@
 <div>
   <b>Last Used:</b>
   ${k.last_used_at
-    ? new Date(k.last_used_at).toLocaleString()
-    : "Never"}
+            ? new Date(k.last_used_at).toLocaleString()
+            : "Never"}
 </div>
 
 <button onclick="toggleKey(${k.id}, ${!k.is_active})">
@@ -179,6 +184,9 @@
 <button onclick="rechargeKey('${k.api_key}')">
   Recharge
 </button>
+<button onclick="loadLogs('${k.api_key}')">
+  View Logs
+</button>
       </div>
     `).join("");
 
@@ -186,6 +194,53 @@
         box.innerHTML = err.message;
       }
     }
+
+    async function loadLogs(apiKey) {
+
+  const box = document.getElementById("logsBox");
+
+  box.innerHTML = "Loading logs...";
+
+  try {
+
+    const res = await fetch(
+      API_BASE + "/logs/" + apiKey
+    , {
+      headers: {
+        "x-admin-key": getAdminKey()
+      }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.innerHTML = data.error?.message || "Failed";
+      return;
+    }
+
+    if (!data.logs || data.logs.length === 0) {
+      box.innerHTML = "No logs found.";
+      return;
+    }
+
+    box.innerHTML = data.logs.map(log => `
+      <div style="
+        padding:12px;
+        margin-bottom:12px;
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:12px;
+      ">
+        <div><b>Model:</b> ${log.model}</div>
+        <div><b>Total Tokens:</b> ${log.total_tokens || 0}</div>
+        <div><b>Cost:</b> $${Number(log.cost || 0).toFixed(4)}</div>
+        <div><b>Time:</b> ${new Date(log.created_at).toLocaleString()}</div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    box.innerHTML = err.message;
+  }
+}
 
     async function toggleKey(keyId, isActive) {
       const ok = confirm(
