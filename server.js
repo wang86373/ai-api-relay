@@ -69,7 +69,7 @@ app.post("/create-api-key", async (req, res) => {
     console.error(err);
 
     return res.status(500).json({
-      error: "Failed to create api key"
+      error: err.message || "Failed to create api key"
     });
   }
 });
