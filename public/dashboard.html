@@ -696,7 +696,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + document.getElementById("apiKeyText").value
+            "Authorization": "Bearer " + document.getElementById("apiKeyText").dataset.fullkey
           },
           body: JSON.stringify({
             model: document.getElementById("modelSelect").value,
