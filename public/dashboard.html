@@ -917,6 +917,76 @@
       }
     }
 
+    async function loadUsageLogs() {
+
+  const email = localStorage.getItem("email");
+
+  if (!email) return;
+
+  try {
+
+    const res = await fetch("/usage-logs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    const container =
+      document.getElementById("logsContainer");
+
+    container.innerHTML = "";
+
+    if (!data.logs || data.logs.length === 0) {
+
+      container.innerHTML =
+        "<div class='muted'>No usage logs yet.</div>";
+
+      return;
+
+    }
+
+    data.logs.forEach(log => {
+
+      container.innerHTML += `
+        <div class="key-item">
+
+          <div class="key-top">
+            <div class="key-name">
+              ${log.model || "GPT-4"}
+            </div>
+          </div>
+
+          <div class="key-meta">
+            Tokens: ${log.total_tokens || 0}
+          </div>
+
+          <div class="key-meta">
+            Cost: $${Number(log.cost || 0).toFixed(4)}
+          </div>
+
+          <div class="key-meta">
+            ${new Date(log.created_at).toLocaleString()}
+          </div>
+
+        </div>
+      `;
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+}
+
     async function loadUsageStats() {
 
       const email = localStorage.getItem("email");
@@ -955,7 +1025,10 @@
     }
     loadApiKeys();
     loadUsageStats();
+    loadUsageLogs();
+
     setInterval(loadUsageStats, 30000);
+    setInterval(loadUsageLogs, 30000);
 
   </script>
 

@@ -154,6 +154,44 @@ app.post("/delete-api-key", async (req, res) => {
 
 });
 
+app.post("/usage-logs", async (req, res) => {
+
+  try {
+
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email required"
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("api_usage")
+      .select("*")
+      .eq("email", email)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) throw error;
+
+    return res.json({
+      success: true,
+      logs: data
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: "Failed to load logs"
+    });
+
+  }
+
+});
+
 app.post("/usage-stats", async (req, res) => {
   try {
     const { email } = req.body;
