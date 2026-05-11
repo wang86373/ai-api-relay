@@ -775,6 +775,7 @@
         alert(data.error || "Failed to create API key");
         return;
       }
+      loadApiKeys();
     }
 
     document.getElementById("createKeyBtn").onclick = createApiKey;
@@ -919,41 +920,41 @@
 
     async function loadUsageLogs() {
 
-  const email = localStorage.getItem("email");
+      const email = localStorage.getItem("email");
 
-  if (!email) return;
+      if (!email) return;
 
-  try {
+      try {
 
-    const res = await fetch("/usage-logs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
+        const res = await fetch("/usage-logs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok) return;
+        if (!res.ok) return;
 
-    const container =
-      document.getElementById("logsContainer");
+        const container =
+          document.getElementById("logsContainer");
 
-    container.innerHTML = "";
+        container.innerHTML = "";
 
-    if (!data.logs || data.logs.length === 0) {
+        if (!data.logs || data.logs.length === 0) {
 
-      container.innerHTML =
-        "<div class='muted'>No usage logs yet.</div>";
+          container.innerHTML =
+            "<div class='muted'>No usage logs yet.</div>";
 
-      return;
+          return;
 
-    }
+        }
 
-    data.logs.forEach(log => {
+        data.logs.forEach(log => {
 
-      container.innerHTML += `
+          container.innerHTML += `
         <div class="key-item">
 
           <div class="key-top">
@@ -969,7 +970,9 @@
           <div class="key-meta">
             Cost: $${Number(log.cost || 0).toFixed(4)}
           </div>
-
+<div class="key-meta">
+  API Key: ****${String(log.api_key || "").slice(-6)}
+</div>
           <div class="key-meta">
             ${new Date(log.created_at).toLocaleString()}
           </div>
@@ -977,15 +980,15 @@
         </div>
       `;
 
-    });
+        });
 
-  } catch (err) {
+      } catch (err) {
 
-    console.error(err);
+        console.error(err);
 
-  }
+      }
 
-}
+    }
 
     async function loadUsageStats() {
 
@@ -1028,7 +1031,6 @@
     loadUsageLogs();
 
     setInterval(loadUsageStats, 30000);
-    setInterval(loadUsageLogs, 30000);
 
   </script>
 

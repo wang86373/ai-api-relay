@@ -832,8 +832,18 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       messages
     });
 
+    let pricePer1k = 0.01;
+
+    if (model === "deepseek-chat") {
+      pricePer1k = 0.002;
+    }
+
+    if (model === "claude-3-5-sonnet") {
+      pricePer1k = 0.03;
+    }
+
     const cost =
-      (completion.usage?.total_tokens || 0) * selectedModel.pricePerToken;
+      ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
     await supabase.from("api_usage").insert({
       email: keyData.email,
