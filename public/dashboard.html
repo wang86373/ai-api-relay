@@ -126,6 +126,41 @@
       color: #e5e7eb;
     }
 
+    .key-list {
+      margin-top: 20px;
+    }
+
+    .key-item {
+      background: rgba(15, 23, 42, .72);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .key-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .key-name {
+      font-weight: 700;
+      color: white;
+      font-size: 15px;
+    }
+
+    .key-meta {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .key-actions {
+      margin-top: 14px;
+    }
+
     .api-box {
       background: #020617;
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -317,6 +352,7 @@
         </button>
       </div>
     </div>
+    <div id="apiKeyList" class="key-list"></div>
 
     <div class="card">
       <h2>Your API Key</h2>
@@ -788,6 +824,36 @@
           document.getElementById("apiKeyText").innerText =
             data.keys[0].api_key;
 
+          const list = document.getElementById("apiKeyList");
+
+          list.innerHTML = "";
+
+          data.keys.forEach((keyObj, index) => {
+
+            list.innerHTML += `
+    <div class="key-item">
+
+      <div class="key-top">
+        <div class="key-name">
+          API Key ${index + 1}
+        </div>
+      </div>
+
+      <div class="key-meta">
+        ${keyObj.api_key.slice(0, 12)}********
+      </div>
+
+      <div class="key-actions">
+        <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
+          Copy
+        </button>
+      </div>
+
+    </div>
+  `;
+
+          });
+
           document.getElementById("apiKeyBox").style.display =
             "block";
         }
@@ -799,42 +865,43 @@
 
     async function loadUsageStats() {
 
-  const email = localStorage.getItem("email");
+      const email = localStorage.getItem("email");
 
-  if (!email) return;
+      if (!email) return;
 
-  try {
+      try {
 
-    const res = await fetch("/usage-stats", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
+        const res = await fetch("/usage-stats", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok) return;
+        if (!res.ok) return;
 
-    document.getElementById("todayRequests").innerText =
-      data.totalRequests;
+        document.getElementById("todayRequests").innerText =
+          data.totalRequests;
 
-    document.getElementById("tokenUsage").innerText =
-      data.totalTokens.toLocaleString();
+        document.getElementById("tokenUsage").innerText =
+          data.totalTokens.toLocaleString();
 
-    document.getElementById("estimatedCost").innerText =
-      "$" + Number(data.totalCost).toFixed(4);
+        document.getElementById("estimatedCost").innerText =
+          "$" + Number(data.totalCost).toFixed(4);
 
-  } catch (err) {
+      } catch (err) {
 
-    console.error(err);
+        console.error(err);
 
-  }
+      }
 
-}
+    }
     loadApiKeys();
     loadUsageStats();
+    setInterval(loadUsageStats, 30000);
 
   </script>
 
