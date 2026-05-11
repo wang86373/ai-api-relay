@@ -7,6 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -200,8 +206,15 @@
 
       <p class="muted" id="emailText"></p>
     </div>
-
     <div class="stats-grid">
+      <div class="card">
+        <div class="section-label">Analytics</div>
+        <h2>Usage Summary</h2>
+        <div id="usageSummary">
+          Loading usage summary...
+        </div>
+      </div>
+
       <div class="card">
         <div class="section-label">Balance</div>
         <h2>Account Balance</h2>
@@ -233,14 +246,6 @@
     ">
           Copy API Key
         </button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="section-label">Analytics</div>
-      <h2>Usage Summary</h2>
-      <div id="usageSummary">
-        Loading usage summary...
       </div>
     </div>
 
