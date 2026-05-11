@@ -376,6 +376,9 @@
           <input class="api-box" id="apiKeyText" />
 
           <button onclick="copyKey()">Copy API Key</button>
+
+          <button id="revealKeyBtn">Reveal</button>
+
           <button onclick="testApi()">Test API</button>
         </div>
 
@@ -786,6 +789,7 @@
         return;
       }
       loadApiKeys();
+      loadUsageLogs();
     }
 
     document.getElementById("createKeyBtn").onclick = createApiKey;
@@ -793,6 +797,30 @@
       navigator.clipboard.writeText(apiKey);
       alert("API key copied.");
     }
+
+    document.getElementById("revealKeyBtn").onclick = function () {
+
+      const text = document.getElementById("apiKeyText");
+
+      if (text.dataset.fullkey) {
+
+        if (text.value.includes("********")) {
+
+          text.value = text.dataset.fullkey;
+          this.innerText = "Hide";
+
+        } else {
+
+          text.value =
+            text.dataset.fullkey.slice(0, 12) + "********";
+
+          this.innerText = "Reveal";
+        }
+
+      }
+
+    };
+
     function revealApiKey(btn, apiKey) {
 
       const text =
@@ -846,6 +874,7 @@
         alert("API key deleted");
 
         loadApiKeys();
+        loadUsageLogs();
 
       } catch (err) {
 
@@ -880,6 +909,11 @@
         if (data.keys && data.keys.length > 0) {
 
           document.getElementById("apiKeyText").value =
+            data.keys[0].api_key.slice(0, 12) + "********";
+          document.getElementById("revealKeyBtn").innerText =
+            "Reveal";
+
+          document.getElementById("apiKeyText").dataset.fullkey =
             data.keys[0].api_key;
 
           const list = document.getElementById("apiKeyList");
