@@ -49,7 +49,7 @@ app.post("/create-api-key", async (req, res) => {
       .from("api_keys")
       .insert([
         {
-          email,
+          user_email: email,
           api_key: apiKey,
           is_active: true
         }
@@ -420,13 +420,13 @@ app.get("/admin/keys", async (req, res) => {
     }
 
     const { data: usageLogs } = await supabase
-  .from("usage_logs")
-  .select("*");
+      .from("usage_logs")
+      .select("*");
 
     const keysWithStats = data.map(key => {
       const logs = (usageLogs || []).filter(
-  log => log.api_key === key.api_key
-);
+        log => log.api_key === key.api_key
+      );
 
       const totalRequests = logs.length;
 
@@ -439,21 +439,21 @@ app.get("/admin/keys", async (req, res) => {
       }, 0);
 
       const lastUsedAt = logs.length > 0
-  ? logs
-      .map(log => log.created_at)
-      .filter(Boolean)
-      .sort()
-      .reverse()[0]
-  : null;
+        ? logs
+          .map(log => log.created_at)
+          .filter(Boolean)
+          .sort()
+          .reverse()[0]
+        : null;
 
       return {
-  ...key,
-  total_requests: totalRequests,
-  total_tokens: totalTokens,
-  total_cost: totalCost,
-  last_used_at: lastUsedAt
-};
-});
+        ...key,
+        total_requests: totalRequests,
+        total_tokens: totalTokens,
+        total_cost: totalCost,
+        last_used_at: lastUsedAt
+      };
+    });
 
     return res.json({
       success: true,
@@ -874,7 +874,6 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
     const { error: logError } = await supabase.from("usage_logs").insert({
-      email: keyData.email,
       api_key: apiKey,
       model,
 
@@ -885,8 +884,8 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     });
 
     if (logError) {
-  console.error("Usage log insert error:", logError.message);
-}
+      console.error("Usage log insert error:", logError.message);
+    }
 
     await supabase
       .from("api_keys")
