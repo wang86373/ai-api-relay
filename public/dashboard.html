@@ -249,31 +249,31 @@
 
     <div class="stats-grid">
 
-  <div class="card">
-    <div class="section-label">Today</div>
-    <h2 id="todayRequests">0</h2>
-    <p class="muted">API Requests Today</p>
-  </div>
+      <div class="card">
+        <div class="section-label">Today</div>
+        <h2 id="todayRequests">0</h2>
+        <p class="muted">API Requests Today</p>
+      </div>
 
-  <div class="card">
-    <div class="section-label">Tokens</div>
-    <h2 id="tokenUsage">0</h2>
-    <p class="muted">Total Tokens Used</p>
-  </div>
+      <div class="card">
+        <div class="section-label">Tokens</div>
+        <h2 id="tokenUsage">0</h2>
+        <p class="muted">Total Tokens Used</p>
+      </div>
 
-  <div class="card">
-    <div class="section-label">Cost</div>
-    <h2 id="estimatedCost">$0</h2>
-    <p class="muted">Estimated Usage Cost</p>
-  </div>
+      <div class="card">
+        <div class="section-label">Cost</div>
+        <h2 id="estimatedCost">$0</h2>
+        <p class="muted">Estimated Usage Cost</p>
+      </div>
 
-  <div class="card">
-    <div class="section-label">Keys</div>
-    <h2 id="activeKeys">0</h2>
-    <p class="muted">Active API Keys</p>
-  </div>
+      <div class="card">
+        <div class="section-label">Keys</div>
+        <h2 id="activeKeys">0</h2>
+        <p class="muted">Active API Keys</p>
+      </div>
 
-</div>
+    </div>
 
     <div class="card">
 
@@ -761,41 +761,80 @@
 
     };
 
-      async function loadApiKeys() {
+    async function loadApiKeys() {
 
-        const email = localStorage.getItem("email");
+      const email = localStorage.getItem("email");
 
-        if (!email) return;
+      if (!email) return;
 
-        try {
+      try {
 
-          const res = await fetch("/get-api-keys", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email })
-          });
+        const res = await fetch("/get-api-keys", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-          const data = await res.json();
+        const data = await res.json();
+        document.getElementById("activeKeys").innerText =
+          data.keys.length;
 
-          if (!res.ok) return;
+        if (!res.ok) return;
 
-          if (data.keys && data.keys.length > 0) {
+        if (data.keys && data.keys.length > 0) {
 
-            document.getElementById("apiKeyText").innerText =
-              data.keys[0].api_key;
+          document.getElementById("apiKeyText").innerText =
+            data.keys[0].api_key;
 
-            document.getElementById("apiKeyBox").style.display =
-              "block";
-          }
-
-        } catch (err) {
-          console.error(err);
+          document.getElementById("apiKeyBox").style.display =
+            "block";
         }
-      }
 
-      loadApiKeys();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadUsageStats() {
+
+  const email = localStorage.getItem("email");
+
+  if (!email) return;
+
+  try {
+
+    const res = await fetch("/usage-stats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    document.getElementById("todayRequests").innerText =
+      data.totalRequests;
+
+    document.getElementById("tokenUsage").innerText =
+      data.totalTokens.toLocaleString();
+
+    document.getElementById("estimatedCost").innerText =
+      "$" + Number(data.totalCost).toFixed(4);
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+}
+    loadApiKeys();
+    loadUsageStats();
 
   </script>
 

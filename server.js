@@ -111,6 +111,57 @@ app.post("/get-api-keys", async (req, res) => {
   }
 });
 
+app.post("/usage-stats", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: "Email required"
+      });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { data, error } = await supabase
+      .from("api_usage")
+      .select("total_tokens, cost, created_at")
+      .eq("email", email)
+      .gte("created_at", today.toISOString());
+
+    if (error) throw error;
+
+    const totalRequests = data.length;
+
+    const totalTokens = data.reduce(
+      (sum, row) => sum + Number(row.total_tokens || 0),
+      0
+    );
+
+    const totalCost = data.reduce(
+      (sum, row) => sum + Number(row.cost || 0),
+      0
+    );
+
+    return res.json({
+      success: true,
+      totalRequests,
+      totalTokens,
+      totalCost
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: err.message || "Failed to load usage stats"
+    });
+
+  }
+});
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
