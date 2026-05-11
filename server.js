@@ -408,7 +408,15 @@ app.get("/admin/keys", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("api_keys")
-      .select("*")
+      .select(`
+        *,
+        usage_logs (
+          id,
+          tokens_used,
+          cost,
+          created_at
+        )
+      `)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -419,9 +427,39 @@ app.get("/admin/keys", async (req, res) => {
       });
     }
 
+    const keysWithStats = data.map(key => {
+      const logs = key.usage_logs || [];
+
+      const totalRequests = logs.length;
+
+      const totalTokens = logs.reduce((sum, log) => {
+        return sum + Number(log.tokens_used || 0);
+      }, 0);
+
+      const totalCost = logs.reduce((sum, log) => {
+        return sum + Number(log.cost || 0);
+      }, 0);
+
+      const lastUsedAt = logs.length > 0
+  ? logs
+      .map(log => log.created_at)
+      .filter(Boolean)
+      .sort()
+      .reverse()[0]
+  : null;
+
+      return {
+  ...key,
+  total_requests: totalRequests,
+  total_tokens: totalTokens,
+  total_cost: totalCost,
+  last_used_at: lastUsedAt
+};
+});
+
     return res.json({
       success: true,
-      keys: data
+      keys: keysWithStats
     });
   } catch (err) {
     return res.status(500).json({

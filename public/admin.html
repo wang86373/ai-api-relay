@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Admin - USDT Payments</title>
@@ -60,7 +61,8 @@
       font-size: 14px;
     }
 
-    th, td {
+    th,
+    td {
       border-bottom: 1px solid #334155;
       padding: 10px;
       text-align: left;
@@ -102,10 +104,10 @@
     </div>
 
     <div class="card">
-  <h2>API Keys</h2>
-  <button onclick="loadKeys()">Load API Keys</button>
-  <div id="keysBox">No keys loaded.</div>
-</div>
+      <h2>API Keys</h2>
+      <button onclick="loadKeys()">Load API Keys</button>
+      <div id="keysBox">No keys loaded.</div>
+    </div>
 
     <div class="card">
       <h2>Payment Requests</h2>
@@ -121,34 +123,34 @@
       return document.getElementById("adminKey").value.trim();
     }
 
-async function loadKeys() {
-  const box = document.getElementById("keysBox");
+    async function loadKeys() {
+      const box = document.getElementById("keysBox");
 
-  box.innerHTML = "Loading...";
+      box.innerHTML = "Loading...";
 
-  try {
-    const res = await fetch(
-      API_BASE + "/admin/keys",
-      {
-        headers: {
-          "x-admin-key": getAdminKey()
+      try {
+        const res = await fetch(
+          API_BASE + "/admin/keys",
+          {
+            headers: {
+              "x-admin-key": getAdminKey()
+            }
+          }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          box.innerHTML = data.error?.message || "Failed";
+          return;
         }
-      }
-    );
 
-    const data = await res.json();
+        if (!data.keys || data.keys.length === 0) {
+          box.innerHTML = "No API keys";
+          return;
+        }
 
-    if (!res.ok) {
-      box.innerHTML = data.error?.message || "Failed";
-      return;
-    }
-
-    if (!data.keys || data.keys.length === 0) {
-      box.innerHTML = "No API keys";
-      return;
-    }
-
-    box.innerHTML = data.keys.map(k => `
+        box.innerHTML = data.keys.map(k => `
       <div style="
         padding:12px;
         margin-bottom:12px;
@@ -159,6 +161,17 @@ async function loadKeys() {
         <div><b>Balance:</b> $${k.balance}</div>
         <div><b>API Key:</b> ${k.api_key}</div>
         <div><b>Active:</b> ${k.is_active}</div>
+        <div><b>Total Requests:</b> ${k.total_requests || 0}</div>
+
+<div><b>Total Tokens:</b> ${k.total_tokens || 0}</div>
+
+<div><b>Total Cost:</b> $${Number(k.total_cost || 0).toFixed(4)}</div>
+<div>
+  <b>Last Used:</b>
+  ${k.last_used_at
+    ? new Date(k.last_used_at).toLocaleString()
+    : "Never"}
+</div>
 
 <button onclick="toggleKey(${k.id}, ${!k.is_active})">
   ${k.is_active ? "Disable" : "Enable"}
@@ -169,70 +182,70 @@ async function loadKeys() {
       </div>
     `).join("");
 
-  } catch (err) {
-    box.innerHTML = err.message;
-  }
-}
+      } catch (err) {
+        box.innerHTML = err.message;
+      }
+    }
 
-async function toggleKey(keyId, isActive) {
-  const ok = confirm(
-    isActive
-      ? "Enable this API key?"
-      : "Disable this API key?"
-  );
+    async function toggleKey(keyId, isActive) {
+      const ok = confirm(
+        isActive
+          ? "Enable this API key?"
+          : "Disable this API key?"
+      );
 
-  if (!ok) return;
+      if (!ok) return;
 
-  const res = await fetch(API_BASE + "/admin/toggle-key", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-key": getAdminKey()
-    },
-    body: JSON.stringify({
-      key_id: keyId,
-      is_active: isActive
-    })
-  });
+      const res = await fetch(API_BASE + "/admin/toggle-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": getAdminKey()
+        },
+        body: JSON.stringify({
+          key_id: keyId,
+          is_active: isActive
+        })
+      });
 
-  const data = await res.json();
+      const data = await res.json();
 
-  if (!res.ok) {
-    alert(data.error?.message || "Failed");
-    return;
-  }
+      if (!res.ok) {
+        alert(data.error?.message || "Failed");
+        return;
+      }
 
-  alert("Updated.");
-  loadKeys();
-}
+      alert("Updated.");
+      loadKeys();
+    }
 
-async function rechargeKey(apiKey) {
-  const amount = prompt("Recharge amount:");
+    async function rechargeKey(apiKey) {
+      const amount = prompt("Recharge amount:");
 
-  if (!amount) return;
+      if (!amount) return;
 
-  const res = await fetch(API_BASE + "/admin/recharge", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-key": getAdminKey()
-    },
-    body: JSON.stringify({
-      api_key: apiKey,
-      amount: Number(amount)
-    })
-  });
+      const res = await fetch(API_BASE + "/admin/recharge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": getAdminKey()
+        },
+        body: JSON.stringify({
+          api_key: apiKey,
+          amount: Number(amount)
+        })
+      });
 
-  const data = await res.json();
+      const data = await res.json();
 
-  if (!res.ok) {
-    alert(data.error?.message || "Recharge failed");
-    return;
-  }
+      if (!res.ok) {
+        alert(data.error?.message || "Recharge failed");
+        return;
+      }
 
-  alert("Balance updated.");
-  loadKeys();
-}
+      alert("Balance updated.");
+      loadKeys();
+    }
 
     async function loadPayments() {
       const msg = document.getElementById("msg");
@@ -285,11 +298,10 @@ async function rechargeKey(apiKey) {
                   <td class="${p.status}">${p.status}</td>
                   <td>${new Date(p.created_at).toLocaleString()}</td>
                   <td>
-                    ${
-                      p.status === "confirmed"
-                        ? "Confirmed"
-                        : `<button onclick="confirmPayment(${p.id})">Confirm</button>`
-                    }
+                    ${p.status === "confirmed"
+            ? "Confirmed"
+            : `<button onclick="confirmPayment(${p.id})">Confirm</button>`
+          }
                   </td>
                 </tr>
               `).join("")}
@@ -337,4 +349,5 @@ async function rechargeKey(apiKey) {
     }
   </script>
 </body>
+
 </html>
