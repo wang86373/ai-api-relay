@@ -175,6 +175,17 @@
       min-width: 420px;
     }
 
+    .api-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .api-actions .api-box {
+      flex: 1;
+    }
+
     .msg {
       margin-top: 14px;
       color: #cbd5e1;
@@ -356,10 +367,12 @@
           Price: GPT-4o-mini
         </div>
 
+        <div class="api-actions">
         <input class="api-box" id="apiKeyText" />
-
+      
         <button onclick="copyKey()">Copy API Key</button>
         <button onclick="testApi()">Test API</button>
+        </div>
 
         <div class="msg" id="msg"></div>
       </div>
