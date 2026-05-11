@@ -870,28 +870,27 @@
 </div>
 
       <div class="key-actions">
-        <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
-          Copy
-        </button>
 
-        <button onclick="
-this.parentElement.parentElement.querySelector('.real-key').innerText='${keyObj.api_key}'
-">
-  Reveal
-</button>
+  <button onclick="navigator.clipboard.writeText('${keyObj.api_key}')">
+    Copy
+  </button>
 
-        <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">
-         Delete
-        </button>
-      </div>
+  <button onclick="
+  this.parentElement.parentElement.querySelector('.real-key').innerText='${keyObj.api_key}'
+  ">
+    Reveal
+  </button>
+
+  <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">
+    Delete
+  </button>
+
+</div>
 
     </div>
   `;
 
           });
-
-          document.getElementById("apiKeyBox").style.display =
-            "block";
         }
 
       } catch (err) {
