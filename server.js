@@ -873,7 +873,7 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     const cost =
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
-    await supabase.from("api_usage").insert({
+    await supabase.from("usage_logs").insert({
       email: keyData.email,
       api_key: apiKey,
       model,
