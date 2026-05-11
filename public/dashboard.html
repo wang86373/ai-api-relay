@@ -1,164 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Dashboard - AI API Relay</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body{
-  margin:0;
-  font-family:Inter,Arial,sans-serif;
-  background:
-    radial-gradient(circle at top,#1e3a8a 0%,#0f172a 35%),
-    #020617;
-  color:white;
-  padding:40px;
-  min-height:100vh;
-}
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #1e3a8a 0%, #0f172a 35%),
+        #020617;
+      color: white;
+      padding: 40px;
+      min-height: 100vh;
+    }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
 
-.card{
-  background:rgba(15,23,42,0.82);
-  backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:24px;
-  padding:30px;
-  margin-bottom:26px;
-  box-shadow:
-    0 10px 40px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-}
+    .card {
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 26px;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
 
-h1,h2{
-  margin-top:0;
-  letter-spacing:-0.02em;
-}
+    h1,
+    h2 {
+      margin-top: 0;
+      letter-spacing: -0.02em;
+    }
 
-h1{
-  font-size:42px;
-  margin-bottom:8px;
-}
+    h1 {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
 
-h2{
-  font-size:28px;
-  margin-bottom:20px;
-}
+    h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
 
-.muted{
-  color:#94a3b8;
-  font-size:15px;
-}
+    .muted {
+      color: #94a3b8;
+      font-size: 15px;
+    }
 
-.balance{
-  font-size:56px;
-  font-weight:800;
-  margin:12px 0;
-  background:linear-gradient(90deg,#4ade80,#22c55e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
+    .balance {
+      font-size: 56px;
+      font-weight: 800;
+      margin: 12px 0;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-button{
-  padding:14px 22px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#2563eb,#3b82f6);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:14px;
-  margin-right:10px;
-  transition:all .2s ease;
-  box-shadow:0 6px 18px rgba(37,99,235,.35);
-}
+    button {
+      padding: 14px 22px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      margin-right: 10px;
+      transition: all .2s ease;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, .35);
+    }
 
-button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 12px 24px rgba(37,99,235,.45);
-}
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, .45);
+    }
 
-.danger{
-  background:linear-gradient(135deg,#dc2626,#ef4444);
-  box-shadow:0 6px 18px rgba(220,38,38,.35);
-}
+    .danger {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      box-shadow: 0 6px 18px rgba(220, 38, 38, .35);
+    }
 
-.danger:hover{
-  box-shadow:0 12px 24px rgba(220,38,38,.45);
-}
+    .danger:hover {
+      box-shadow: 0 12px 24px rgba(220, 38, 38, .45);
+    }
 
-.api-box{
-  background:#020617;
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:16px;
-  padding:18px;
-  word-break:break-all;
-  font-family:monospace;
-  margin-top:16px;
-  color:#f8fafc;
-  font-size:15px;
-}
+    .api-box {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 18px;
+      word-break: break-all;
+      font-family: monospace;
+      margin-top: 16px;
+      color: #f8fafc;
+      font-size: 15px;
+    }
 
-.msg{
-  margin-top:14px;
-  color:#cbd5e1;
-  font-size:15px;
-}
+    .msg {
+      margin-top: 14px;
+      color: #cbd5e1;
+      font-size: 15px;
+    }
 
-a{
-  color:#60a5fa;
-  text-decoration:none;
-}
+    a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
 
-a:hover{
-  text-decoration:underline;
-}
+    a:hover {
+      text-decoration: underline;
+    }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:40px;
-}
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
 
-.brand{
-  font-size:22px;
-  font-weight:800;
-}
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+    }
 
-.tagline{
-  color:#94a3b8;
-  margin-top:4px;
-  font-size:14px;
-}
+    .tagline {
+      color: #94a3b8;
+      margin-top: 4px;
+      font-size: 14px;
+    }
 
-.nav{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-.hero{
-  margin-bottom:30px;
-}
+    .hero {
+      margin-bottom: 30px;
+    }
 
-.hero h1{
-  font-size:64px;
-  margin-bottom:14px;
-  line-height:1;
-}
+    .hero h1 {
+      font-size: 64px;
+      margin-bottom: 14px;
+      line-height: 1;
+    }
 
-.hero p{
-  color:#94a3b8;
-  font-size:20px;
-  max-width:700px;
-  line-height:1.6;
-}
-
+    .hero p {
+      color: #94a3b8;
+      font-size: 20px;
+      max-width: 700px;
+      line-height: 1.6;
+    }
   </style>
 </head>
 
@@ -167,41 +168,42 @@ a:hover{
   <div class="container">
 
     <div class="topbar">
-  <div>
-    <div class="brand">AI API Relay</div>
-    <div class="tagline">OpenAI-compatible API infrastructure</div>
-  </div>
+      <div>
+        <div class="brand">AI API Relay</div>
+        <div class="tagline">OpenAI-compatible API infrastructure</div>
+      </div>
 
-  <div class="nav">
-    <a href="/docs.html">Docs</a>
-    <button onclick="logout()">Logout</button>
-  </div>
-</div>
+      <div class="nav">
+        <a href="/docs.html">Docs</a>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
 
-<div class="hero">
-  <h1>Developer Dashboard</h1>
-  <p>Manage API keys, monitor usage, and track balance in one place.</p>
-</div>
+    <div class="hero">
+      <h1>Developer Dashboard</h1>
+      <p>Manage API keys, monitor usage, and track balance in one place.</p>
+    </div>
 
     <div class="card">
-      
+
       <p class="muted" id="emailText"></p>
     </div>
 
     <div class="card">
-      <h2>Your Balance</h2>
-      <div class="balance" id="balanceText">$0</div>
-      <p class="muted">Your API usage will automatically deduct from this balance.</p>
-    </div>
+    <div class="section-label">Balance</div>
+    <h2>Account Balance</h2>
+    <div class="balance" id="balanceText">$0</div>
+    <p class="muted">Your API usage will automatically deduct from this balance.</p>
+  </div>
 
-    <div class="card">
-  <h2>API Keys</h2>
+  <div class="card">
+    <h2>API Keys</h2>
 
-  <button id="createKeyBtn">
-    Create New API Key
-  </button>
+    <button id="createKeyBtn">
+      Create New API Key
+    </button>
 
-  <div id="apiKeyBox" style="
+    <div id="apiKeyBox" style="
     margin-top:20px;
     padding:15px;
     background:#111827;
@@ -209,68 +211,64 @@ a:hover{
     word-break:break-all;
     display:none;
   ">
-    <div id="apiKeyText"></div>
+      <div id="apiKeyText"></div>
 
-    <button id="copyKeyBtn" style="
+      <button id="copyKeyBtn" style="
       margin-top:10px;
     ">
-      Copy API Key
-    </button>
+        Copy API Key
+      </button>
+    </div>
   </div>
-</div>
 
-<div class="card">
-  <h2>Usage Summary</h2>
-  <div id="usageSummary">
-    Loading usage summary...
+  <div class="card">
+    <h2>Usage Summary</h2>
+    <div id="usageSummary">
+      Loading usage summary...
+    </div>
   </div>
-</div>
 
-    <div class="card">
-      <h2>Your API Key</h2>
+  <div class="card">
+    <h2>Your API Key</h2>
 
-      <select id="modelSelect" class="api-box" style="margin-bottom:12px;">
-  <option value="gpt-4o-mini">gpt-4o-mini</option>
-  <option value="deepseek-chat">deepseek-chat</option>
-  <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-</select>
+    <select id="modelSelect" class="api-box" style="margin-bottom:12px;">
+      <option value="gpt-4o-mini">gpt-4o-mini</option>
+      <option value="deepseek-chat">deepseek-chat</option>
+      <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+    </select>
 
-<div
-  id="modelPrice"
-  class="muted"
-  style="margin-top:8px;margin-bottom:14px;"
->
-  Price: GPT-4o-mini
-</div>
-
-      <input class="api-box" id="apiKeyText" />
-
-      <button onclick="copyKey()">Copy API Key</button>
-      <button onclick="testApi()">Test API</button>
-
-      <div class="msg" id="msg"></div>
+    <div id="modelPrice" class="muted" style="margin-top:8px;margin-bottom:14px;">
+      Price: GPT-4o-mini
     </div>
 
+    <input class="api-box" id="apiKeyText" />
+
+    <button onclick="copyKey()">Copy API Key</button>
+    <button onclick="testApi()">Test API</button>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  </div>
+
+  <div class="card">
+    <h2>Usage Logs</h2>
+
+    <div id="logsContainer">
+      Loading logs...
     </div>
-
-<div class="card">
-  <h2>Usage Logs</h2>
-  
-  <div id="logsContainer">
-    Loading logs...
   </div>
-</div>
 
-<div class="card">
-  <h2>USDT Payment History</h2>
-  <div id="usdtHistoryContainer">
-    Loading USDT history...
+  <div class="card">
+    <h2>USDT Payment History</h2>
+    <div id="usdtHistoryContainer">
+      Loading USDT history...
+    </div>
   </div>
-</div>
 
-    <div class="card">
-      <h2>Recharge</h2>
-      <div style="
+  <div class="card">
+    <h2>Recharge</h2>
+    <div style="
   background: rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.08);
   border-radius:12px;
@@ -278,18 +276,15 @@ a:hover{
   margin-bottom:16px;
 ">
 
-  <div style="margin-bottom:8px;">
-    <b>USDT Network:</b> TRC20
-  </div>
+      <div style="margin-bottom:8px;">
+        <b>USDT Network:</b> TRC20
+      </div>
 
-  <div style="margin-bottom:8px;">
-    <b>Wallet Address:</b>
-  </div>
+      <div style="margin-bottom:8px;">
+        <b>Wallet Address:</b>
+      </div>
 
-  <input
-    value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-    readonly
-    style="
+      <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
       width:100%;
       background:#081226;
       color:#00ff99;
@@ -297,44 +292,40 @@ a:hover{
       padding:12px;
       border-radius:10px;
       font-size:14px;
-    "
-  />
+    " />
 
-  <button onclick="copyUsdtAddress()">
-  Copy USDT Address
-</button>
+      <button onclick="copyUsdtAddress()">
+        Copy USDT Address
+      </button>
 
-<div style="margin-top:14px;">
-  <img
-    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-    alt="USDT TRC20 QR Code"
-    style="
+      <div style="margin-top:14px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+          alt="USDT TRC20 QR Code" style="
       background:white;
       padding:10px;
       border-radius:12px;
       width:220px;
       height:220px;
-    "
-  />
-</div>
+    " />
+      </div>
 
-  <p class="muted" style="margin-top:10px;">
-    Send USDT via TRC20 network only.
-  </p>
+      <p class="muted" style="margin-top:10px;">
+        Send USDT via TRC20 network only.
+      </p>
 
-</div>
-      <p class="muted">Stripe and USDT payment will be added next.</p>
-
-      <button onclick="stripeCheckout()">
-  Pay with Stripe
-</button>
-      <button onclick="usdtPayment()">Pay with USDT</button>
     </div>
+    <p class="muted">Stripe and USDT payment will be added next.</p>
 
-    <div class="card">
-      <h2>Account</h2>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
+    <button onclick="stripeCheckout()">
+      Pay with Stripe
+    </button>
+    <button onclick="usdtPayment()">Pay with USDT</button>
+  </div>
+
+  <div class="card">
+    <h2>Account</h2>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 
   </div>
 
@@ -342,91 +333,91 @@ a:hover{
     const apiKey = localStorage.getItem("api_key");
     const email = localStorage.getItem("email");
 
-if (!apiKey) {
-  window.location.href = "/register.html";
-}
-
-document.getElementById("emailText").innerText = email ? "Account: " + email : "";
-document.getElementById("apiKeyText").value = apiKey;
-
-async function usdtPayment() {
-
-  const amount = prompt("Enter USDT amount");
-
-  if (!amount) return;
-
-  const tx_hash = prompt("Enter transaction hash");
-
-  if (!tx_hash) return;
-
-  try {
-
-    const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        api_key: apiKey,
-        amount,
-        tx_hash
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.error?.message || "Submit failed");
-      return;
+    if (!apiKey) {
+      window.location.href = "/register.html";
     }
 
-    alert("USDT payment submitted successfully");
+    document.getElementById("emailText").innerText = email ? "Account: " + email : "";
+    document.getElementById("apiKeyText").value = apiKey;
 
-  } catch (err) {
+    async function usdtPayment() {
 
-    alert("USDT submit failed");
+      const amount = prompt("Enter USDT amount");
 
-  }
-}
+      if (!amount) return;
 
-async function loadAccount() {
-  try {
-    const res = await fetch("/key/" + encodeURIComponent(apiKey));
-    const data = await res.json();
+      const tx_hash = prompt("Enter transaction hash");
 
-    if (!res.ok) {
-      document.getElementById("balanceText").innerText = "$0";
-      return;
+      if (!tx_hash) return;
+
+      try {
+
+        const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey,
+            amount,
+            tx_hash
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error?.message || "Submit failed");
+          return;
+        }
+
+        alert("USDT payment submitted successfully");
+
+      } catch (err) {
+
+        alert("USDT submit failed");
+
+      }
     }
 
-    document.getElementById("balanceText").innerText =
-      "$" + Number(data.balance || 0).toFixed(4);
+    async function loadAccount() {
+      try {
+        const res = await fetch("/key/" + encodeURIComponent(apiKey));
+        const data = await res.json();
 
-  } catch (err) {
-    document.getElementById("balanceText").innerText = "$0";
-  }
-}
+        if (!res.ok) {
+          document.getElementById("balanceText").innerText = "$0";
+          return;
+        }
 
-loadAccount();
-async function loadLogs() {
-  try {
-    const res = await fetch("/logs/" + encodeURIComponent(apiKey));
-    const data = await res.json();
+        document.getElementById("balanceText").innerText =
+          "$" + Number(data.balance || 0).toFixed(4);
 
-    if (!res.ok) {
-      document.getElementById("logsContainer").innerHTML =
-        "Failed to load logs";
-      return;
+      } catch (err) {
+        document.getElementById("balanceText").innerText = "$0";
+      }
     }
 
-    if (!data.logs || data.logs.length === 0) {
-      document.getElementById("logsContainer").innerHTML =
-        "No usage yet";
-      return;
-    }
+    loadAccount();
+    async function loadLogs() {
+      try {
+        const res = await fetch("/logs/" + encodeURIComponent(apiKey));
+        const data = await res.json();
 
-    document.getElementById("logsContainer").innerHTML =
-      data.logs.map(log => `
+        if (!res.ok) {
+          document.getElementById("logsContainer").innerHTML =
+            "Failed to load logs";
+          return;
+        }
+
+        if (!data.logs || data.logs.length === 0) {
+          document.getElementById("logsContainer").innerHTML =
+            "No usage yet";
+          return;
+        }
+
+        document.getElementById("logsContainer").innerHTML =
+          data.logs.map(log => `
         <div style="
           padding:12px;
           border:1px solid rgba(255,255,255,0.08);
@@ -439,73 +430,73 @@ async function loadLogs() {
         </div>
       `).join("");
 
-  } catch (err) {
-    document.getElementById("logsContainer").innerHTML =
-      "Failed to load logs";
-  }
-}
-
-loadLogs();
-
-async function loadUsageSummary() {
-  try {
-
-    const res = await fetch(
-      "https://ai-api-relay.onrender.com/logs/" +
-      encodeURIComponent(apiKey)
-    );
-
-    const data = await res.json();
-
-    if (!res.ok || !data.logs) {
-      return;
+      } catch (err) {
+        document.getElementById("logsContainer").innerHTML =
+          "Failed to load logs";
+      }
     }
 
-    const totalRequests = data.logs.length;
+    loadLogs();
 
-    const totalTokens = data.logs.reduce((sum, log) => {
-      return sum + Number(log.total_tokens || 0);
-    }, 0);
+    async function loadUsageSummary() {
+      try {
 
-    document.getElementById("usageSummary").innerHTML = `
+        const res = await fetch(
+          "https://ai-api-relay.onrender.com/logs/" +
+          encodeURIComponent(apiKey)
+        );
+
+        const data = await res.json();
+
+        if (!res.ok || !data.logs) {
+          return;
+        }
+
+        const totalRequests = data.logs.length;
+
+        const totalTokens = data.logs.reduce((sum, log) => {
+          return sum + Number(log.total_tokens || 0);
+        }, 0);
+
+        document.getElementById("usageSummary").innerHTML = `
       <p>Total Requests: ${totalRequests}</p>
       <p>Total Tokens: ${totalTokens}</p>
     `;
 
-  } catch (err) {
+      } catch (err) {
 
-    document.getElementById("usageSummary").innerHTML =
-      "Failed to load usage summary";
+        document.getElementById("usageSummary").innerHTML =
+          "Failed to load usage summary";
 
-  }
-}
-
-loadUsageSummary();
-
-async function loadUsdtHistory() {
-  try {
-
-    const res = await fetch(
-      "https://ai-api-relay.onrender.com/usdt/history/" +
-      encodeURIComponent(apiKey)
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      document.getElementById("usdtHistoryContainer").innerHTML =
-        "Failed to load USDT history";
-      return;
+      }
     }
 
-    if (!data.payments || data.payments.length === 0) {
-      document.getElementById("usdtHistoryContainer").innerHTML =
-        "No USDT payments yet";
-      return;
-    }
+    loadUsageSummary();
 
-    document.getElementById("usdtHistoryContainer").innerHTML =
-      data.payments.map(p => `
+    async function loadUsdtHistory() {
+      try {
+
+        const res = await fetch(
+          "https://ai-api-relay.onrender.com/usdt/history/" +
+          encodeURIComponent(apiKey)
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById("usdtHistoryContainer").innerHTML =
+            "Failed to load USDT history";
+          return;
+        }
+
+        if (!data.payments || data.payments.length === 0) {
+          document.getElementById("usdtHistoryContainer").innerHTML =
+            "No USDT payments yet";
+          return;
+        }
+
+        document.getElementById("usdtHistoryContainer").innerHTML =
+          data.payments.map(p => `
         <div style="
           padding:12px;
           border:1px solid rgba(255,255,255,0.08);
@@ -519,41 +510,41 @@ async function loadUsdtHistory() {
         </div>
       `).join("");
 
-  } catch (err) {
+      } catch (err) {
 
-    document.getElementById("usdtHistoryContainer").innerHTML =
-      "Failed to load USDT history";
+        document.getElementById("usdtHistoryContainer").innerHTML =
+          "Failed to load USDT history";
 
-  }
-}
+      }
+    }
 
-loadUsdtHistory();
+    loadUsdtHistory();
 
     function copyKey() {
-    navigator.clipboard.writeText(
-    document.getElementById("apiKeyText").value
-);
+      navigator.clipboard.writeText(
+        document.getElementById("apiKeyText").value
+      );
       document.getElementById("msg").innerText = "API key copied.";
     }
 
     const modelPrices = {
-  "gpt-4o-mini": "$0.01 / 1K tokens",
-  "deepseek-chat": "$0.005 / 1K tokens",
-  "claude-3-5-sonnet": "$0.02 / 1K tokens"
-};
+      "gpt-4o-mini": "$0.01 / 1K tokens",
+      "deepseek-chat": "$0.005 / 1K tokens",
+      "claude-3-5-sonnet": "$0.02 / 1K tokens"
+    };
 
-function updateModelPrice() {
-  const model = document.getElementById("modelSelect").value;
+    function updateModelPrice() {
+      const model = document.getElementById("modelSelect").value;
 
-  document.getElementById("modelPrice").innerText =
-    "Price: " + modelPrices[model];
-}
+      document.getElementById("modelPrice").innerText =
+        "Price: " + modelPrices[model];
+    }
 
-document
-  .getElementById("modelSelect")
-  .addEventListener("change", updateModelPrice);
+    document
+      .getElementById("modelSelect")
+      .addEventListener("change", updateModelPrice);
 
-updateModelPrice();
+    updateModelPrice();
 
     async function testApi() {
       const msg = document.getElementById("msg");
@@ -594,38 +585,38 @@ updateModelPrice();
 
     async function stripeCheckout() {
 
-  try {
+      try {
 
-    const res = await fetch("https://ai-api-relay.onrender.com/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-  api_key: apiKey
-})
-    });
+        const res = await fetch("https://ai-api-relay.onrender.com/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey
+          })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.error?.message || "Stripe error");
-      return;
+        if (!res.ok) {
+          alert(data.error?.message || "Stripe error");
+          return;
+        }
+
+        window.location.href = data.url;
+
+      } catch (err) {
+
+        alert("Stripe checkout failed");
+
+      }
     }
 
-    window.location.href = data.url;
-
-  } catch (err) {
-
-    alert("Stripe checkout failed");
-
-  }
-}
-
-function copyUsdtAddress() {
-  navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
-  alert("USDT address copied.");
-}
+    function copyUsdtAddress() {
+      navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
+      alert("USDT address copied.");
+    }
 
     function logout() {
       localStorage.removeItem("api_key");
@@ -634,78 +625,79 @@ function copyUsdtAddress() {
       window.location.href = "/register.html";
     }
 
-async function createApiKey() {
-  const email = localStorage.getItem("email");
+    async function createApiKey() {
+      const email = localStorage.getItem("email");
 
-  if (!email) {
-    alert("Please login first.");
-    return;
-  }
+      if (!email) {
+        alert("Please login first.");
+        return;
+      }
 
-  const res = await fetch("/create-api-key", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email })
-  });
+      const res = await fetch("/create-api-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
 
-  const data = await res.json();
+      const data = await res.json();
 
-  if (!res.ok) {
-    alert(data.error || "Failed to create API key");
-    return;
-  }
+      if (!res.ok) {
+        alert(data.error || "Failed to create API key");
+        return;
+      }
 
-  document.getElementById("apiKeyText").innerText = data.apiKey;
-  document.getElementById("apiKeyBox").style.display = "block";
-}
-
-document.getElementById("createKeyBtn").onclick = createApiKey;
-
-document.getElementById("copyKeyBtn").onclick = function () {
-  const key = document.getElementById("apiKeyText").innerText;
-  navigator.clipboard.writeText(key);
-  alert("API Key copied.");
-};
-
-async function loadApiKeys() {
-
-  const email = localStorage.getItem("email");
-
-  if (!email) return;
-
-  try {
-
-    const res = await fetch("/get-api-keys", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) return;
-
-    if (data.keys && data.keys.length > 0) {
-
-      document.getElementById("apiKeyText").innerText =
-        data.keys[0].api_key;
-
-      document.getElementById("apiKeyBox").style.display =
-        "block";
+      document.getElementById("apiKeyText").innerText = data.apiKey;
+      document.getElementById("apiKeyBox").style.display = "block";
     }
 
-  } catch (err) {
-    console.error(err);
-  }
-}
+    document.getElementById("createKeyBtn").onclick = createApiKey;
 
-loadApiKeys();
+    document.getElementById("copyKeyBtn").onclick = function () {
+      const key = document.getElementById("apiKeyText").innerText;
+      navigator.clipboard.writeText(key);
+      alert("API Key copied.");
+    };
+
+    async function loadApiKeys() {
+
+      const email = localStorage.getItem("email");
+
+      if (!email) return;
+
+      try {
+
+        const res = await fetch("/get-api-keys", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        if (data.keys && data.keys.length > 0) {
+
+          document.getElementById("apiKeyText").innerText =
+            data.keys[0].api_key;
+
+          document.getElementById("apiKeyBox").style.display =
+            "block";
+        }
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadApiKeys();
 
   </script>
 
 </body>
+
 </html>
