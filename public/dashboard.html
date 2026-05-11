@@ -247,6 +247,34 @@
       <p>Manage API keys, monitor usage, and track balance in one place.</p>
     </div>
 
+    <div class="stats-grid">
+
+  <div class="card">
+    <div class="section-label">Today</div>
+    <h2 id="todayRequests">0</h2>
+    <p class="muted">API Requests Today</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Tokens</div>
+    <h2 id="tokenUsage">0</h2>
+    <p class="muted">Total Tokens Used</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Cost</div>
+    <h2 id="estimatedCost">$0</h2>
+    <p class="muted">Estimated Usage Cost</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Keys</div>
+    <h2 id="activeKeys">0</h2>
+    <p class="muted">Active API Keys</p>
+  </div>
+
+</div>
+
     <div class="card">
 
       <p class="muted" id="emailText"></p>
@@ -283,6 +311,9 @@
       margin-top:10px;
       ">
           Copy API Key
+        </button>
+        <button id="revealKeyBtn">
+          Reveal Key
         </button>
       </div>
     </div>
@@ -707,7 +738,8 @@
         return;
       }
 
-      document.getElementById("apiKeyText").innerText = data.apiKey;
+      document.getElementById("apiKeyText").innerText =
+        data.apiKey.slice(0, 12) + "••••••••••";
       document.getElementById("apiKeyBox").style.display = "block";
     }
 
@@ -719,41 +751,51 @@
       alert("API Key copied.");
     };
 
-    async function loadApiKeys() {
+    document.getElementById("revealKeyBtn").onclick = function () {
 
-      const email = localStorage.getItem("email");
+      const text = document.getElementById("apiKeyText");
 
-      if (!email) return;
-
-      try {
-
-        const res = await fetch("/get-api-keys", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) return;
-
-        if (data.keys && data.keys.length > 0) {
-
-          document.getElementById("apiKeyText").innerText =
-            data.keys[0].api_key;
-
-          document.getElementById("apiKeyBox").style.display =
-            "block";
-        }
-
-      } catch (err) {
-        console.error(err);
+      if (text.dataset.fullkey) {
+        text.innerText = text.dataset.fullkey;
       }
-    }
 
-    loadApiKeys();
+    };
+
+      async function loadApiKeys() {
+
+        const email = localStorage.getItem("email");
+
+        if (!email) return;
+
+        try {
+
+          const res = await fetch("/get-api-keys", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) return;
+
+          if (data.keys && data.keys.length > 0) {
+
+            document.getElementById("apiKeyText").innerText =
+              data.keys[0].api_key;
+
+            document.getElementById("apiKeyBox").style.display =
+              "block";
+          }
+
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      loadApiKeys();
 
   </script>
 
