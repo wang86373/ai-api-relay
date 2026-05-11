@@ -402,8 +402,8 @@
       </div>
     </div>
 
-    <div class="card">
-      <h2>Recharge</h2>
+    <div class="card" id="rechargeSection">
+  <h2>Recharge</h2>
       <div style="
   background: rgba(255,255,255,0.04);
   border:1px solid rgba(255,255,255,0.08);
@@ -712,7 +712,17 @@
         const data = await res.json();
 
         if (!res.ok) {
-          msg.innerText = data.error?.message || "API test failed.";
+          const errorMsg = data.error?.message || data.error || "API test failed.";
+
+          msg.innerText = errorMsg;
+
+          if (errorMsg.includes("Insufficient balance")) {
+            msg.innerText = "Insufficient balance. Please recharge.";
+            document.getElementById("rechargeSection")?.scrollIntoView({
+              behavior: "smooth"
+            });
+          }
+
           return;
         }
 
