@@ -76,6 +76,7 @@
       font-weight: 800;
       margin: 12px 0;
       background: linear-gradient(90deg, #4ade80, #22c55e);
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -268,6 +269,10 @@
 
       .hero h1 {
         font-size: 42px;
+      }
+
+      .api-box {
+        min-width: 0;
       }
 
     }
@@ -520,6 +525,11 @@
 
         document.getElementById("balanceText").innerText =
           "$" + Number(data.balance || 0).toFixed(4);
+        if (Number(data.balance || 0) < 0.01) {
+          document.getElementById("balanceText").style.color = "#ef4444";
+        } else {
+          document.getElementById("balanceText").style.color = "#22c55e";
+        }
 
       } catch (err) {
         document.getElementById("balanceText").innerText = "$0";
@@ -657,8 +667,8 @@
 
     const modelPrices = {
       "gpt-4o-mini": "$0.01 / 1K tokens",
-      "deepseek-chat": "$0.005 / 1K tokens",
-      "claude-3-5-sonnet": "$0.02 / 1K tokens"
+      "deepseek-chat": "$0.002 / 1K tokens",
+      "claude-3-5-sonnet": "$0.03 / 1K tokens"
     };
 
     function updateModelPrice() {
@@ -683,7 +693,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey
+            "Authorization": "Bearer " + document.getElementById("apiKeyText").value
           },
           body: JSON.stringify({
             model: document.getElementById("modelSelect").value,
@@ -869,7 +879,7 @@
 
         if (data.keys && data.keys.length > 0) {
 
-          document.getElementById("apiKeyText").innerText =
+          document.getElementById("apiKeyText").value =
             data.keys[0].api_key;
 
           const list = document.getElementById("apiKeyList");
