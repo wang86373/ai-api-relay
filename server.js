@@ -408,15 +408,7 @@ app.get("/admin/keys", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("api_keys")
-      .select(`
-        *,
-        usage_logs (
-          id,
-          tokens_used,
-          cost,
-          created_at
-        )
-      `)
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -427,8 +419,14 @@ app.get("/admin/keys", async (req, res) => {
       });
     }
 
+    const { data: usageLogs } = await supabase
+  .from("usage_logs")
+  .select("*");
+
     const keysWithStats = data.map(key => {
-      const logs = key.usage_logs || [];
+      const logs = (usageLogs || []).filter(
+  log => log.api_key === key.api_key
+);
 
       const totalRequests = logs.length;
 
