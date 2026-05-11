@@ -873,7 +873,7 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     const cost =
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
-    await supabase.from("usage_logs").insert({
+    const { error: logError } = await supabase.from("usage_logs").insert({
       email: keyData.email,
       api_key: apiKey,
       model,
@@ -883,6 +883,10 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       total_tokens: completion.usage?.total_tokens || 0,
       cost
     });
+
+    if (logError) {
+  console.error("Usage log insert error:", logError.message);
+}
 
     await supabase
       .from("api_keys")
