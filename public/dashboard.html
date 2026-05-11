@@ -959,6 +959,11 @@
           list.innerHTML = "";
 
           data.keys.forEach((keyObj, index) => {
+            const keyStats = stats[keyObj.api_key] || {
+              requests: 0,
+              tokens: 0,
+              cost: 0
+            };
 
             list.innerHTML += `
     <div class="key-item">
@@ -971,6 +976,18 @@
 
       <div class="key-meta real-key">
   ${keyObj.api_key.slice(0, 12)}********
+</div>
+
+   <div class="key-meta">
+  Requests: ${keyStats.requests}
+</div>
+
+<div class="key-meta">
+  Tokens: ${keyStats.tokens}
+</div>
+
+<div class="key-meta">
+  Cost: $${keyStats.cost.toFixed(4)}
 </div>
 
    <div class="key-actions">
@@ -1024,6 +1041,26 @@
           document.getElementById("logsContainer");
 
         container.innerHTML = "";
+
+        const stats = {};
+
+        data.logs.forEach(log => {
+
+          if (!stats[log.api_key]) {
+
+            stats[log.api_key] = {
+              requests: 0,
+              tokens: 0,
+              cost: 0
+            };
+
+          }
+
+          stats[log.api_key].requests += 1;
+          stats[log.api_key].tokens += Number(log.total_tokens || 0);
+          stats[log.api_key].cost += Number(log.cost || 0);
+
+        });
 
         if (!data.logs || data.logs.length === 0) {
 
