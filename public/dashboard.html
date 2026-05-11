@@ -1,3 +1,4 @@
+ey
 <!DOCTYPE html>
 <html lang="en">
 
@@ -477,6 +478,10 @@
   <script>
     const apiKey = localStorage.getItem("api_key");
     const email = localStorage.getItem("email");
+    if (!apiKey || apiKey.includes("cfezsdkavv9mwv59qxkhtn")) {
+      localStorage.removeItem("api_key");
+      window.location.href = "/register.html";
+    }
 
     if (!apiKey) {
       window.location.href = "/register.html";
