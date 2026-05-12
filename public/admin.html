@@ -278,21 +278,60 @@
         border:1px solid rgba(255,255,255,0.08);
         border-radius:12px;
       ">
-        <div><b>Name:</b> ${k.key_name || "My API Key"}</div>
-        <div><b>Email:</b> ${k.user_email || "-"}</div>
-        <div><b>Balance:</b> $${k.balance}</div>
-        <div><b>API Key:</b> ${k.api_key.slice(0, 8)}...${k.api_key.slice(-6)}</div>
-        <div><b>Active:</b> ${k.is_active}</div>
-        <div><b>Total Requests:</b> ${k.total_requests || 0}</div>
+        <div style="
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+">
 
-<div><b>Total Tokens:</b> ${k.total_tokens || 0}</div>
+  <div>
+    <div class="muted">Name</div>
+    <b>${k.key_name || "My API Key"}</b>
+  </div>
 
-<div><b>Total Cost:</b> $${Number(k.total_cost || 0).toFixed(4)}</div>
-<div>
-  <b>Last Used:</b>
-  ${k.last_used_at
-            ? new Date(k.last_used_at).toLocaleString()
-            : "Never"}
+  <div>
+    <div class="muted">Email</div>
+    <b>${k.user_email || "-"}</b>
+  </div>
+
+  <div>
+    <div class="muted">Balance</div>
+    <b>$${Number(k.balance || 0).toFixed(4)}</b>
+  </div>
+
+  <div>
+    <div class="muted">API Key</div>
+    <b>
+      ${k.api_key.slice(0, 8)}...
+      ${k.api_key.slice(-6)}
+    </b>
+  </div>
+
+  <div>
+    <div class="muted">Requests</div>
+    <b>${k.total_requests || 0}</b>
+  </div>
+
+  <div>
+    <div class="muted">Tokens</div>
+    <b>${k.total_tokens || 0}</b>
+  </div>
+
+  <div>
+    <div class="muted">Total Cost</div>
+    <b>$${Number(k.total_cost || 0).toFixed(4)}</b>
+  </div>
+
+  <div>
+    <div class="muted">Last Used</div>
+    <b>
+${k.last_used_at
+  ? new Date(k.last_used_at).toLocaleString()
+  : "Never"}
+</b>
+  </div>
+
 </div>
 
 <button onclick="toggleKey(${k.id}, ${!k.is_active})">
