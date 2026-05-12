@@ -222,6 +222,16 @@
         <div class="card admin-section" id="keysSection">
           <h2>API Keys</h2>
           <input id="searchInput" placeholder="Search email / api key / key name" />
+          <select id="keySortSelect" onchange="loadKeys()">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="requests_desc">Requests High → Low</option>
+            <option value="requests_asc">Requests Low → High</option>
+            <option value="tokens_desc">Tokens High → Low</option>
+            <option value="tokens_asc">Tokens Low → High</option>
+            <option value="balance_desc">Balance High → Low</option>
+            <option value="balance_asc">Balance Low → High</option>
+          </select>
 
           <button onclick="searchKeys()">
             Search
@@ -507,6 +517,45 @@
             (k.key_name || "").toLowerCase().includes(keyword)
           );
         }
+
+        const sortValue =
+          document.getElementById("keySortSelect")?.value || "newest";
+
+        data.keys = (data.keys || []).sort((a, b) => {
+          if (sortValue === "newest") {
+            return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+          }
+
+          if (sortValue === "oldest") {
+            return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+          }
+
+          if (sortValue === "requests_desc") {
+            return Number(b.total_requests || 0) - Number(a.total_requests || 0);
+          }
+
+          if (sortValue === "requests_asc") {
+            return Number(a.total_requests || 0) - Number(b.total_requests || 0);
+          }
+
+          if (sortValue === "tokens_desc") {
+            return Number(b.total_tokens || 0) - Number(a.total_tokens || 0);
+          }
+
+          if (sortValue === "tokens_asc") {
+            return Number(a.total_tokens || 0) - Number(b.total_tokens || 0);
+          }
+
+          if (sortValue === "balance_desc") {
+            return Number(b.balance || 0) - Number(a.balance || 0);
+          }
+
+          if (sortValue === "balance_asc") {
+            return Number(a.balance || 0) - Number(b.balance || 0);
+          }
+
+          return 0;
+        });
 
         latestKeys = data.keys || [];
         renderOverview();
