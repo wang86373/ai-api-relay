@@ -392,6 +392,8 @@ ey
         Create New API Key
       </button>
 
+      <input id="keySearchInput" placeholder="Search API key / name..." style="margin-top:14px;" />
+
       <div id="apiKeyList" class="key-list"
         style="display:block; max-height:900px; overflow-y:auto; padding-right:6px;"></div>
 
@@ -1128,15 +1130,32 @@ ey
           const list = document.getElementById("apiKeyList");
 
           list.innerHTML = "";
-          data.keys.forEach((keyObj, index) => {
-            const keyStats = stats[keyObj.api_key] || {
-              requests: 0,
-              tokens: 0,
-              cost: 0,
-              lastUsedAt: null
-            };
+          const keyword =
+            document
+              .getElementById("keySearchInput")
+              ?.value
+              ?.toLowerCase()
+              ?.trim() || "";
+          data.keys
+            .filter(keyObj => {
+              const text =
+                (
+                  (keyObj.key_name || "") +
+                  " " +
+                  (keyObj.api_key || "")
+                ).toLowerCase();
 
-            list.innerHTML += `
+              return text.includes(keyword);
+            })
+            .forEach((keyObj, index) => {
+              const keyStats = stats[keyObj.api_key] || {
+                requests: 0,
+                tokens: 0,
+                cost: 0,
+                lastUsedAt: null
+              };
+
+              list.innerHTML += `
     <div class="key-item">
 
       <div class="key-top">
@@ -1186,7 +1205,7 @@ ey
 
     </div>
   `;
-          });
+            });
         }
 
       } catch (err) {
@@ -1325,6 +1344,9 @@ ey
 
     }
     loadApiKeys();
+    document
+  .getElementById("keySearchInput")
+  ?.addEventListener("input", loadApiKeys);
     loadUsageStats();
     loadUsageLogs();
 
