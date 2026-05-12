@@ -620,6 +620,60 @@ app.get("/admin/stats", async (req, res) => {
 
 });
 
+app.get("/admin/revenue-stats", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usage_logs")
+      .select("created_at, total_tokens, cost")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const grouped = {};
+
+    data.forEach(log => {
+      const day = new Date(log.created_at).toLocaleDateString();
+
+      if (!grouped[day]) {
+        grouped[day] = {
+          revenue: 0,
+          tokens: 0,
+          requests: 0
+        };
+      }
+
+      grouped[day].revenue += Number(log.cost || 0);
+      grouped[day].tokens += Number(log.total_tokens || 0);
+      grouped[day].requests += 1;
+    });
+
+    const labels = Object.keys(grouped);
+
+    return res.json({
+      success: true,
+      labels,
+      revenue: labels.map(day => Number(grouped[day].revenue.toFixed(6))),
+      tokens: labels.map(day => grouped[day].tokens),
+      requests: labels.map(day => grouped[day].requests)
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.get("/admin/usdt-stats", async (req, res) => {
 
   if (!checkAdmin(req, res)) return;

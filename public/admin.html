@@ -250,7 +250,13 @@
 
           <h2>Realtime Stats</h2>
 
+          <h3>Requests Trend</h3>
           <canvas id="statsChart" height="120"></canvas>
+
+          <h3>Revenue / Tokens / Requests Trend</h3>
+          <canvas id="revenueChart" height="120"></canvas>
+
+          <h3>USDT Revenue Trend</h3>
           <canvas id="usdtChart" height="120"></canvas>
 
         </div>
@@ -275,6 +281,7 @@
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
     let statsChart;
+    let revenueChart;
     function showAdminSection(sectionId, btn) {
 
       document.querySelectorAll(".admin-section")
@@ -457,8 +464,8 @@
       const onlineUsers = todayStats.onlineUsers;
 
       const topUsers = [...latestKeys]
-  .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
-  .slice(0, 5);
+        .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
+        .slice(0, 5);
 
       document.getElementById("overviewBox").innerHTML = `
   <div style="
@@ -538,8 +545,8 @@
   <h3 style="margin-top:0;">Top Users by Revenue</h3>
 
   ${topUsers.length === 0
-    ? `<div class="muted">No users yet.</div>`
-    : topUsers.map((u, index) => `
+          ? `<div class="muted">No users yet.</div>`
+          : topUsers.map((u, index) => `
       <div style="
         display:grid;
         grid-template-columns:60px 1.5fr 1fr 1fr 1fr 1.4fr;
@@ -958,6 +965,84 @@ ${k.last_used_at
       }
     }
 
+    async function loadRevenueStats() {
+      try {
+        const res = await fetch(API_BASE + "/admin/revenue-stats", {
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        const ctx = document.getElementById("revenueChart");
+
+        if (revenueChart) {
+          revenueChart.destroy();
+        }
+
+        revenueChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Revenue",
+                data: data.revenue,
+                borderColor: "#22c55e",
+                backgroundColor: "rgba(34,197,94,0.12)",
+                tension: 0.35,
+                fill: true
+              },
+              {
+                label: "Tokens",
+                data: data.tokens,
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59,130,246,0.10)",
+                tension: 0.35,
+                fill: false
+              },
+              {
+                label: "Requests",
+                data: data.requests,
+                borderColor: "#f97316",
+                backgroundColor: "rgba(249,115,22,0.10)",
+                tension: 0.35,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "white"
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "#94a3b8"
+                }
+              },
+              y: {
+                ticks: {
+                  color: "#94a3b8"
+                }
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.log("Load revenue stats failed:", err.message);
+      }
+    }
+    let revenueChart;
     let usdtChart;
 
     async function loadUsdtChart() {
@@ -1190,8 +1275,10 @@ ${k.last_used_at
       loadKeys();
       loadPayments();
       loadRealtimeStats();
+      loadRevenueStats();
 
       setInterval(loadRealtimeStats, 30000);
+      setInterval(loadRevenueStats, 30000);
 
       loadUsdtChart();
       setInterval(loadUsdtChart, 30000);
