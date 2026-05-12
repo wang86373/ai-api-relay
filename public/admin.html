@@ -28,6 +28,20 @@
       margin-bottom: 22px;
     }
 
+    select {
+      background: #020617;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: bold;
+      outline: none;
+    }
+
+    select:hover {
+      border-color: #2563eb;
+    }
+
     input {
       width: 100%;
       padding: 14px;
@@ -221,30 +235,30 @@
           <div id="logsBox">
             Please select an API Key from API Keys → View Logs
           </div>
+        </div>
+        <div class="card admin-section" id="statsSection">
+
+          <h2>Realtime Stats</h2>
+
+          <canvas id="statsChart" height="120"></canvas>
+          <canvas id="usdtChart" height="120"></canvas>
+
+        </div>
+        <div class="card admin-section" id="paymentsSection">
+          <h2>Payment Requests</h2>
+          <select id="paymentStatusFilter" onchange="loadPayments()">
+            <option value="all">All Payments</option>
+            <option value="pending">Pending Only</option>
+            <option value="confirmed">Confirmed Only</option>
+          </select>
+          <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
+
+          <div class="msg" id="msg"></div>
+          <div id="paymentsBox">No data loaded.</div>
+        </div>
+
+      </main>
     </div>
-    <div class="card admin-section" id="statsSection">
-
-      <h2>Realtime Stats</h2>
-
-      <canvas id="statsChart" height="120"></canvas>
-      <canvas id="usdtChart" height="120"></canvas>
-
-    </div>
-    <div class="card admin-section" id="paymentsSection">
-      <h2>Payment Requests</h2>
-      <select id="paymentStatusFilter" onchange="loadPayments()">
-        <option value="all">All Payments</option>
-        <option value="pending">Pending Only</option>
-        <option value="confirmed">Confirmed Only</option>
-      </select>
-      <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
-
-      <div class="msg" id="msg"></div>
-      <div id="paymentsBox">No data loaded.</div>
-    </div>
-
-    </main>
-  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -901,7 +915,7 @@ ${k.last_used_at
           data.payments = data.payments.filter(p => p.status === statusFilter);
         }
 
-        msg.innerText = "Loaded.";
+        msg.innerText = "";
         latestPayments = data.payments || [];
         renderOverview();
 
