@@ -995,7 +995,7 @@ ey
           const list = document.getElementById("apiKeyList");
 
           list.innerHTML = "";
-
+          data.keys.forEach((keyObj, index) => {
           const keyStats = stats[keyObj.api_key] || {
             requests: 0,
             tokens: 0,
@@ -1053,7 +1053,7 @@ ey
 
     </div>
   `;
-
+        });
         }
 
       } catch (err) {
