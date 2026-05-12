@@ -1018,11 +1018,11 @@ ey
     </div>
   `;
 
-      }
+        }
 
       } catch (err) {
-      console.error(err);
-    }
+        console.error(err);
+      }
     }
 
     async function loadUsageLogs() {
@@ -1059,7 +1059,8 @@ ey
             stats[log.api_key] = {
               requests: 0,
               tokens: 0,
-              cost: 0
+              cost: 0,
+              lastUsedAt: null
             };
 
           }
@@ -1067,6 +1068,7 @@ ey
           stats[log.api_key].requests += 1;
           stats[log.api_key].tokens += Number(log.total_tokens || 0);
           stats[log.api_key].cost += Number(log.cost || 0);
+          stats[log.api_key].lastUsedAt = log.created_at;
 
         });
 
