@@ -175,15 +175,55 @@
       }).length;
 
       document.getElementById("overviewBox").innerHTML = `
-    <div><b>Total Users:</b> ${users.size}</div>
-    <div><b>Total API Keys:</b> ${totalKeys}</div>
-    <div><b>Active Keys:</b> ${activeKeys}</div>
-    <div><b>Total Balance:</b> $${totalBalance.toFixed(4)}</div>
-    <div><b>Total Requests:</b> ${totalRequests}</div>
-    <div><b>Total Tokens:</b> ${totalTokens}</div>
-    <div><b>Total Cost:</b> $${totalCost.toFixed(4)}</div>
-    <div><b>Pending USDT:</b> ${pendingUsdt}</div>
-  `;
+  <div style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+    margin-top:16px;
+  ">
+
+    <div class="item">
+      <div class="muted">Total Users</div>
+      <h2>${users.size}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">API Keys</div>
+      <h2>${totalKeys}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Active Keys</div>
+      <h2>${activeKeys}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Total Balance</div>
+      <h2>$${totalBalance.toFixed(4)}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Requests</div>
+      <h2>${totalRequests}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Tokens</div>
+      <h2>${totalTokens}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Total Cost</div>
+      <h2>$${totalCost.toFixed(4)}</h2>
+    </div>
+
+    <div class="item">
+      <div class="muted">Pending USDT</div>
+      <h2>${pendingUsdt}</h2>
+    </div>
+
+  </div>
+`;
     }
 
     function searchKeys() {
