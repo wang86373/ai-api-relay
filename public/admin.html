@@ -104,6 +104,13 @@
     </div>
 
     <div class="card">
+      <h2>Admin Overview</h2>
+      <div id="overviewBox">
+        Click Load API Keys to view overview.
+      </div>
+    </div>
+
+    <div class="card">
       <h2>API Keys</h2>
       <input id="searchInput" placeholder="Search email / api key / key name" />
 
@@ -131,6 +138,52 @@
 
     function getAdminKey() {
       return document.getElementById("adminKey").value.trim();
+    }
+
+    let latestKeys = [];
+    let latestPayments = [];
+
+    function renderOverview() {
+      const users = new Set(
+        latestKeys
+          .map(k => k.user_email)
+          .filter(Boolean)
+      );
+
+      const totalKeys = latestKeys.length;
+
+      const activeKeys = latestKeys.filter(k => k.is_active).length;
+
+      const totalBalance = latestKeys.reduce((sum, k) => {
+        return sum + Number(k.balance || 0);
+      }, 0);
+
+      const totalRequests = latestKeys.reduce((sum, k) => {
+        return sum + Number(k.total_requests || 0);
+      }, 0);
+
+      const totalTokens = latestKeys.reduce((sum, k) => {
+        return sum + Number(k.total_tokens || 0);
+      }, 0);
+
+      const totalCost = latestKeys.reduce((sum, k) => {
+        return sum + Number(k.total_cost || 0);
+      }, 0);
+
+      const pendingUsdt = latestPayments.filter(p => {
+        return p.status !== "confirmed";
+      }).length;
+
+      document.getElementById("overviewBox").innerHTML = `
+    <div><b>Total Users:</b> ${users.size}</div>
+    <div><b>Total API Keys:</b> ${totalKeys}</div>
+    <div><b>Active Keys:</b> ${activeKeys}</div>
+    <div><b>Total Balance:</b> $${totalBalance.toFixed(4)}</div>
+    <div><b>Total Requests:</b> ${totalRequests}</div>
+    <div><b>Total Tokens:</b> ${totalTokens}</div>
+    <div><b>Total Cost:</b> $${totalCost.toFixed(4)}</div>
+    <div><b>Pending USDT:</b> ${pendingUsdt}</div>
+  `;
     }
 
     function searchKeys() {
@@ -171,6 +224,8 @@
           );
         }
 
+        latestKeys = data.keys || [];
+        renderOverview();
         if (!data.keys || data.keys.length === 0) {
           box.innerHTML = "No API keys";
           return;
@@ -389,6 +444,8 @@
         }
 
         msg.innerText = "Loaded.";
+        latestPayments = data.payments || [];
+        renderOverview();
 
         if (!data.payments || data.payments.length === 0) {
           box.innerHTML = "No payment requests.";
