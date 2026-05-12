@@ -348,6 +348,7 @@
           "overviewSection",
           document.querySelector(".sidebar-btn")
         );
+        loadTodayStats();
 
       } catch (err) {
 
@@ -380,8 +381,44 @@
 
     let latestKeys = [];
     let latestPayments = [];
+
+    let todayStats = {
+      todayRevenue: 0,
+      todayTokens: 0,
+      todayRequests: 0,
+      onlineUsers: 0
+    };
+
     let currentKeyPage = 1;
     const keysPerPage = 10;
+
+    async function loadTodayStats() {
+      try {
+        const res = await fetch(API_BASE + "/admin/today-stats", {
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          return;
+        }
+
+        todayStats = {
+          todayRevenue: Number(data.todayRevenue || 0),
+          todayTokens: Number(data.todayTokens || 0),
+          todayRequests: Number(data.todayRequests || 0),
+          onlineUsers: Number(data.onlineUsers || 0)
+        };
+
+        renderOverview();
+
+      } catch (err) {
+        console.log("Load today stats failed:", err.message);
+      }
+    }
 
     function renderOverview() {
       const users = new Set(
@@ -413,6 +450,11 @@
       const pendingUsdt = latestPayments.filter(p => {
         return p.status !== "confirmed";
       }).length;
+
+      const todayRevenue = todayStats.todayRevenue;
+      const todayTokens = todayStats.todayTokens;
+      const todayRequests = todayStats.todayRequests;
+      const onlineUsers = todayStats.onlineUsers;
 
       document.getElementById("overviewBox").innerHTML = `
   <div style="
@@ -456,6 +498,26 @@
       <div class="muted">Total Cost</div>
       <h2>$${totalCost.toFixed(4)}</h2>
     </div>
+
+    <div class="item">
+  <div class="muted">Today Revenue</div>
+  <h2>$${todayRevenue.toFixed(4)}</h2>
+</div>
+
+<div class="item">
+  <div class="muted">Today Tokens</div>
+  <h2>${todayTokens.toLocaleString()}</h2>
+</div>
+
+<div class="item">
+  <div class="muted">Today Requests</div>
+  <h2>${todayRequests}</h2>
+</div>
+
+<div class="item">
+  <div class="muted">Online Users</div>
+  <h2>${onlineUsers}</h2>
+</div>
 
     <div class="item">
       <div class="muted">Pending USDT</div>
@@ -1072,6 +1134,7 @@ ${k.last_used_at
         "overviewSection",
         document.querySelector(".sidebar-btn")
       );
+      loadTodayStats();
 
       loadKeys();
       loadPayments();

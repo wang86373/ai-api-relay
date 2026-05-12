@@ -514,6 +514,59 @@ app.get("/admin/keys", async (req, res) => {
   }
 });
 
+app.get("/admin/today-stats", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const { data, error } = await supabase
+      .from("usage_logs")
+      .select("api_key, email, total_tokens, cost, created_at")
+      .gte("created_at", today.toISOString());
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const todayRequests = data.length;
+
+    const todayTokens = data.reduce((sum, log) => {
+      return sum + Number(log.total_tokens || 0);
+    }, 0);
+
+    const todayRevenue = data.reduce((sum, log) => {
+      return sum + Number(log.cost || 0);
+    }, 0);
+
+    const onlineUsers = new Set(
+      data
+        .map(log => log.email || log.api_key)
+        .filter(Boolean)
+    ).size;
+
+    return res.json({
+      success: true,
+      todayRequests,
+      todayTokens,
+      todayRevenue,
+      onlineUsers
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.get("/admin/stats", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
