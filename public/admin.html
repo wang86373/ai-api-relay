@@ -88,23 +88,22 @@
       color: #cbd5e1;
     }
 
-    .sidebar-btn{
-  width:100%;
-  text-align:left;
-  margin-bottom:10px;
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.08);
-  color:white;
-  padding:12px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:0.2s;
-}
+    .sidebar-btn {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 10px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-.sidebar-btn:hover{
-  background:rgba(255,255,255,0.08);
-}
-
+    .sidebar-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
   </style>
 </head>
 
@@ -456,9 +455,9 @@
       ">
         <div style="
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:12px;
+  grid-template-columns:repeat(4, 1fr);
+  gap:12px;
+  margin-top:10px;
 ">
 
   <div>
@@ -612,11 +611,12 @@ ${k.last_used_at
 
         box.innerHTML = data.logs.map(log => `
       <div style="
-        padding:12px;
-        margin-bottom:12px;
-        border:1px solid rgba(255,255,255,0.08);
-        border-radius:12px;
-      ">
+  padding:14px 16px;
+  margin-bottom:12px;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  font-size:14px;
+">
         <div><b>Model:</b> ${log.model}</div>
         <div><b>Total Tokens:</b> ${log.total_tokens || 0}</div>
         <div><b>Cost:</b> $${Number(log.cost || 0).toFixed(4)}</div>
