@@ -281,7 +281,7 @@
         <div><b>Name:</b> ${k.key_name || "My API Key"}</div>
         <div><b>Email:</b> ${k.user_email || "-"}</div>
         <div><b>Balance:</b> $${k.balance}</div>
-        <div><b>API Key:</b> ${k.api_key}</div>
+        <div><b>API Key:</b> ${k.api_key.slice(0, 8)}...${k.api_key.slice(-6)}</div>
         <div><b>Active:</b> ${k.is_active}</div>
         <div><b>Total Requests:</b> ${k.total_requests || 0}</div>
 
