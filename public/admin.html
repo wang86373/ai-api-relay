@@ -142,6 +142,8 @@
 
     let latestKeys = [];
     let latestPayments = [];
+    let currentKeyPage = 1;
+    const keysPerPage = 10;
 
     function renderOverview() {
       const users = new Set(
@@ -226,6 +228,20 @@
 `;
     }
 
+    function prevKeyPage() {
+      if (currentKeyPage > 1) {
+        currentKeyPage--;
+        loadKeys();
+      }
+    }
+
+    function nextKeyPage(totalPages) {
+      if (currentKeyPage < totalPages) {
+        currentKeyPage++;
+        loadKeys();
+      }
+    }
+
     function searchKeys() {
       loadKeys();
     }
@@ -271,7 +287,10 @@
           return;
         }
 
-        box.innerHTML = data.keys.map(k => `
+        const totalPages = Math.ceil(data.keys.length / keysPerPage);
+        const startIndex = (currentKeyPage - 1) * keysPerPage;
+        const pagedKeys = data.keys.slice(startIndex, startIndex + keysPerPage);
+        box.innerHTML = pagedKeys.map(k => `
       <div style="
         padding:12px;
         margin-bottom:12px;
@@ -327,8 +346,8 @@
     <div class="muted">Last Used</div>
     <b>
 ${k.last_used_at
-  ? new Date(k.last_used_at).toLocaleString()
-  : "Never"}
+            ? new Date(k.last_used_at).toLocaleString()
+            : "Never"}
 </b>
   </div>
 
@@ -347,7 +366,19 @@ ${k.last_used_at
   Delete
 </button>
       </div>
-    `).join("");
+    `).join("") + `
+  <div style="margin-top:20px;">
+    <button onclick="prevKeyPage()">Previous</button>
+
+    <span style="margin:0 12px;">
+      Page ${currentKeyPage} / ${totalPages}
+    </span>
+
+    <button onclick="nextKeyPage(${totalPages})">
+      Next
+    </button>
+  </div>
+`;
 
       } catch (err) {
         box.innerHTML = err.message;
