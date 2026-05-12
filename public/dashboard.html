@@ -525,6 +525,14 @@ ey
     }
 
     const apiKey = localStorage.getItem("api_key");
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get("top") === "1") {
+      window.scrollTo({
+        top: 0,
+        behavior: "instant"
+      });
+    }
     const email = localStorage.getItem("email");
     if (!apiKey || apiKey.includes("cfezsdkavv9mwv59qxkhtn")) {
       localStorage.removeItem("api_key");
@@ -1343,10 +1351,15 @@ ey
       }
 
     }
-    loadApiKeys();
+    loadApiKeys().then(() => {
+      if (window.location.hash === "#keys") {
+        document.getElementById("apiKeysSection")
+          ?.scrollIntoView({ behavior: "instant" });
+      }
+    });
     document
-  .getElementById("keySearchInput")
-  ?.addEventListener("input", loadApiKeys);
+      .getElementById("keySearchInput")
+      ?.addEventListener("input", loadApiKeys);
     loadUsageStats();
     loadUsageLogs();
 
