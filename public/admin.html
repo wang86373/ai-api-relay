@@ -456,6 +456,10 @@
       const todayRequests = todayStats.todayRequests;
       const onlineUsers = todayStats.onlineUsers;
 
+      const topUsers = [...latestKeys]
+  .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
+  .slice(0, 5);
+
       document.getElementById("overviewBox").innerHTML = `
   <div style="
     display:grid;
@@ -524,7 +528,54 @@
       <h2>${pendingUsdt}</h2>
     </div>
 
-  </div>
+   <div style="
+  grid-column:1 / -1;
+  background:#111827;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:20px;
+">
+  <h3 style="margin-top:0;">Top Users by Revenue</h3>
+
+  ${topUsers.length === 0
+    ? `<div class="muted">No users yet.</div>`
+    : topUsers.map((u, index) => `
+      <div style="
+        display:grid;
+        grid-template-columns:60px 1.5fr 1fr 1fr 1fr 1.4fr;
+        gap:12px;
+        padding:12px 0;
+        border-bottom:1px solid rgba(255,255,255,0.06);
+        align-items:center;
+      ">
+        <div>#${index + 1}</div>
+        <div>
+          <div class="muted">Email</div>
+          <b>${u.user_email || "-"}</b>
+        </div>
+        <div>
+          <div class="muted">Revenue</div>
+          <b>$${Number(u.total_cost || 0).toFixed(4)}</b>
+        </div>
+        <div>
+          <div class="muted">Tokens</div>
+          <b>${Number(u.total_tokens || 0).toLocaleString()}</b>
+        </div>
+        <div>
+          <div class="muted">Requests</div>
+          <b>${u.total_requests || 0}</b>
+        </div>
+        <div>
+          <div class="muted">Last Used</div>
+          <b>
+            ${u.last_used_at
+              ? new Date(u.last_used_at).toLocaleString()
+              : "Never"}
+          </b>
+        </div>
+      </div>
+    `).join("")}
+</div>
 `;
     }
 
