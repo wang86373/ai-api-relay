@@ -91,7 +91,23 @@
 </head>
 
 <body>
-  <div class="container">
+
+  <div id="loginPage" class="container">
+    <div class="card">
+      <h1>Admin Login</h1>
+      <p>Enter ADMIN_SECRET to access admin dashboard.</p>
+
+      <input id="loginAdminKey" placeholder="ADMIN_SECRET" type="password" />
+
+      <button onclick="adminLogin()">
+        Login
+      </button>
+
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </div>
+
+  <div id="adminPage" class="container" style="display:none;">
 
     <div class="card">
       <h1>USDT Payment Admin</h1>
@@ -136,8 +152,33 @@
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
 
+    function adminLogin() {
+
+      const key =
+        document.getElementById("loginAdminKey")
+          .value
+          .trim();
+
+      if (!key) {
+        document.getElementById("loginMsg").innerText =
+          "Enter ADMIN_SECRET";
+
+        return;
+      }
+
+      localStorage.setItem("admin_key", key);
+
+      document.getElementById("adminKey").value = key;
+
+      document.getElementById("loginPage").style.display =
+        "none";
+
+      document.getElementById("adminPage").style.display =
+        "block";
+    }
+
     function getAdminKey() {
-      return document.getElementById("adminKey").value.trim();
+      return localStorage.getItem("admin_key") || "";
     }
 
     let latestKeys = [];
@@ -633,6 +674,22 @@ ${k.last_used_at
       } catch (err) {
         msg.innerText = err.message;
       }
+    }
+
+    const savedAdminKey =
+      localStorage.getItem("admin_key");
+
+    if (savedAdminKey) {
+
+      document.getElementById("adminPage").style.display =
+        "block";
+
+      document.getElementById("loginPage").style.display =
+        "none";
+
+      document.getElementById("adminKey").value =
+        savedAdminKey;
+
     }
   </script>
 </body>
