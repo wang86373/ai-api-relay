@@ -228,6 +228,7 @@
       <h2>Realtime Stats</h2>
 
       <canvas id="statsChart" height="120"></canvas>
+      <canvas id="usdtChart" height="120"></canvas>
 
     </div>
     <div class="card admin-section" id="paymentsSection">
@@ -778,6 +779,73 @@ ${k.last_used_at
       }
     }
 
+    let usdtChart;
+
+    async function loadUsdtChart() {
+      try {
+
+        const res = await fetch(
+          API_BASE + "/admin/usdt-stats"
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        const ctx =
+          document.getElementById("usdtChart");
+
+        if (usdtChart) {
+          usdtChart.destroy();
+        }
+
+        usdtChart = new Chart(ctx, {
+          type: "line",
+
+          data: {
+            labels: data.labels,
+
+            datasets: [{
+              label: "USDT Payments",
+
+              data: data.amounts,
+
+              tension: 0.35
+            }]
+          },
+
+          options: {
+            responsive: true,
+
+            plugins: {
+              legend: {
+                labels: {
+                  color: "white"
+                }
+              }
+            },
+
+            scales: {
+              x: {
+                ticks: {
+                  color: "white"
+                }
+              },
+
+              y: {
+                ticks: {
+                  color: "white"
+                }
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     async function rechargeKey(apiKey) {
       const amount = prompt("Recharge amount:");
 
@@ -939,6 +1007,9 @@ ${k.last_used_at
       loadRealtimeStats();
 
       setInterval(loadRealtimeStats, 30000);
+
+      loadUsdtChart();
+      setInterval(loadUsdtChart, 30000);
 
       document.getElementById("loginPage").style.display =
         "none";

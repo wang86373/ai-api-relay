@@ -567,6 +567,59 @@ app.get("/admin/stats", async (req, res) => {
 
 });
 
+app.get("/admin/usdt-stats", async (req, res) => {
+
+  if (!checkAdmin(req, res)) return;
+
+  try {
+
+    const { data, error } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const grouped = {};
+
+    data.forEach(payment => {
+
+      const day =
+        new Date(payment.created_at)
+        .toLocaleDateString();
+
+      grouped[day] =
+        (grouped[day] || 0)
+        + Number(payment.amount || 0);
+    });
+
+    const labels = Object.keys(grouped);
+
+    const amounts =
+      Object.values(grouped);
+
+    res.json({
+      success: true,
+      labels,
+      amounts
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.post("/admin/toggle-key", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
@@ -899,6 +952,42 @@ app.get("/logs/:apiKey", async (req, res) => {
         message: err.message
       }
     });
+  }
+});
+
+app.get("/usdt/history/:apiKey", async (req, res) => {
+  try {
+
+    const apiKey = req.params.apiKey;
+
+    const { data, error } = await supabase
+      .from("usdt_payments")
+      .select("*")
+      .eq("api_key", apiKey)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    return res.json({
+      success: true,
+      payments: data
+    });
+
+  } catch (err) {
+
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+
   }
 });
 
