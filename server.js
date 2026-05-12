@@ -514,6 +514,59 @@ app.get("/admin/keys", async (req, res) => {
   }
 });
 
+app.get("/admin/stats", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+
+    const { data, error } = await supabase
+      .from("usage_logs")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const grouped = {};
+
+    data.forEach(log => {
+
+      const hour =
+        new Date(log.created_at)
+          .toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+
+      grouped[hour] =
+        (grouped[hour] || 0) + 1;
+    });
+
+    const labels = Object.keys(grouped);
+    const requests = Object.values(grouped);
+
+    res.json({
+      success: true,
+      labels,
+      requests
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+
+});
+
 app.post("/admin/toggle-key", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
@@ -1017,16 +1070,16 @@ async function verifyUsdtTrc20Payment(txHash, expectedAmount) {
   }
 
   if (tx.confirmed !== true) {
-  throw new Error("Transaction is not confirmed yet");
-}
+    throw new Error("Transaction is not confirmed yet");
+  }
 
-if (tx.revert === true) {
-  throw new Error("Transaction was reverted");
-}
+  if (tx.revert === true) {
+    throw new Error("Transaction was reverted");
+  }
 
-if (tx.contractRet && tx.contractRet !== "SUCCESS") {
-  throw new Error("Transaction failed on-chain");
-}
+  if (tx.contractRet && tx.contractRet !== "SUCCESS") {
+    throw new Error("Transaction failed on-chain");
+  }
 
   const transfers = tx.trc20TransferInfo || [];
 
@@ -1074,18 +1127,18 @@ app.post("/usdt/submit", async (req, res) => {
     }
 
     const { data: existingPayment } = await supabase
-  .from("usdt_payments")
-  .select("id")
-  .eq("tx_hash", tx_hash)
-  .maybeSingle();
+      .from("usdt_payments")
+      .select("id")
+      .eq("tx_hash", tx_hash)
+      .maybeSingle();
 
-if (existingPayment) {
-  return res.status(400).json({
-    error: {
-      message: "This transaction has already been used"
+    if (existingPayment) {
+      return res.status(400).json({
+        error: {
+          message: "This transaction has already been used"
+        }
+      });
     }
-  });
-}
 
     const verifyResult =
       await verifyUsdtTrc20Payment(tx_hash, amount);
@@ -1102,27 +1155,27 @@ if (existingPayment) {
       ]);
 
     const { data: existingKey } = await supabase
-  .from("api_keys")
-  .select("*")
-  .eq("api_key", api_key)
-  .single();
+      .from("api_keys")
+      .select("*")
+      .eq("api_key", api_key)
+      .single();
 
-if (!existingKey) {
-  return res.status(404).json({
-    error: {
-      message: "API key not found"
+    if (!existingKey) {
+      return res.status(404).json({
+        error: {
+          message: "API key not found"
+        }
+      });
     }
-  });
-}
 
-const { error: updateError } = await supabase
-  .from("api_keys")
-  .update({
-    balance:
-      Number(existingKey.balance || 0) +
-      Number(verifyResult.amount)
-  })
-  .eq("api_key", api_key);
+    const { error: updateError } = await supabase
+      .from("api_keys")
+      .update({
+        balance:
+          Number(existingKey.balance || 0) +
+          Number(verifyResult.amount)
+      })
+      .eq("api_key", api_key);
 
     if (updateError) {
       return res.status(500).json({
@@ -1133,11 +1186,11 @@ const { error: updateError } = await supabase
     }
 
     res.json({
-  success: true,
-  status: "confirmed",
-  amount: verifyResult.amount,
-  message: "USDT payment verified and balance updated"
-});
+      success: true,
+      status: "confirmed",
+      amount: verifyResult.amount,
+      message: "USDT payment verified and balance updated"
+    });
 
   } catch (err) {
 

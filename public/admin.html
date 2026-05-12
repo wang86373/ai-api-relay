@@ -178,6 +178,10 @@
           Usage Logs
         </button>
 
+        <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
+          Stats
+        </button>
+
         <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
           Payments
         </button>
@@ -219,7 +223,13 @@
           </div>
         </div>
     </div>
+    <div class="card admin-section" id="statsSection">
 
+      <h2>Realtime Stats</h2>
+
+      <canvas id="statsChart" height="120"></canvas>
+
+    </div>
     <div class="card admin-section" id="paymentsSection">
       <h2>Payment Requests</h2>
       <select id="paymentStatusFilter" onchange="loadPayments()">
@@ -237,8 +247,10 @@
   </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
+    let statsChart;
     function showAdminSection(sectionId, btn) {
 
       document.querySelectorAll(".admin-section")
@@ -707,6 +719,65 @@ ${k.last_used_at
       loadKeys();
     }
 
+    async function loadRealtimeStats() {
+      try {
+
+        const res = await fetch(API_BASE + "/admin/stats");
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        const ctx =
+          document.getElementById("statsChart");
+
+        if (statsChart) {
+          statsChart.destroy();
+        }
+
+        statsChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Requests",
+                data: data.requests,
+                borderColor: "#4f46e5",
+                backgroundColor: "rgba(79,70,229,0.15)",
+                tension: 0.35,
+                fill: true
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "white"
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: "white"
+                }
+              },
+              y: {
+                ticks: {
+                  color: "white"
+                }
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
     async function rechargeKey(apiKey) {
       const amount = prompt("Recharge amount:");
 
@@ -865,6 +936,9 @@ ${k.last_used_at
 
       loadKeys();
       loadPayments();
+      loadRealtimeStats();
+
+      setInterval(loadRealtimeStats, 30000);
 
       document.getElementById("loginPage").style.display =
         "none";
