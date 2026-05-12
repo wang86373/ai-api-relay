@@ -87,6 +87,24 @@
       margin-top: 12px;
       color: #cbd5e1;
     }
+
+    .sidebar-btn{
+  width:100%;
+  text-align:left;
+  margin-bottom:10px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.08);
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.sidebar-btn:hover{
+  background:rgba(255,255,255,0.08);
+}
+
   </style>
 </head>
 
@@ -107,121 +125,173 @@
     </div>
   </div>
 
-  <div id="adminPage" class="container" style="display:none;">
+  <div id="adminPage" style="display:none;">
 
-    <div class="card">
-      <h1>USDT Payment Admin</h1>
-      <button onclick="adminLogout()" class="danger">
-        Logout
-      </button>
-      <p>Enter your ADMIN_SECRET to manage USDT payment requests.</p>
+    <div style="
+    display:flex;
+    min-height:100vh;
+  ">
 
-      <input id="adminKey" placeholder="ADMIN_SECRET" />
-      <button onclick="loadPayments()">Load Payments</button>
+      <aside style="
+      width:240px;
+      background:#020617;
+      border-right:1px solid rgba(255,255,255,0.08);
+      padding:24px;
+      position:sticky;
+      top:0;
+      height:100vh;
+    ">
+        <h2>AI API Relay</h2>
 
-      <div class="msg" id="msg"></div>
+        <button class="sidebar-btn" onclick="showAdminSection('overviewSection', this)">
+          Overview
+        </button>
+
+        <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
+          API Keys
+        </button>
+
+        <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
+          Usage Logs
+        </button>
+
+        <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
+          Payments
+        </button>
+
+        <button onclick="adminLogout()" class="danger">
+          Logout
+        </button>
+      </aside>
+
+      <main class="container" style="flex:1;">
+
+        <div class="card">
+          <h1>USDT Payment Admin</h1>
+          <p>Enter your ADMIN_SECRET to manage USDT payment requests.</p>
+
+          <input id="adminKey" placeholder="ADMIN_SECRET" />
+          <button onclick="loadPayments()">Load Payments</button>
+
+          <div class="msg" id="msg"></div>
+        </div>
+
+        <div class="card admin-section" id="overviewSection">
+          <h2>Admin Overview</h2>
+          <div id="overviewBox">
+            Click Load API Keys to view overview.
+          </div>
+        </div>
+
+        <div class="card admin-section" id="keysSection">
+          <h2>API Keys</h2>
+          <input id="searchInput" placeholder="Search email / api key / key name" />
+
+          <button onclick="searchKeys()">
+            Search
+          </button>
+          <button onclick="loadKeys()">Load API Keys</button>
+          <div id="keysBox">No keys loaded.</div>
+        </div>
+        <div class="card admin-section" id="logsSection">
+          <h2>Usage Logs</h2>
+
+          <div id="logsBox">
+            No logs loaded.
+          </div>
+        </div>
     </div>
 
-    <div class="card">
-      <h2>Admin Overview</h2>
-      <div id="overviewBox">
-        Click Load API Keys to view overview.
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>API Keys</h2>
-      <input id="searchInput" placeholder="Search email / api key / key name" />
-
-      <button onclick="searchKeys()">
-        Search
-      </button>
-      <button onclick="loadKeys()">Load API Keys</button>
-      <div id="keysBox">No keys loaded.</div>
-      <h2 style="margin-top:40px;">Usage Logs</h2>
-
-      <div id="logsBox">
-        No logs loaded.
-      </div>
-    </div>
-
-    <div class="card">
+    <div class="card admin-section" id="paymentsSection">
       <h2>Payment Requests</h2>
       <div id="paymentsBox">No data loaded.</div>
     </div>
 
+    </main>
+  </div>
   </div>
 
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
+    function showAdminSection(sectionId) {
+
+      document.querySelectorAll(".admin-section")
+        .forEach(el => {
+          el.style.display = "none";
+        });
+
+      document.getElementById(sectionId)
+        .style.display = "block";
+    }
 
     async function adminLogin() {
 
-  const key =
-    document.getElementById("loginAdminKey")
-      .value
-      .trim();
+      const key =
+        document.getElementById("loginAdminKey")
+          .value
+          .trim();
 
-  if (!key) {
-    document.getElementById("loginMsg").innerText =
-      "Enter ADMIN_SECRET";
+      if (!key) {
+        document.getElementById("loginMsg").innerText =
+          "Enter ADMIN_SECRET";
 
-    return;
-  }
-
-  try {
-
-    const res = await fetch(
-      API_BASE + "/admin/verify",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-key": key
-        }
+        return;
       }
-    );
 
-    const data = await res.json();
+      try {
 
-    if (!res.ok) {
+        const res = await fetch(
+          API_BASE + "/admin/verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-key": key
+            }
+          }
+        );
 
-      document.getElementById("loginMsg").innerText =
-        data.error?.message || "Invalid ADMIN_SECRET";
+        const data = await res.json();
 
-      return;
+        if (!res.ok) {
+
+          document.getElementById("loginMsg").innerText =
+            data.error?.message || "Invalid ADMIN_SECRET";
+
+          return;
+        }
+
+        localStorage.setItem("admin_key", key);
+
+        document.getElementById("adminKey").value =
+          key;
+
+        document.getElementById("loginPage").style.display =
+          "none";
+
+        document.getElementById("adminPage").style.display =
+          "block";
+        showAdminSection("overviewSection");
+
+      } catch (err) {
+
+        document.getElementById("loginMsg").innerText =
+          "Login failed";
+      }
     }
 
-    localStorage.setItem("admin_key", key);
+    function adminLogout() {
+      localStorage.removeItem("admin_key");
 
-    document.getElementById("adminKey").value =
-      key;
+      document.getElementById("adminPage").style.display =
+        "none";
 
-    document.getElementById("loginPage").style.display =
-      "none";
+      document.getElementById("loginPage").style.display =
+        "block";
 
-    document.getElementById("adminPage").style.display =
-      "block";
-
-  } catch (err) {
-
-    document.getElementById("loginMsg").innerText =
-      "Login failed";
-  }
-}
-
-function adminLogout() {
-  localStorage.removeItem("admin_key");
-
-  document.getElementById("adminPage").style.display =
-    "none";
-
-  document.getElementById("loginPage").style.display =
-    "block";
-
-  document.getElementById("adminKey").value = "";
-  document.getElementById("loginAdminKey").value = "";
-}
+      document.getElementById("adminKey").value = "";
+      document.getElementById("loginAdminKey").value = "";
+    }
 
     function getAdminKey() {
       return localStorage.getItem("admin_key") || "";
@@ -729,6 +799,7 @@ ${k.last_used_at
 
       document.getElementById("adminPage").style.display =
         "block";
+      showAdminSection("overviewSection");
 
       document.getElementById("loginPage").style.display =
         "none";
