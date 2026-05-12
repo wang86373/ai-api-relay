@@ -88,7 +88,7 @@ app.post("/get-api-keys", async (req, res) => {
     const { data, error } = await supabase
       .from("api_keys")
       .select("api_key, is_active, created_at")
-      .eq("email", email)
+      .eq("user_email", email)
       .eq("is_active", true)
       .order("created_at", { ascending: false });
 
@@ -167,7 +167,7 @@ app.post("/usage-logs", async (req, res) => {
     }
 
     const { data, error } = await supabase
-      .from("api_usage")
+      .from("usage_logs")
       .select("*")
       .eq("email", email)
       .order("created_at", { ascending: false })
@@ -206,7 +206,7 @@ app.post("/usage-stats", async (req, res) => {
     today.setHours(0, 0, 0, 0);
 
     const { data, error } = await supabase
-      .from("api_usage")
+      .from("usage_logs")
       .select("total_tokens, cost, created_at")
       .eq("email", email)
       .gte("created_at", today.toISOString());
@@ -431,7 +431,7 @@ app.get("/admin/keys", async (req, res) => {
       const totalRequests = logs.length;
 
       const totalTokens = logs.reduce((sum, log) => {
-        return sum + Number(log.tokens_used || 0);
+        return sum + Number(log.total_tokens || 0);
       }, 0);
 
       const totalCost = logs.reduce((sum, log) => {
@@ -914,14 +914,15 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
     const { error: logError } = await supabase.from("usage_logs").insert({
-      api_key: apiKey,
-      model,
+  api_key: apiKey,
+  email: keyData.user_email,
+  model,
 
-      prompt_tokens: completion.usage?.prompt_tokens || 0,
-      completion_tokens: completion.usage?.completion_tokens || 0,
-      total_tokens: completion.usage?.total_tokens || 0,
-      cost
-    });
+  prompt_tokens: completion.usage?.prompt_tokens || 0,
+  completion_tokens: completion.usage?.completion_tokens || 0,
+  total_tokens: completion.usage?.total_tokens || 0,
+  cost
+});
 
     if (logError) {
       console.error("Usage log insert error:", logError.message);

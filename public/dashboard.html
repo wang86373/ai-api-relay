@@ -927,6 +927,7 @@ ey
 
     }
 
+    let stats = {};
     async function loadApiKeys() {
 
       const email = localStorage.getItem("email");
@@ -1047,7 +1048,7 @@ ey
 
         container.innerHTML = "";
 
-        const stats = {};
+        stats = {};
 
         data.logs.forEach(log => {
 
