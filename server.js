@@ -334,6 +334,14 @@ function checkAdmin(req, res) {
   return true;
 }
 
+app.post("/admin/verify", (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  return res.json({
+    success: true
+  });
+});
+
 function createApiKey() {
   return (
     "sk_" +

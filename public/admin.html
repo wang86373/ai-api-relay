@@ -111,6 +111,9 @@
 
     <div class="card">
       <h1>USDT Payment Admin</h1>
+      <button onclick="adminLogout()" class="danger">
+        Logout
+      </button>
       <p>Enter your ADMIN_SECRET to manage USDT payment requests.</p>
 
       <input id="adminKey" placeholder="ADMIN_SECRET" />
@@ -152,30 +155,73 @@
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
 
-    function adminLogin() {
+    async function adminLogin() {
 
-      const key =
-        document.getElementById("loginAdminKey")
-          .value
-          .trim();
+  const key =
+    document.getElementById("loginAdminKey")
+      .value
+      .trim();
 
-      if (!key) {
-        document.getElementById("loginMsg").innerText =
-          "Enter ADMIN_SECRET";
+  if (!key) {
+    document.getElementById("loginMsg").innerText =
+      "Enter ADMIN_SECRET";
 
-        return;
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      API_BASE + "/admin/verify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": key
+        }
       }
+    );
 
-      localStorage.setItem("admin_key", key);
+    const data = await res.json();
 
-      document.getElementById("adminKey").value = key;
+    if (!res.ok) {
 
-      document.getElementById("loginPage").style.display =
-        "none";
+      document.getElementById("loginMsg").innerText =
+        data.error?.message || "Invalid ADMIN_SECRET";
 
-      document.getElementById("adminPage").style.display =
-        "block";
+      return;
     }
+
+    localStorage.setItem("admin_key", key);
+
+    document.getElementById("adminKey").value =
+      key;
+
+    document.getElementById("loginPage").style.display =
+      "none";
+
+    document.getElementById("adminPage").style.display =
+      "block";
+
+  } catch (err) {
+
+    document.getElementById("loginMsg").innerText =
+      "Login failed";
+  }
+}
+
+function adminLogout() {
+  localStorage.removeItem("admin_key");
+
+  document.getElementById("adminPage").style.display =
+    "none";
+
+  document.getElementById("loginPage").style.display =
+    "block";
+
+  document.getElementById("adminKey").value = "";
+  document.getElementById("loginAdminKey").value = "";
+}
 
     function getAdminKey() {
       return localStorage.getItem("admin_key") || "";
