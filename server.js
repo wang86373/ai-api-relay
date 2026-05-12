@@ -621,6 +621,7 @@ app.get("/admin/stats", async (req, res) => {
 });
 
 app.get("/admin/revenue-stats", async (req, res) => {
+
   if (!checkAdmin(req, res)) return;
 
   try {
@@ -663,6 +664,64 @@ app.get("/admin/revenue-stats", async (req, res) => {
       revenue: labels.map(day => Number(grouped[day].revenue.toFixed(6))),
       tokens: labels.map(day => grouped[day].tokens),
       requests: labels.map(day => grouped[day].requests)
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
+ app.get("/admin/top-models", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usage_logs")
+      .select("model, total_tokens, cost, created_at");
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const grouped = {};
+
+    data.forEach(log => {
+      const model = log.model || "unknown";
+
+      if (!grouped[model]) {
+        grouped[model] = {
+          model,
+          requests: 0,
+          tokens: 0,
+          revenue: 0
+        };
+      }
+
+      grouped[model].requests += 1;
+      grouped[model].tokens += Number(log.total_tokens || 0);
+      grouped[model].revenue += Number(log.cost || 0);
+    });
+
+    const models = Object.values(grouped)
+      .sort((a, b) => b.revenue - a.revenue)
+      .map(item => ({
+        model: item.model,
+        requests: item.requests,
+        tokens: item.tokens,
+        revenue: Number(item.revenue.toFixed(6))
+      }));
+
+    return res.json({
+      success: true,
+      models
     });
 
   } catch (err) {

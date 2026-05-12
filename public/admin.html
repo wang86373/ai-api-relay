@@ -282,6 +282,7 @@
     const API_BASE = "https://ai-api-relay.onrender.com";
     let statsChart;
     let revenueChart;
+    let usdtChart;
     function showAdminSection(sectionId, btn) {
 
       document.querySelectorAll(".admin-section")
@@ -388,6 +389,7 @@
 
     let latestKeys = [];
     let latestPayments = [];
+    let latestModels = [];
 
     let todayStats = {
       todayRevenue: 0,
@@ -1042,7 +1044,27 @@ ${k.last_used_at
         console.log("Load revenue stats failed:", err.message);
       }
     }
-    let usdtChart;
+
+    async function loadTopModels() {
+  try {
+    const res = await fetch(API_BASE + "/admin/top-models", {
+      headers: {
+        "x-admin-key": getAdminKey()
+      }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    latestModels = data.models || [];
+
+    renderOverview();
+
+  } catch (err) {
+    console.log("Load top models failed:", err.message);
+  }
+}
 
     async function loadUsdtChart() {
       try {
