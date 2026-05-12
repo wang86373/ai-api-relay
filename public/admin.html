@@ -222,6 +222,11 @@
 
     <div class="card admin-section" id="paymentsSection">
       <h2>Payment Requests</h2>
+      <select id="paymentStatusFilter" onchange="loadPayments()">
+        <option value="all">All Payments</option>
+        <option value="pending">Pending Only</option>
+        <option value="confirmed">Confirmed Only</option>
+      </select>
       <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
 
       <div class="msg" id="msg"></div>
@@ -744,6 +749,13 @@ ${k.last_used_at
         if (!res.ok) {
           msg.innerText = data.error?.message || "Failed to load payments";
           return;
+        }
+
+        const statusFilter =
+          document.getElementById("paymentStatusFilter")?.value || "all";
+
+        if (statusFilter !== "all") {
+          data.payments = data.payments.filter(p => p.status === statusFilter);
         }
 
         msg.innerText = "Loaded.";
