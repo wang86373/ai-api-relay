@@ -736,7 +736,11 @@ ${k.last_used_at
     async function loadRealtimeStats() {
       try {
 
-        const res = await fetch(API_BASE + "/admin/stats");
+        const res = await fetch(API_BASE + "/admin/stats", {
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
         const data = await res.json();
 
         if (!res.ok) return;
@@ -798,7 +802,12 @@ ${k.last_used_at
       try {
 
         const res = await fetch(
-          API_BASE + "/admin/usdt-stats"
+          API_BASE + "/admin/usdt-stats",
+          {
+            headers: {
+              "x-admin-key": getAdminKey()
+            }
+          }
         );
 
         const data = await res.json();
