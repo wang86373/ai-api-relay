@@ -476,6 +476,20 @@ ey
   </div>
 
   <script>
+
+    function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+
+  toast.innerText = message;
+  toast.style.display = "block";
+  toast.style.background =
+    type === "error" ? "#7f1d1d" : "#064e3b";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
+}
+
     const apiKey = localStorage.getItem("api_key");
     const email = localStorage.getItem("email");
     if (!apiKey || apiKey.includes("cfezsdkavv9mwv59qxkhtn")) {
@@ -517,15 +531,18 @@ ey
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.error?.message || "Submit failed");
+          showToast(data.error?.message || "Submit failed", "error");
           return;
         }
 
-        alert("USDT payment submitted successfully");
+        showToast(data.message || "Payment confirmed");
+
+        loadAccount();
+        loadLogs();
 
       } catch (err) {
 
-        alert("USDT submit failed");
+        showToast("USDT submit failed", "error");
 
       }
     }
@@ -765,7 +782,7 @@ ey
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.error?.message || "Stripe error");
+          showToast(data.error?.message || "Stripe error", "error");
           return;
         }
 
@@ -773,14 +790,14 @@ ey
 
       } catch (err) {
 
-        alert("Stripe checkout failed");
+        showToast("Stripe checkout failed", "error");
 
       }
     }
 
     function copyUsdtAddress() {
       navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
-      alert("USDT address copied.");
+      showToast("USDT address copied");
     }
 
     function logout() {
@@ -794,7 +811,7 @@ ey
       const email = localStorage.getItem("email");
 
       if (!email) {
-        alert("Please login first.");
+        showToast("Please login first", "error");
         return;
       }
 
@@ -809,7 +826,7 @@ ey
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Failed to create API key");
+        showToast(data.error || "Failed to create API key", "error");
         return;
       }
       loadApiKeys();
@@ -819,7 +836,7 @@ ey
     document.getElementById("createKeyBtn").onclick = createApiKey;
     function copyApiKey(apiKey) {
       navigator.clipboard.writeText(apiKey);
-      alert("API key copied.");
+      showToast("API key copied");
     }
 
     document.getElementById("toggleKeysBtn").onclick = function () {
@@ -887,36 +904,36 @@ ey
     }
 
     async function renameApiKey(apiKey, oldName) {
-  const keyName = prompt("Enter new key name", oldName || "My API Key");
+      const keyName = prompt("Enter new key name", oldName || "My API Key");
 
-  if (!keyName) return;
+      if (!keyName) return;
 
-  try {
-    const res = await fetch("/rename-api-key", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        api_key: apiKey,
-        key_name: keyName
-      })
-    });
+      try {
+        const res = await fetch("/rename-api-key", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey,
+            key_name: keyName
+          })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok) {
-      alert(data.error || "Rename failed");
-      return;
+        if (!res.ok) {
+          showToast(data.error || "Rename failed", "error");
+          return;
+        }
+
+        showToast("API key renamed");
+        loadApiKeys();
+
+      } catch (err) {
+        showToast("Rename failed", "error");
+      }
     }
-
-    alert("API key renamed");
-    loadApiKeys();
-
-  } catch (err) {
-    alert("Rename failed");
-  }
-}
 
     async function deleteApiKey(apiKey) {
 
@@ -940,20 +957,20 @@ ey
 
         if (!res.ok) {
 
-          alert(data.error || "Delete failed");
+          showToast(data.error || "Delete failed", "error");
 
           return;
 
         }
 
-        alert("API key deleted");
+        showToast("API key deleted");
 
         loadApiKeys();
         loadUsageLogs();
 
       } catch (err) {
 
-        alert("Delete failed");
+        showToast("Delete failed", "error");
 
       }
 
@@ -996,14 +1013,14 @@ ey
 
           list.innerHTML = "";
           data.keys.forEach((keyObj, index) => {
-          const keyStats = stats[keyObj.api_key] || {
-            requests: 0,
-            tokens: 0,
-            cost: 0,
-            lastUsedAt: null
-          };
+            const keyStats = stats[keyObj.api_key] || {
+              requests: 0,
+              tokens: 0,
+              cost: 0,
+              lastUsedAt: null
+            };
 
-          list.innerHTML += `
+            list.innerHTML += `
     <div class="key-item">
 
       <div class="key-top">
@@ -1053,7 +1070,7 @@ ey
 
     </div>
   `;
-        });
+          });
         }
 
       } catch (err) {
@@ -1198,6 +1215,22 @@ ey
     setInterval(loadUsageStats, 30000);
 
   </script>
+
+<div id="toast" style="
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  background:#111827;
+  color:white;
+  padding:14px 18px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+  display:none;
+  z-index:9999;
+  font-weight:bold;
+">
+</div>
 
 </body>
 

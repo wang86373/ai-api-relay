@@ -320,6 +320,11 @@
       }
     }
 
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      alert("Copied!");
+    }
+
     function adminLogout() {
       localStorage.removeItem("admin_key");
 
@@ -786,7 +791,12 @@ ${k.last_used_at
                   <td>${p.id}</td>
                   <td>${p.api_key}</td>
                   <td>${p.amount}</td>
-                  <td>${p.tx_hash || ""}</td>
+                  <td>
+  ${p.tx_hash || ""}
+  <button onclick="copyText('${p.tx_hash || ""}')">
+    Copy
+  </button>
+</td>
                   <td class="${p.status}">${p.status}</td>
                   <td>${new Date(p.created_at).toLocaleString()}</td>
                   <td>

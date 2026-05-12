@@ -285,6 +285,7 @@ const openai = new OpenAI({
 });
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const USDT_TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 
 const deepseek = process.env.DEEPSEEK_API_KEY
   ? new OpenAI({
@@ -959,15 +960,15 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
     const { error: logError } = await supabase.from("usage_logs").insert({
-  api_key: apiKey,
-  email: keyData.user_email,
-  model,
+      api_key: apiKey,
+      email: keyData.user_email,
+      model,
 
-  prompt_tokens: completion.usage?.prompt_tokens || 0,
-  completion_tokens: completion.usage?.completion_tokens || 0,
-  total_tokens: completion.usage?.total_tokens || 0,
-  cost
-});
+      prompt_tokens: completion.usage?.prompt_tokens || 0,
+      completion_tokens: completion.usage?.completion_tokens || 0,
+      total_tokens: completion.usage?.total_tokens || 0,
+      cost
+    });
 
     if (logError) {
       console.error("Usage log insert error:", logError.message);
@@ -997,6 +998,64 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
 
 app.use(express.static("public"));
 
+async function verifyUsdtTrc20Payment(txHash, expectedAmount) {
+  const receiveAddress = process.env.USDT_TRC20_RECEIVE_ADDRESS;
+
+  if (!receiveAddress) {
+    throw new Error("USDT_TRC20_RECEIVE_ADDRESS is not configured");
+  }
+
+  const url =
+    "https://apilist.tronscanapi.com/api/transaction-info?hash=" +
+    encodeURIComponent(txHash);
+
+  const response = await fetch(url);
+  const tx = await response.json();
+
+  if (!response.ok || !tx) {
+    throw new Error("Failed to verify transaction");
+  }
+
+  if (tx.confirmed !== true) {
+  throw new Error("Transaction is not confirmed yet");
+}
+
+if (tx.revert === true) {
+  throw new Error("Transaction was reverted");
+}
+
+if (tx.contractRet && tx.contractRet !== "SUCCESS") {
+  throw new Error("Transaction failed on-chain");
+}
+
+  const transfers = tx.trc20TransferInfo || [];
+
+  const usdtTransfer = transfers.find(t => {
+    return (
+      t.contract_address === USDT_TRC20_CONTRACT &&
+      t.to_address === receiveAddress
+    );
+  });
+
+  if (!usdtTransfer) {
+    throw new Error("No matching USDT TRC20 transfer found");
+  }
+
+  const actualAmount =
+    Number(usdtTransfer.amount_str || usdtTransfer.amount || 0) / 1000000;
+
+  if (actualAmount < Number(expectedAmount)) {
+    throw new Error("USDT amount is less than submitted amount");
+  }
+
+  return {
+    success: true,
+    amount: actualAmount,
+    from: usdtTransfer.from_address,
+    to: usdtTransfer.to_address
+  };
+}
+
 app.post("/usdt/submit", async (req, res) => {
   try {
 
@@ -1014,6 +1073,23 @@ app.post("/usdt/submit", async (req, res) => {
       });
     }
 
+    const { data: existingPayment } = await supabase
+  .from("usdt_payments")
+  .select("id")
+  .eq("tx_hash", tx_hash)
+  .maybeSingle();
+
+if (existingPayment) {
+  return res.status(400).json({
+    error: {
+      message: "This transaction has already been used"
+    }
+  });
+}
+
+    const verifyResult =
+      await verifyUsdtTrc20Payment(tx_hash, amount);
+
     const { error } = await supabase
       .from("usdt_payments")
       .insert([
@@ -1021,21 +1097,47 @@ app.post("/usdt/submit", async (req, res) => {
           api_key,
           amount,
           tx_hash,
-          status: "pending"
+          status: "confirmed"
         }
       ]);
 
-    if (error) {
+    const { data: existingKey } = await supabase
+  .from("api_keys")
+  .select("*")
+  .eq("api_key", api_key)
+  .single();
+
+if (!existingKey) {
+  return res.status(404).json({
+    error: {
+      message: "API key not found"
+    }
+  });
+}
+
+const { error: updateError } = await supabase
+  .from("api_keys")
+  .update({
+    balance:
+      Number(existingKey.balance || 0) +
+      Number(verifyResult.amount)
+  })
+  .eq("api_key", api_key);
+
+    if (updateError) {
       return res.status(500).json({
         error: {
-          message: error.message
+          message: updateError.message
         }
       });
     }
 
     res.json({
-      success: true
-    });
+  success: true,
+  status: "confirmed",
+  amount: verifyResult.amount,
+  message: "USDT payment verified and balance updated"
+});
 
   } catch (err) {
 
