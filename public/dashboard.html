@@ -8,6 +8,25 @@ ey
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
+
+     .spinner{
+  display:inline-block;
+  width:14px;
+  height:14px;
+  border:2px solid rgba(255,255,255,0.4);
+  border-top-color:white;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+  vertical-align:middle;
+  margin-right:8px;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -465,7 +484,12 @@ ey
       <button onclick="stripeCheckout()">
         Pay with Stripe
       </button>
-      <button onclick="usdtPayment()">Pay with USDT</button>
+      <input id="usdtAmount" placeholder="USDT Amount" />
+      <input id="usdtTxHash" placeholder="Transaction Hash" />
+
+      <button id="usdtSubmitBtn" onclick="usdtPayment()">
+        Submit USDT Payment
+      </button>
     </div>
 
     <div class="card">
@@ -478,17 +502,17 @@ ey
   <script>
 
     function showToast(message, type = "success") {
-  const toast = document.getElementById("toast");
+      const toast = document.getElementById("toast");
 
-  toast.innerText = message;
-  toast.style.display = "block";
-  toast.style.background =
-    type === "error" ? "#7f1d1d" : "#064e3b";
+      toast.innerText = message;
+      toast.style.display = "block";
+      toast.style.background =
+        type === "error" ? "#7f1d1d" : "#064e3b";
 
-  setTimeout(() => {
-    toast.style.display = "none";
-  }, 3000);
-}
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
 
     const apiKey = localStorage.getItem("api_key");
     const email = localStorage.getItem("email");
@@ -506,15 +530,22 @@ ey
 
     async function usdtPayment() {
 
-      const amount = prompt("Enter USDT amount");
+      const amount =
+        document.getElementById("usdtAmount").value;
 
-      if (!amount) return;
+      const tx_hash =
+        document.getElementById("usdtTxHash").value;
 
-      const tx_hash = prompt("Enter transaction hash");
-
-      if (!tx_hash) return;
-
+      if (!amount || !tx_hash) {
+        showToast("Please enter amount and tx hash", "error");
+        return;
+      }
       try {
+
+        const submitBtn = document.getElementById("usdtSubmitBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner"></span>Verifying...';
 
         const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
           method: "POST",
@@ -537,6 +568,9 @@ ey
 
         showToast(data.message || "Payment confirmed");
 
+        document.getElementById("usdtAmount").value = "";
+        document.getElementById("usdtTxHash").value = "";
+
         loadAccount();
         loadLogs();
 
@@ -544,6 +578,15 @@ ey
 
         showToast("USDT submit failed", "error");
 
+      } finally {
+
+        const submitBtn =
+          document.getElementById("usdtSubmitBtn");
+
+        submitBtn.disabled = false;
+
+        submitBtn.innerText =
+          "Submit USDT Payment";
       }
     }
 
@@ -1216,7 +1259,7 @@ ey
 
   </script>
 
-<div id="toast" style="
+  <div id="toast" style="
   position:fixed;
   right:24px;
   bottom:24px;
@@ -1230,7 +1273,7 @@ ey
   z-index:9999;
   font-weight:bold;
 ">
-</div>
+  </div>
 
 </body>
 
