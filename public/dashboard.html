@@ -886,6 +886,38 @@ ey
 
     }
 
+    async function renameApiKey(apiKey, oldName) {
+  const keyName = prompt("Enter new key name", oldName || "My API Key");
+
+  if (!keyName) return;
+
+  try {
+    const res = await fetch("/rename-api-key", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        api_key: apiKey,
+        key_name: keyName
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Rename failed");
+      return;
+    }
+
+    alert("API key renamed");
+    loadApiKeys();
+
+  } catch (err) {
+    alert("Rename failed");
+  }
+}
+
     async function deleteApiKey(apiKey) {
 
       const ok = confirm("Delete this API key?");
@@ -976,8 +1008,8 @@ ey
 
       <div class="key-top">
         <div class="key-name">
-          API Key ${index + 1}
-        </div>
+  ${keyObj.key_name || "API Key " + (index + 1)}
+</div>
       </div>
 
       <div class="key-meta real-key">
@@ -1008,6 +1040,10 @@ ey
   <button onclick="revealApiKey(this, '${keyObj.api_key}')">
     Reveal
   </button>
+
+  <button onclick="renameApiKey('${keyObj.api_key}', '${keyObj.key_name || ""}')">
+  Rename
+</button>
 
   <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">
     Delete

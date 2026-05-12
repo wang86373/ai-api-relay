@@ -87,7 +87,7 @@ app.post("/get-api-keys", async (req, res) => {
 
     const { data, error } = await supabase
       .from("api_keys")
-      .select("api_key, is_active, created_at")
+      .select("api_key, key_name, is_active, created_at")
       .eq("user_email", email)
       .eq("is_active", true)
       .order("created_at", { ascending: false });
@@ -152,6 +152,43 @@ app.post("/delete-api-key", async (req, res) => {
 
   }
 
+});
+
+app.post("/rename-api-key", async (req, res) => {
+  try {
+
+    const { api_key, key_name } = req.body;
+
+    if (!api_key || !key_name) {
+      return res.status(400).json({
+        error: "api_key and key_name required"
+      });
+    }
+
+    const { error } = await supabase
+      .from("api_keys")
+      .update({
+        key_name
+      })
+      .eq("api_key", api_key);
+
+    if (error) {
+      return res.status(500).json({
+        error: error.message
+      });
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    return res.status(500).json({
+      error: "Rename failed"
+    });
+
+  }
 });
 
 app.post("/usage-logs", async (req, res) => {
