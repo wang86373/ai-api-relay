@@ -212,16 +212,27 @@
 
   <script>
     const API_BASE = "https://ai-api-relay.onrender.com";
-    function showAdminSection(sectionId) {
+    function showAdminSection(sectionId, btn) {
 
-      document.querySelectorAll(".admin-section")
-        .forEach(el => {
-          el.style.display = "none";
-        });
+  document.querySelectorAll(".admin-section")
+    .forEach(el => {
+      el.style.display = "none";
+    });
 
-      document.getElementById(sectionId)
-        .style.display = "block";
-    }
+  document.getElementById(sectionId)
+    .style.display = "block";
+
+  document.querySelectorAll(".sidebar-btn")
+    .forEach(el => {
+      el.style.background = "transparent";
+      el.style.borderColor = "rgba(255,255,255,0.08)";
+    });
+
+  if (btn) {
+    btn.style.background = "#2563eb";
+    btn.style.borderColor = "#2563eb";
+  }
+}
 
     async function adminLogin() {
 
@@ -582,7 +593,7 @@ ${k.last_used_at
     }
 
     async function loadLogs(apiKey) {
-
+    showAdminSection("logsSection");
       const box = document.getElementById("logsBox");
 
       box.innerHTML = "Loading logs...";
@@ -759,6 +770,7 @@ ${k.last_used_at
     }
 
     async function confirmPayment(paymentId) {
+      showAdminSection("paymentsSection");
       const ok = confirm("Confirm this USDT payment?");
       if (!ok) return;
 
