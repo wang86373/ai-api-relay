@@ -105,6 +105,11 @@
 
     <div class="card">
       <h2>API Keys</h2>
+      <input id="searchInput" placeholder="Search email / api key / key name" />
+
+      <button onclick="searchKeys()">
+        Search
+      </button>
       <button onclick="loadKeys()">Load API Keys</button>
       <div id="keysBox">No keys loaded.</div>
       <h2 style="margin-top:40px;">Usage Logs</h2>
@@ -128,8 +133,17 @@
       return document.getElementById("adminKey").value.trim();
     }
 
+    function searchKeys() {
+      loadKeys();
+    }
+
     async function loadKeys() {
       const box = document.getElementById("keysBox");
+      const keyword =
+        document.getElementById("searchInput")
+          ?.value
+          ?.trim()
+          ?.toLowerCase() || "";
 
       box.innerHTML = "Loading...";
 
@@ -149,6 +163,13 @@
           box.innerHTML = data.error?.message || "Failed";
           return;
         }
+        if (keyword) {
+          data.keys = data.keys.filter(k =>
+            (k.user_email || "").toLowerCase().includes(keyword) ||
+            (k.api_key || "").toLowerCase().includes(keyword) ||
+            (k.key_name || "").toLowerCase().includes(keyword)
+          );
+        }
 
         if (!data.keys || data.keys.length === 0) {
           box.innerHTML = "No API keys";
@@ -162,6 +183,7 @@
         border:1px solid rgba(255,255,255,0.08);
         border-radius:12px;
       ">
+        <div><b>Name:</b> ${k.key_name || "My API Key"}</div>
         <div><b>Email:</b> ${k.user_email || "-"}</div>
         <div><b>Balance:</b> $${k.balance}</div>
         <div><b>API Key:</b> ${k.api_key}</div>
@@ -200,73 +222,73 @@
 
     async function deleteKey(apiKey) {
 
-  const ok = confirm(
-    "Delete this API key permanently?"
-  );
+      const ok = confirm(
+        "Delete this API key permanently?"
+      );
 
-  if (!ok) return;
+      if (!ok) return;
 
-  try {
+      try {
 
-    const res = await fetch(
-      API_BASE + "/admin/delete-key",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-key": getAdminKey()
-        },
-        body: JSON.stringify({
-          api_key: apiKey
-        })
+        const res = await fetch(
+          API_BASE + "/admin/delete-key",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-key": getAdminKey()
+            },
+            body: JSON.stringify({
+              api_key: apiKey
+            })
+          }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error?.message || "Delete failed");
+          return;
+        }
+
+        alert("API key deleted");
+
+        loadKeys();
+
+      } catch (err) {
+        alert(err.message);
       }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.error?.message || "Delete failed");
-      return;
     }
-
-    alert("API key deleted");
-
-    loadKeys();
-
-  } catch (err) {
-    alert(err.message);
-  }
-}
 
     async function loadLogs(apiKey) {
 
-  const box = document.getElementById("logsBox");
+      const box = document.getElementById("logsBox");
 
-  box.innerHTML = "Loading logs...";
+      box.innerHTML = "Loading logs...";
 
-  try {
+      try {
 
-    const res = await fetch(
-      API_BASE + "/logs/" + apiKey
-    , {
-      headers: {
-        "x-admin-key": getAdminKey()
-      }
-    });
+        const res = await fetch(
+          API_BASE + "/logs/" + apiKey
+          , {
+            headers: {
+              "x-admin-key": getAdminKey()
+            }
+          });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!res.ok) {
-      box.innerHTML = data.error?.message || "Failed";
-      return;
-    }
+        if (!res.ok) {
+          box.innerHTML = data.error?.message || "Failed";
+          return;
+        }
 
-    if (!data.logs || data.logs.length === 0) {
-      box.innerHTML = "No logs found.";
-      return;
-    }
+        if (!data.logs || data.logs.length === 0) {
+          box.innerHTML = "No logs found.";
+          return;
+        }
 
-    box.innerHTML = data.logs.map(log => `
+        box.innerHTML = data.logs.map(log => `
       <div style="
         padding:12px;
         margin-bottom:12px;
@@ -280,10 +302,10 @@
       </div>
     `).join("");
 
-  } catch (err) {
-    box.innerHTML = err.message;
-  }
-}
+      } catch (err) {
+        box.innerHTML = err.message;
+      }
+    }
 
     async function toggleKey(keyId, isActive) {
       const ok = confirm(
