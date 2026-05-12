@@ -964,14 +964,14 @@ ey
 
           list.innerHTML = "";
 
-          data.keys.forEach((keyObj, index) => {
-            const keyStats = stats[keyObj.api_key] || {
-              requests: 0,
-              tokens: 0,
-              cost: 0
-            };
+          const keyStats = stats[keyObj.api_key] || {
+            requests: 0,
+            tokens: 0,
+            cost: 0,
+            lastUsedAt: null
+          };
 
-            list.innerHTML += `
+          list.innerHTML += `
     <div class="key-item">
 
       <div class="key-top">
@@ -995,6 +995,9 @@ ey
 <div class="key-meta">
   Cost: $${keyStats.cost.toFixed(4)}
 </div>
+<div class="key-meta">
+  Last Used: ${keyStats.lastUsedAt ? new Date(keyStats.lastUsedAt).toLocaleString() : "Never"}
+</div>
 
    <div class="key-actions">
 
@@ -1015,12 +1018,11 @@ ey
     </div>
   `;
 
-          });
-        }
+      }
 
       } catch (err) {
-        console.error(err);
-      }
+      console.error(err);
+    }
     }
 
     async function loadUsageLogs() {
