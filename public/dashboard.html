@@ -397,6 +397,22 @@ ey
       <div id="apiKeyList" class="key-list"
         style="display:block; max-height:900px; overflow-y:auto; padding-right:6px;"></div>
 
+      <div id="keyPagination" style="
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+  margin-top:20px;
+">
+        <button onclick="prevKeyPage()">← Prev</button>
+
+        <div id="keyPageText" class="muted">
+          Page 1
+        </div>
+
+        <button onclick="nextKeyPage()">Next →</button>
+      </div>
+
       <div class="card">
         <h2>Your API Key</h2>
 
@@ -525,6 +541,8 @@ ey
     }
 
     const apiKey = localStorage.getItem("api_key");
+    let currentKeyPage = 1;
+    const keysPerPage = 6;
     const urlParams = new URLSearchParams(window.location.search);
 
     if (urlParams.get("top") === "1") {
@@ -959,6 +977,60 @@ ey
       loadUsageLogs();
     }
 
+    function updateKeyPagination(total) {
+  const totalPages =
+    Math.ceil(total / keysPerPage) || 1;
+
+  document.getElementById("keyPageText").innerText =
+    `Page ${currentKeyPage} / ${totalPages}`;
+}
+
+function prevKeyPage() {
+  if (currentKeyPage > 1) {
+    currentKeyPage--;
+    loadApiKeys();
+  }
+}
+
+function nextKeyPage() {
+  const keyword =
+    document.getElementById("keySearchInput")
+    ?.value
+    ?.toLowerCase()
+    ?.trim() || "";
+
+  fetch("/get-api-keys", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: localStorage.getItem("email")
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const filtered = data.keys.filter(keyObj => {
+      const text =
+        (
+          (keyObj.key_name || "") +
+          " " +
+          (keyObj.api_key || "")
+        ).toLowerCase();
+
+      return text.includes(keyword);
+    });
+
+    const totalPages =
+      Math.ceil(filtered.length / keysPerPage);
+
+    if (currentKeyPage < totalPages) {
+      currentKeyPage++;
+      loadApiKeys();
+    }
+  });
+}
+
     document.getElementById("createKeyBtn").onclick = createApiKey;
     function copyApiKey(apiKey) {
       navigator.clipboard.writeText(apiKey);
@@ -1144,7 +1216,7 @@ ey
               ?.value
               ?.toLowerCase()
               ?.trim() || "";
-          data.keys
+          const filteredKeys = data.keys
             .filter(keyObj => {
               const text =
                 (
@@ -1154,8 +1226,15 @@ ey
                 ).toLowerCase();
 
               return text.includes(keyword);
-            })
+            });
+
+          const start = (currentKeyPage - 1) * keysPerPage;
+          const end = start + keysPerPage;
+          updateKeyPagination(filteredKeys.length);
+          filteredKeys
+            .slice(start, end)
             .forEach((keyObj, index) => {
+              
               const keyStats = stats[keyObj.api_key] || {
                 requests: 0,
                 tokens: 0,
