@@ -890,7 +890,7 @@ margin-bottom:18px;
 
   ${filteredModels.length === 0
           ? `<div class="muted">No model usage yet.</div>`
-          : sortedModelStats.map(([modelName, stats], index) =>`
+          : sortedModelStats.map(([modelName, stats], index) => `
       <div style="
         display:grid;
         grid-template-columns:60px 1.5fr 1fr 1fr 1fr;
@@ -1514,6 +1514,8 @@ ${k.last_used_at
         <div><b>Model:</b> ${log.model}</div>
         <div><b>Total Tokens:</b> ${log.total_tokens || 0}</div>
         <div><b>Cost:</b> $${Number(log.cost || 0).toFixed(4)}</div>
+        <div><b>Provider Cost:</b> $${Number(log.provider_cost || 0).toFixed(6)}</div>
+        <div><b>Profit:</b> $${Number(log.profit || 0).toFixed(6)}</div>
         <div><b>Time:</b> ${new Date(log.created_at).toLocaleString()}</div>
       </div>
     `).join("");
