@@ -397,6 +397,7 @@
     let latestActivities = [];
     let commandSearchKeyword = "";
     let latestErrors = [];
+    let topModelSortBy = "revenue";
 
     let todayStats = {
       todayRevenue: 0,
@@ -533,6 +534,19 @@
         modelStats[modelName].tokens += Number(m.tokens || 0);
         modelStats[modelName].revenue += Number(m.revenue || 0);
       });
+
+      const sortedModelStats = Object.entries(modelStats)
+        .sort((a, b) => {
+          if (topModelSortBy === "requests") {
+            return b[1].requests - a[1].requests;
+          }
+
+          if (topModelSortBy === "tokens") {
+            return b[1].tokens - a[1].tokens;
+          }
+
+          return b[1].revenue - a[1].revenue;
+        });
 
       document.getElementById("overviewBox").innerHTML = `
       <div style="
@@ -841,11 +855,42 @@
   padding:20px;
   margin-top:16px;
 ">
-  <h3 style="margin-top:0;">Top Models by Revenue</h3>
+  <div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:18px;
+">
+  <div style="
+    font-size:32px;
+    font-weight:800;
+  ">
+    Top Models
+  </div>
+
+  <div style="
+    display:flex;
+    gap:10px;
+  ">
+    <button onclick="topModelSortBy='revenue';renderOverview()">
+      Revenue
+    </button>
+
+    <button onclick="topModelSortBy='requests';renderOverview()">
+      Requests
+    </button>
+
+    <button onclick="topModelSortBy='tokens';renderOverview()">
+      Tokens
+    </button>
+  </div>
+</div>
 
   ${filteredModels.length === 0
           ? `<div class="muted">No model usage yet.</div>`
-          : filteredModels.map((m, index) => `
+          : sortedModelStats.map(([modelName, stats], index) =>`
       <div style="
         display:grid;
         grid-template-columns:60px 1.5fr 1fr 1fr 1fr;
@@ -858,22 +903,22 @@
 
         <div>
           <div class="muted">Model</div>
-          <b>${m.model || "unknown"}</b>
+          <b>${modelName}</b>
         </div>
 
         <div>
           <div class="muted">Revenue</div>
-          <b>$${Number(m.revenue || 0).toFixed(4)}</b>
+          <b>$${Number(stats.revenue || 0).toFixed(4)}</b>
         </div>
 
         <div>
           <div class="muted">Tokens</div>
-          <b>${Number(m.tokens || 0).toLocaleString()}</b>
+          <b>${Number(stats.tokens || 0).toLocaleString()}</b>
         </div>
 
         <div>
           <div class="muted">Requests</div>
-          <b>${m.requests || 0}</b>
+          <b>${stats.requests || 0}</b>
         </div>
       </div>
     `).join("")}
