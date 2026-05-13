@@ -147,6 +147,20 @@
         transform: rotate(360deg);
       }
     }
+
+    @keyframes ultraDangerFlash {
+      0% {
+        background-color: rgba(127, 29, 29, 0);
+      }
+
+      50% {
+        background-color: rgba(127, 29, 29, 0.12);
+      }
+
+      100% {
+        background-color: rgba(127, 29, 29, 0);
+      }
+    }
   </style>
 </head>
 
@@ -728,6 +742,31 @@
     let ultraLiveSeconds = 10;
     let ultraLiveRefreshCount = 0;
     let ultraLiveLastUpdate = null;
+    let ultraLivePreviousStats = {
+      todayRevenue: 0,
+      todayRequests: 0,
+      todayTokens: 0,
+      onlineUsers: 0
+    };
+    let ultraLiveKnownErrorIds = new Set();
+    let ultraLiveKnownPaymentIds = new Set();
+    let ultraLiveReadyForAlerts = false;
+    let ultraLiveHealth = {
+      status: "Healthy",
+      errorRate: 0,
+      rpm: 0,
+      tpm: 0,
+      costPerMin: 0,
+      riskLevel: "low"
+    };
+    let ultraLiveThreat = {
+      status: "Secure",
+      riskScore: 0,
+      suspiciousKeys: [],
+      highFrequencyKeys: [],
+      errorSpike: false,
+      mode: "normal"
+    };
 
     function createUltraLiveTopBar() {
       if (document.getElementById("ultraLiveTopBar")) return;
@@ -802,6 +841,238 @@
       }, 220);
     }
 
+    function showUltraLiveDelta(label, value, type = "info") {
+      if (!value || value <= 0) return;
+
+      const message =
+        label === "Revenue"
+          ? `${label} +$${Number(value).toFixed(4)}`
+          : `${label} +${Number(value).toLocaleString()}`;
+
+      showToast(message, type, 2600);
+      pushUltraLiveActivity({
+        title: label + " Increased",
+        detail: message,
+        type
+      });
+    }
+
+    function checkUltraLiveNewErrors(errors = []) {
+      if (!Array.isArray(errors)) return;
+
+      const newErrors = errors.filter(err => {
+        const id =
+          err.id ||
+          err.created_at + "_" + err.error_message;
+
+        return !ultraLiveKnownErrorIds.has(id);
+      });
+
+      errors.forEach(err => {
+        const id =
+          err.id ||
+          err.created_at + "_" + err.error_message;
+
+        ultraLiveKnownErrorIds.add(id);
+      });
+
+      if (!ultraLiveReadyForAlerts) return;
+
+      newErrors.forEach(err => {
+        showToast(
+          "New API Error: " + (err.error_message || "Unknown error"),
+          "error",
+          5000
+        );
+        pushUltraLiveActivity({
+          title: "API Error Detected",
+          detail: err.error_message || "Unknown error",
+          type: "error"
+        });
+      });
+    }
+
+    function checkUltraLiveNewPayments(payments = []) {
+      if (!Array.isArray(payments)) return;
+
+      const newPayments = payments.filter(p => {
+        const id =
+          p.id ||
+          p.tx_hash ||
+          p.created_at + "_" + p.amount;
+
+        return !ultraLiveKnownPaymentIds.has(id);
+      });
+
+      payments.forEach(p => {
+        const id =
+          p.id ||
+          p.tx_hash ||
+          p.created_at + "_" + p.amount;
+
+        ultraLiveKnownPaymentIds.add(id);
+      });
+
+      if (!ultraLiveReadyForAlerts) return;
+
+      newPayments.forEach(p => {
+        showToast(
+          "New USDT Payment: $" + Number(p.amount || 0).toFixed(2),
+          p.status === "confirmed" ? "success" : "warning",
+          5000
+        );
+        pushUltraLiveActivity({
+          title: "New USDT Payment",
+          detail:
+            "$" +
+            Number(p.amount || 0).toFixed(2) +
+            " · " +
+            (p.status || "pending"),
+          type: "payment"
+        });
+      });
+    }
+
+    function calculateUltraLiveHealth() {
+      const recentActivities = Array.isArray(latestActivities)
+        ? latestActivities
+        : [];
+
+      const recentErrors = Array.isArray(latestErrors)
+        ? latestErrors
+        : [];
+
+      const requests =
+        Number(todayStats.todayRequests || 0);
+
+      const tokens =
+        Number(todayStats.todayTokens || 0);
+
+      const revenue =
+        Number(todayStats.todayRevenue || 0);
+
+      const errors =
+        recentErrors.length;
+
+      const errorRate =
+        requests > 0
+          ? (errors / requests) * 100
+          : 0;
+
+      const rpm =
+        recentActivities.length;
+
+      const tpm =
+        recentActivities.reduce((sum, item) => {
+          return sum + Number(item.tokens || 0);
+        }, 0);
+
+      const costPerMin =
+        recentActivities.reduce((sum, item) => {
+          return sum + Number(item.revenue || 0);
+        }, 0);
+
+      let status = "Healthy";
+      let riskLevel = "low";
+
+      if (errorRate >= 20 || errors >= 10) {
+        status = "Critical";
+        riskLevel = "high";
+      } else if (errorRate >= 8 || errors >= 5) {
+        status = "Warning";
+        riskLevel = "medium";
+      }
+
+      ultraLiveHealth = {
+        status,
+        errorRate,
+        rpm,
+        tpm,
+        costPerMin,
+        riskLevel
+      };
+
+      return ultraLiveHealth;
+    }
+
+    function calculateUltraLiveThreat() {
+      const keys = Array.isArray(latestKeys) ? latestKeys : [];
+      const errors = Array.isArray(latestErrors) ? latestErrors : [];
+      const activities = Array.isArray(latestActivities) ? latestActivities : [];
+
+      const suspiciousKeys = keys.filter(k => {
+        const requests = Number(k.total_requests || 0);
+        const balance = Number(k.balance || 0);
+        const tokens = Number(k.total_tokens || 0);
+
+        return (
+          requests >= 100 ||
+          tokens >= 100000 ||
+          balance < 0
+        );
+      });
+
+      const activityMap = {};
+
+      activities.forEach(a => {
+        const key = a.api_key || "unknown";
+
+        if (!activityMap[key]) {
+          activityMap[key] = {
+            api_key: key,
+            count: 0,
+            tokens: 0,
+            revenue: 0
+          };
+        }
+
+        activityMap[key].count += 1;
+        activityMap[key].tokens += Number(a.tokens || 0);
+        activityMap[key].revenue += Number(a.revenue || 0);
+      });
+
+      const highFrequencyKeys = Object.values(activityMap)
+        .filter(item => item.count >= 5 || item.tokens >= 50000);
+
+      const errorSpike =
+        errors.length >= 8 ||
+        ultraLiveHealth.errorRate >= 15;
+
+      let riskScore = 0;
+
+      riskScore += suspiciousKeys.length * 18;
+      riskScore += highFrequencyKeys.length * 22;
+      riskScore += errorSpike ? 35 : 0;
+      riskScore += ultraLiveHealth.riskLevel === "high" ? 25 : 0;
+
+      riskScore = Math.min(100, riskScore);
+
+      let status = "Secure";
+      let mode = "normal";
+
+      if (riskScore >= 80) {
+        status = "System Under Attack";
+        mode = "attack";
+      } else if (riskScore >= 45) {
+        status = "High Risk";
+        mode = "danger";
+      } else if (riskScore >= 20) {
+        status = "Watch";
+        mode = "watch";
+      }
+
+      ultraLiveThreat = {
+        status,
+        riskScore,
+        suspiciousKeys,
+        highFrequencyKeys,
+        errorSpike,
+        mode
+      };
+
+      return ultraLiveThreat;
+    }
+
     function updateUltraLiveTopBar(status = "Online") {
       const healthEl = document.getElementById("ultraApiHealth");
       const revenueEl = document.getElementById("ultraTopRevenue");
@@ -834,6 +1105,435 @@
       flashValue(revenueEl);
       flashValue(requestsEl);
       flashValue(usersEl);
+    }
+
+    function createUltraLiveHealthPanel() {
+      if (document.getElementById("ultraLiveHealthPanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraLiveHealthPanel";
+      panel.style.cssText = `
+    position:fixed;
+    left:24px;
+    bottom:24px;
+    z-index:9996;
+    width:360px;
+    padding:18px;
+    border-radius:24px;
+    background:rgba(2,6,23,.86);
+    border:1px solid rgba(56,189,248,.18);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(56,189,248,.10);
+    backdrop-filter:blur(18px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:14px;
+    ">
+      <div style="
+        color:#38bdf8;
+        font-weight:900;
+        letter-spacing:.04em;
+      ">
+        AI HEALTH ENGINE
+      </div>
+
+      <div id="ultraHealthBadge" style="
+        font-size:12px;
+        padding:5px 9px;
+        border-radius:999px;
+        background:rgba(34,197,94,.16);
+        color:#22c55e;
+        font-weight:800;
+      ">
+        Healthy
+      </div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    ">
+      <div class="healthItem">
+        <div class="muted">Error Rate</div>
+        <b id="healthErrorRate">0%</b>
+      </div>
+
+      <div class="healthItem">
+        <div class="muted">RPM</div>
+        <b id="healthRpm">0</b>
+      </div>
+
+      <div class="healthItem">
+        <div class="muted">TPM</div>
+        <b id="healthTpm">0</b>
+      </div>
+
+      <div class="healthItem">
+        <div class="muted">Cost / Min</div>
+        <b id="healthCostMin">$0.0000</b>
+      </div>
+    </div>
+
+    <div id="healthMessage" style="
+      margin-top:14px;
+      color:#94a3b8;
+      font-size:13px;
+      line-height:1.5;
+    ">
+      System running normally.
+    </div>
+  `;
+
+      document.body.appendChild(panel);
+
+      document.querySelectorAll(".healthItem").forEach(el => {
+        el.style.cssText = `
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+    `;
+      });
+    }
+
+    function createUltraLiveThreatPanel() {
+      if (document.getElementById("ultraLiveThreatPanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraLiveThreatPanel";
+      panel.style.cssText = `
+    position:fixed;
+    left:24px;
+    bottom:300px;
+    z-index:9996;
+    width:360px;
+    padding:18px;
+    border-radius:24px;
+    background:rgba(2,6,23,.88);
+    border:1px solid rgba(239,68,68,.22);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(239,68,68,.10);
+    backdrop-filter:blur(18px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:14px;
+    ">
+      <div style="
+        color:#f87171;
+        font-weight:900;
+        letter-spacing:.04em;
+      ">
+        AI THREAT ENGINE
+      </div>
+
+      <div id="ultraThreatBadge" style="
+        font-size:12px;
+        padding:5px 9px;
+        border-radius:999px;
+        background:rgba(34,197,94,.16);
+        color:#22c55e;
+        font-weight:800;
+      ">
+        Secure
+      </div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    ">
+      <div class="threatItem">
+        <div class="muted">Risk Score</div>
+        <b id="threatRiskScore">0 / 100</b>
+      </div>
+
+      <div class="threatItem">
+        <div class="muted">Error Spike</div>
+        <b id="threatErrorSpike">No</b>
+      </div>
+
+      <div class="threatItem">
+        <div class="muted">Suspicious Keys</div>
+        <b id="threatSuspiciousKeys">0</b>
+      </div>
+
+      <div class="threatItem">
+        <div class="muted">High Frequency</div>
+        <b id="threatHighFreqKeys">0</b>
+      </div>
+    </div>
+
+    <div id="threatMessage" style="
+      margin-top:14px;
+      color:#94a3b8;
+      font-size:13px;
+      line-height:1.5;
+    ">
+      No suspicious activity detected.
+    </div>
+  `;
+
+      document.body.appendChild(panel);
+
+      document.querySelectorAll(".threatItem").forEach(el => {
+        el.style.cssText = `
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+    `;
+      });
+    }
+
+    function updateUltraLiveThreatPanel() {
+      const threat = calculateUltraLiveThreat();
+
+      const badge = document.getElementById("ultraThreatBadge");
+      const riskEl = document.getElementById("threatRiskScore");
+      const spikeEl = document.getElementById("threatErrorSpike");
+      const suspiciousEl = document.getElementById("threatSuspiciousKeys");
+      const highFreqEl = document.getElementById("threatHighFreqKeys");
+      const msgEl = document.getElementById("threatMessage");
+
+      if (!badge) return;
+
+      const color =
+        threat.mode === "attack"
+          ? "#ef4444"
+          : threat.mode === "danger"
+            ? "#f97316"
+            : threat.mode === "watch"
+              ? "#facc15"
+              : "#22c55e";
+
+      badge.innerText = threat.status;
+      badge.style.color = color;
+      badge.style.background = color + "22";
+
+      riskEl.innerText =
+        threat.riskScore + " / 100";
+
+      spikeEl.innerText =
+        threat.errorSpike ? "YES" : "NO";
+
+      suspiciousEl.innerText =
+        threat.suspiciousKeys.length;
+
+      highFreqEl.innerText =
+        threat.highFrequencyKeys.length;
+
+      msgEl.innerText =
+        threat.mode === "attack"
+          ? "System may be under attack. Investigate suspicious keys immediately."
+          : threat.mode === "danger"
+            ? "High risk activity detected. Monitor API traffic closely."
+            : threat.mode === "watch"
+              ? "Suspicious patterns detected."
+              : "No suspicious activity detected.";
+
+      if (threat.mode === "attack") {
+        showToast(
+          "SYSTEM UNDER ATTACK",
+          "error",
+          6000
+        );
+
+        pushUltraLiveActivity({
+          title: "Threat Alert",
+          detail: "System Under Attack",
+          type: "error"
+        });
+
+        threat.suspiciousKeys
+          .slice(0, 3)
+          .forEach(k => {
+            pushUltraLiveActivity({
+              title: "Suspicious API Key",
+              detail:
+                (k.api_key || "unknown").slice(0, 16) +
+                "...",
+              type: "warning"
+            });
+          });
+
+        document.body.style.animation =
+          "ultraDangerFlash 1s infinite";
+      } else {
+        document.body.style.animation = "";
+      }
+    }
+
+    function createUltraLiveActivityStream() {
+      if (document.getElementById("ultraLiveActivityStream")) return;
+
+      const stream = document.createElement("div");
+
+      stream.id = "ultraLiveActivityStream";
+      stream.style.cssText = `
+    position:fixed;
+    right:24px;
+    bottom:220px;
+    z-index:9996;
+    width:360px;
+    max-height:360px;
+    overflow:hidden;
+    padding:16px;
+    border-radius:24px;
+    background:rgba(2,6,23,.82);
+    border:1px solid rgba(56,189,248,.18);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(56,189,248,.10);
+    backdrop-filter:blur(18px);
+  `;
+
+      stream.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+    ">
+      <div style="
+        color:#38bdf8;
+        font-weight:900;
+        letter-spacing:.04em;
+      ">
+        LIVE ACTIVITY
+      </div>
+
+      <div style="
+        font-size:12px;
+        color:#22c55e;
+      ">
+        Streaming
+      </div>
+    </div>
+
+    <div id="ultraLiveActivityList" style="
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    "></div>
+  `;
+
+      document.body.appendChild(stream);
+    }
+
+    function pushUltraLiveActivity({
+      title = "Activity",
+      detail = "",
+      type = "info"
+    }) {
+      const list = document.getElementById("ultraLiveActivityList");
+      if (!list) return;
+
+      const colors = {
+        success: "#22c55e",
+        error: "#ef4444",
+        warning: "#facc15",
+        info: "#38bdf8",
+        payment: "#a78bfa"
+      };
+
+      const icon = {
+        success: "✓",
+        error: "!",
+        warning: "!",
+        info: "i",
+        payment: "$"
+      }[type] || "i";
+
+      const item = document.createElement("div");
+
+      item.style.cssText = `
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:12px;
+    border-radius:16px;
+    background:rgba(15,23,42,.82);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 10px 28px rgba(0,0,0,.22);
+    transform:translateX(30px);
+    opacity:0;
+    transition:all .35s cubic-bezier(.2,.8,.2,1);
+  `;
+
+      item.innerHTML = `
+    <div style="
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:${colors[type] || colors.info};
+      color:#020617;
+      font-weight:900;
+      flex-shrink:0;
+    ">
+      ${icon}
+    </div>
+
+    <div style="flex:1;min-width:0;">
+      <div style="
+        font-size:13px;
+        font-weight:800;
+        color:white;
+        margin-bottom:4px;
+      ">
+        ${title}
+      </div>
+
+      <div style="
+        font-size:12px;
+        color:#cbd5e1;
+        line-height:1.45;
+        word-break:break-word;
+      ">
+        ${detail}
+      </div>
+
+      <div style="
+        margin-top:6px;
+        font-size:11px;
+        color:#64748b;
+      ">
+        ${new Date().toLocaleTimeString()}
+      </div>
+    </div>
+  `;
+
+      list.prepend(item);
+
+      requestAnimationFrame(() => {
+        item.style.transform = "translateX(0)";
+        item.style.opacity = "1";
+      });
+
+      while (list.children.length > 8) {
+        list.lastChild.remove();
+      }
     }
 
     function createUltraLiveWidget() {
@@ -968,6 +1668,9 @@
 
         updateUltraLiveWidget("Live");
         updateUltraLiveTopBar("Online");
+        updateUltraLiveHealthPanel();
+        updateUltraLiveThreatPanel();
+        ultraLiveReadyForAlerts = true;
       } catch (err) {
         console.log("Ultra Live refresh failed:", err.message);
         updateUltraLiveWidget("Error");
@@ -980,6 +1683,9 @@
 
     function startUltraLiveDashboard() {
       createUltraLiveTopBar();
+      createUltraLiveHealthPanel();
+      createUltraLiveThreatPanel();
+      createUltraLiveActivityStream();
       createUltraLiveWidget();
 
       if (ultraLiveTimer) clearInterval(ultraLiveTimer);
@@ -1055,6 +1761,27 @@
           todayRequests: Number(data.todayRequests || 0),
           onlineUsers: Number(data.onlineUsers || 0)
         };
+
+        const revenueDelta =
+          todayStats.todayRevenue - ultraLivePreviousStats.todayRevenue;
+
+        const requestsDelta =
+          todayStats.todayRequests - ultraLivePreviousStats.todayRequests;
+
+        const tokensDelta =
+          todayStats.todayTokens - ultraLivePreviousStats.todayTokens;
+
+        const usersDelta =
+          todayStats.onlineUsers - ultraLivePreviousStats.onlineUsers;
+
+        if (ultraLivePreviousStats.todayRequests > 0) {
+          showUltraLiveDelta("Revenue", revenueDelta, "success");
+          showUltraLiveDelta("Requests", requestsDelta, "info");
+          showUltraLiveDelta("Tokens", tokensDelta, "warning");
+          showUltraLiveDelta("Online Users", usersDelta, "info");
+        }
+
+        ultraLivePreviousStats = { ...todayStats };
 
         renderOverview();
 
@@ -2550,6 +3277,7 @@ ${k.last_used_at
         if (!res.ok) return;
 
         latestErrors = data.errors || [];
+        checkUltraLiveNewErrors(latestErrors);
 
         renderOverview();
 
@@ -2756,6 +3484,7 @@ ${k.last_used_at
 
         msg.innerText = "";
         latestPayments = data.payments || [];
+        checkUltraLiveNewPayments(latestPayments);
         renderOverview();
 
         if (!data.payments || data.payments.length === 0) {
