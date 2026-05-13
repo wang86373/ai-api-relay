@@ -294,6 +294,26 @@ const deepseek = process.env.DEEPSEEK_API_KEY
   })
   : null;
 
+const MODEL_PRICING = {
+  "gpt-4o-mini": 0.01,
+  "gpt-4o": 0.05,
+  "gpt-4.1": 0.08,
+
+  "deepseek-chat": 0.002,
+
+  "claude-3-5-sonnet": 0.03
+};
+
+const MODEL_PROVIDER_COST = {
+  "gpt-4o-mini": 0.00015,
+  "gpt-4o": 0.01,
+  "gpt-4.1": 0.03,
+
+  "deepseek-chat": 0.0004,
+
+  "claude-3-5-sonnet": 0.015
+};
+
 const anthropic = process.env.ANTHROPIC_API_KEY
   ? new OpenAI({
     apiKey: process.env.ANTHROPIC_API_KEY,
@@ -1369,18 +1389,19 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       messages
     });
 
-    let pricePer1k = 0.01;
-
-    if (model === "deepseek-chat") {
-      pricePer1k = 0.002;
-    }
-
-    if (model === "claude-3-5-sonnet") {
-      pricePer1k = 0.03;
-    }
+    const pricePer1k =
+      MODEL_PRICING[model] || 0.01;
 
     const cost =
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
+    const providerCostPer1k =
+      MODEL_PROVIDER_COST[model] || 0;
+
+    const providerCost =
+      ((completion.usage?.total_tokens || 0) / 1000)
+      * providerCostPer1k;
+
+    const profit = cost - providerCost;
 
     const { error: usageLogError } = await supabase.from("usage_logs").insert({
       api_key: apiKey,
@@ -1390,7 +1411,9 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       prompt_tokens: completion.usage?.prompt_tokens || 0,
       completion_tokens: completion.usage?.completion_tokens || 0,
       total_tokens: completion.usage?.total_tokens || 0,
-      cost
+      cost,
+      provider_cost: providerCost,
+      profit
     });
 
     if (usageLogError) {
