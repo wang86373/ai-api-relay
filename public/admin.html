@@ -2819,7 +2819,9 @@
     "></div>
   `;
 
-      document.body.appendChild(stream);
+      if (!mountUltraPanelToDock(stream, "right")) {
+        document.body.appendChild(stream);
+      }
     }
 
     function pushUltraLiveActivity({
@@ -2999,7 +3001,9 @@
     </div>
   `;
 
-      document.body.appendChild(widget);
+      if (!mountUltraPanelToDock(widget, "right")) {
+        document.body.appendChild(widget);
+      }
     }
 
     function updateUltraLiveWidget(status = "Live") {
