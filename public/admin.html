@@ -815,16 +815,20 @@
 
       dock.id = "ultraDockLayout";
       dock.style.cssText = `
-    position:fixed;
-    left:24px;
-    right:24px;
-    bottom:24px;
-    z-index:9994;
-    display:grid;
-    grid-template-columns:360px 420px 420px;
-    gap:18px;
-    pointer-events:none;
-  `;
+  position:fixed;
+  left:24px;
+  right:24px;
+  bottom:24px;
+  z-index:9994;
+  display:grid;
+  grid-template-columns:360px 520px 420px;
+  gap:18px;
+  align-items:end;
+  pointer-events:none;
+  max-height:calc(100vh - 110px);
+  overflow-y:auto;
+  padding-right:8px;
+`;
 
       dock.innerHTML = `
     <div id="ultraDockLeft" style="
