@@ -808,6 +808,75 @@
     };
     let ultraCommandCenterOpen = true;
 
+    function createUltraDockLayout() {
+      if (document.getElementById("ultraDockLayout")) return;
+
+      const dock = document.createElement("div");
+
+      dock.id = "ultraDockLayout";
+      dock.style.cssText = `
+    position:fixed;
+    left:24px;
+    right:24px;
+    bottom:24px;
+    z-index:9994;
+    display:grid;
+    grid-template-columns:360px 420px 420px;
+    gap:18px;
+    pointer-events:none;
+  `;
+
+      dock.innerHTML = `
+    <div id="ultraDockLeft" style="
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      pointer-events:auto;
+    "></div>
+
+    <div id="ultraDockCenter" style="
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      pointer-events:auto;
+    "></div>
+
+    <div id="ultraDockRight" style="
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      pointer-events:auto;
+    "></div>
+  `;
+
+      document.body.appendChild(dock);
+    }
+
+    function mountUltraPanelToDock(panel, column = "right") {
+      const dockId =
+        column === "left"
+          ? "ultraDockLeft"
+          : column === "center"
+            ? "ultraDockCenter"
+            : "ultraDockRight";
+
+      const dock = document.getElementById(dockId);
+
+      if (!dock || !panel) return false;
+
+      panel.style.position = "relative";
+      panel.style.left = "auto";
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+      panel.style.top = "auto";
+      panel.style.width = "100%";
+      panel.style.zIndex = "auto";
+
+      dock.appendChild(panel);
+
+      return true;
+    }
+
     function createUltraCommandCenterToggle() {
       if (document.getElementById("ultraCommandCenterToggle")) return;
 
@@ -1552,7 +1621,9 @@
     </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "left")) {
+        document.body.appendChild(panel);
+      }
 
       document.querySelectorAll(".healthItem").forEach(el => {
         el.style.cssText = `
@@ -1650,7 +1721,9 @@
     </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "left")) {
+        document.body.appendChild(panel);
+      }
 
       document.querySelectorAll(".threatItem").forEach(el => {
         el.style.cssText = `
@@ -1896,7 +1969,9 @@
     </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "center")) {
+        document.body.appendChild(panel);
+      }
 
       document.querySelectorAll(".defenseItem").forEach(el => {
         el.style.cssText = `
@@ -2985,6 +3060,7 @@
     }
 
     function startUltraLiveDashboard() {
+      createUltraDockLayout();
       createUltraCommandCenterToggle();
       createUltraLiveTopBar();
       createUltraLiveHealthPanel();
