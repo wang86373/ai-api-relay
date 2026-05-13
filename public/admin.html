@@ -767,6 +767,21 @@
       errorSpike: false,
       mode: "normal"
     };
+    let ultraLiveDefense = {
+      autoDefenseEnabled: true,
+      autoLockdownEnabled: true,
+      autoRecoveryEnabled: true,
+      safeMode: false,
+      lockdown: false,
+      isolationMode: false,
+      blockedKeys: [],
+      suggestedActions: [],
+      defenseLevel: "Normal",
+      lockdownStartedAt: null,
+      lastAutoActionAt: null,
+      lastDefenseAt: null
+    };
+    let ultraDefenseTimeline = [];
 
     function createUltraLiveTopBar() {
       if (document.getElementById("ultraLiveTopBar")) return;
@@ -1071,6 +1086,249 @@
       };
 
       return ultraLiveThreat;
+    }
+
+    function calculateUltraLiveDefense() {
+      const threat = ultraLiveThreat || {};
+      const actions = [];
+
+      if (!ultraLiveDefense.autoDefenseEnabled) {
+        ultraLiveDefense.suggestedActions = [
+          "Auto Defense is disabled."
+        ];
+
+        return ultraLiveDefense;
+      }
+
+      if (threat.mode === "attack") {
+        ultraLiveDefense.safeMode = true;
+
+        actions.push("Enable Safe Mode");
+        actions.push("Throttle Suspicious Keys");
+
+        if (
+          Array.isArray(threat.suspiciousKeys) &&
+          threat.suspiciousKeys.length >= 3
+        ) {
+          ultraLiveDefense.lockdown = true;
+
+          actions.push("Enable Global Lockdown");
+        }
+
+        ultraLiveDefense.defenseLevel = "Critical";
+      } else if (threat.status === "Warning") {
+        ultraLiveDefense.safeMode = true;
+
+        actions.push("Monitor Suspicious Traffic");
+
+        ultraLiveDefense.defenseLevel = "Elevated";
+      } else {
+        ultraLiveDefense.safeMode = false;
+        ultraLiveDefense.lockdown = false;
+        ultraLiveDefense.isolationMode = false;
+
+        ultraLiveDefense.defenseLevel = "Normal";
+      }
+
+      if (
+        Array.isArray(threat.highFrequencyKeys) &&
+        threat.highFrequencyKeys.length > 0
+      ) {
+        ultraLiveDefense.isolationMode = true;
+
+        ultraLiveDefense.blockedKeys =
+          threat.highFrequencyKeys
+            .slice(0, 5)
+            .map(k => k.api_key || "unknown");
+
+        actions.push("Isolate High Frequency Keys");
+      }
+
+      ultraLiveDefense.suggestedActions = actions;
+      ultraLiveDefense.lastDefenseAt = Date.now();
+
+      return ultraLiveDefense;
+    }
+
+    function runUltraAutoLockdownEngine() {
+      if (!ultraLiveDefense.autoDefenseEnabled) return;
+      if (!ultraLiveDefense.autoLockdownEnabled) return;
+
+      const threat = ultraLiveThreat || {};
+      const now = Date.now();
+
+      const shouldLockdown =
+        threat.mode === "attack" ||
+        Number(threat.riskScore || 0) >= 85 ||
+        (
+          Array.isArray(threat.suspiciousKeys) &&
+          threat.suspiciousKeys.length >= 5
+        );
+
+      if (shouldLockdown && !ultraLiveDefense.lockdown) {
+        ultraLiveDefense.lockdown = true;
+        ultraLiveDefense.safeMode = true;
+        ultraLiveDefense.isolationMode = true;
+        ultraLiveDefense.defenseLevel = "Critical";
+        ultraLiveDefense.lockdownStartedAt = now;
+        ultraLiveDefense.lastAutoActionAt = now;
+
+        ultraLiveDefense.blockedKeys = [
+          ...new Set([
+            ...(ultraLiveDefense.blockedKeys || []),
+            ...((threat.highFrequencyKeys || []).map(k => k.api_key || "unknown")),
+            ...((threat.suspiciousKeys || []).map(k => k.api_key || "unknown"))
+          ])
+        ].slice(0, 10);
+
+        showToast("AUTO LOCKDOWN ACTIVATED", "error", 7000);
+
+        pushUltraLiveActivity({
+          title: "Auto Lockdown",
+          detail: "AI activated lockdown due to high risk traffic.",
+          type: "error"
+        });
+
+        addUltraDefenseTimeline({
+          title: "Auto Lockdown",
+          detail: "AI activated lockdown due to high risk traffic.",
+          type: "error"
+        });
+
+        document.body.style.animation =
+          "ultraDangerFlash 1s infinite";
+      }
+    }
+
+    function runUltraAutoRecoveryEngine() {
+      if (!ultraLiveDefense.autoRecoveryEnabled) return;
+      if (!ultraLiveDefense.lockdown) return;
+
+      const threat = ultraLiveThreat || {};
+      const now = Date.now();
+
+      const lockdownAge =
+        ultraLiveDefense.lockdownStartedAt
+          ? now - ultraLiveDefense.lockdownStartedAt
+          : 0;
+
+      const canRecover =
+        lockdownAge > 30000 &&
+        threat.mode !== "attack" &&
+        Number(threat.riskScore || 0) < 35;
+
+      if (canRecover) {
+        ultraLiveDefense.lockdown = false;
+        ultraLiveDefense.safeMode = false;
+        ultraLiveDefense.isolationMode = false;
+        ultraLiveDefense.defenseLevel = "Normal";
+        ultraLiveDefense.lockdownStartedAt = null;
+        ultraLiveDefense.lastAutoActionAt = now;
+
+        document.body.style.animation = "";
+
+        showToast("AUTO RECOVERY COMPLETED", "success", 5000);
+
+        pushUltraLiveActivity({
+          title: "Auto Recovery",
+          detail: "System returned to normal after threat level dropped.",
+          type: "success"
+        });
+        addUltraDefenseTimeline({
+          title: "Auto Recovery",
+          detail: "System returned to normal after threat level dropped.",
+          type: "success"
+        });
+      }
+    }
+
+    function addUltraDefenseTimeline({
+      title = "Defense Event",
+      detail = "",
+      type = "info"
+    }) {
+      const item = {
+        title,
+        detail,
+        type,
+        time: new Date().toLocaleTimeString(),
+        created_at: new Date().toISOString()
+      };
+
+      ultraDefenseTimeline.unshift(item);
+
+      if (ultraDefenseTimeline.length > 50) {
+        ultraDefenseTimeline = ultraDefenseTimeline.slice(0, 50);
+      }
+
+      localStorage.setItem(
+        "ultraDefenseTimeline",
+        JSON.stringify(ultraDefenseTimeline)
+      );
+
+      updateUltraDefenseTimelinePanel();
+      updateUltraSecurityAnalyticsPanel();
+    }
+
+    function loadUltraDefenseTimeline() {
+      try {
+        const saved =
+          localStorage.getItem("ultraDefenseTimeline");
+
+        if (!saved) return;
+
+        ultraDefenseTimeline =
+          JSON.parse(saved) || [];
+
+      } catch (err) {
+        ultraDefenseTimeline = [];
+      }
+    }
+
+    function clearUltraDefenseTimeline() {
+      ultraDefenseTimeline = [];
+
+      localStorage.removeItem("ultraDefenseTimeline");
+
+      updateUltraDefenseTimelinePanel();
+
+      showToast("Defense Timeline Cleared", "success", 3000);
+
+      pushUltraLiveActivity({
+        title: "Timeline Cleared",
+        detail: "Defense timeline was cleared manually.",
+        type: "info"
+      });
+    }
+
+    function exportUltraDefenseTimeline() {
+      const data = JSON.stringify(
+        ultraDefenseTimeline,
+        null,
+        2
+      );
+
+      const blob = new Blob(
+        [data],
+        { type: "application/json" }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ultra-defense-timeline.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+
+      showToast("Defense Timeline Exported", "success", 3000);
+
+      pushUltraLiveActivity({
+        title: "Timeline Exported",
+        detail: "Defense timeline JSON exported.",
+        type: "success"
+      });
     }
 
     function updateUltraLiveTopBar(status = "Online") {
@@ -1381,6 +1639,607 @@
       }
     }
 
+    function createUltraLiveDefensePanel() {
+      if (document.getElementById("ultraLiveDefensePanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraLiveDefensePanel";
+      panel.style.cssText = `
+    position:fixed;
+    left:400px;
+    bottom:24px;
+    z-index:9996;
+    width:380px;
+    padding:18px;
+    border-radius:24px;
+    background:rgba(2,6,23,.88);
+    border:1px solid rgba(168,85,247,.24);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(168,85,247,.12);
+    backdrop-filter:blur(18px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:16px;
+    ">
+      <div style="
+        color:#c084fc;
+        font-weight:900;
+        letter-spacing:.04em;
+      ">
+        AI DEFENSE ENGINE
+      </div>
+
+      <div id="defenseLevelBadge" style="
+        font-size:12px;
+        padding:6px 10px;
+        border-radius:999px;
+        background:rgba(34,197,94,.16);
+        color:#22c55e;
+        font-weight:800;
+      ">
+        Normal
+      </div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    ">
+      <div class="defenseItem">
+        <div class="muted">Auto Defense</div>
+        <b id="defenseAuto">ON</b>
+      </div>
+
+      <div class="defenseItem">
+        <div class="muted">Safe Mode</div>
+        <b id="defenseSafeMode">OFF</b>
+      </div>
+
+      <div class="defenseItem">
+        <div class="muted">Lockdown</div>
+        <b id="defenseLockdown">OFF</b>
+      </div>
+
+      <div class="defenseItem">
+        <div class="muted">Isolation</div>
+        <b id="defenseIsolation">OFF</b>
+      </div>
+    </div>
+
+    <div class="defenseItem" style="margin-top:14px;">
+      <div class="muted" style="margin-bottom:8px;">
+        Suggested Actions
+      </div>
+
+      <div id="defenseActions">
+        No actions required.
+      </div>
+    </div>
+
+    <div class="defenseItem" style="margin-top:14px;">
+      <div class="muted" style="margin-bottom:8px;">
+        Blocked Keys
+      </div>
+
+      <div id="defenseBlockedKeys">
+        None
+      </div>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:14px;
+    ">
+      <button onclick="toggleUltraLiveDefense()" style="
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#7c3aed;
+        color:white;
+        border:none;
+        font-weight:700;
+        cursor:pointer;
+      ">
+        Toggle Auto
+      </button>
+
+      <button onclick="toggleUltraSafeMode()" style="
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#f59e0b;
+        color:white;
+        border:none;
+        font-weight:700;
+        cursor:pointer;
+      ">
+        Safe Mode
+      </button>
+
+      <button onclick="triggerUltraEmergencyLockdown()" style="
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#dc2626;
+        color:white;
+        border:none;
+        font-weight:700;
+        cursor:pointer;
+      ">
+        Lockdown
+      </button>
+
+      <button onclick="resetUltraLiveDefense()" style="
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#334155;
+        color:white;
+        border:none;
+        font-weight:700;
+        cursor:pointer;
+      ">
+        Reset
+      </button>
+    </div>
+  `;
+
+      document.body.appendChild(panel);
+
+      document.querySelectorAll(".defenseItem").forEach(el => {
+        el.style.cssText = `
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+    `;
+      });
+    }
+
+    function createUltraDefenseTimelinePanel() {
+      if (document.getElementById("ultraDefenseTimelinePanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraDefenseTimelinePanel";
+      panel.style.cssText = `
+    position:fixed;
+    left:400px;
+    bottom:360px;
+    z-index:9996;
+    width:380px;
+    max-height:340px;
+    overflow:hidden;
+    padding:18px;
+    border-radius:24px;
+    background:rgba(2,6,23,.88);
+    border:1px solid rgba(14,165,233,.24);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(14,165,233,.12);
+    backdrop-filter:blur(18px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+">
+  <div style="
+    color:#38bdf8;
+    font-weight:900;
+    letter-spacing:.04em;
+  ">
+    DEFENSE TIMELINE
+  </div>
+
+  <div style="display:flex;gap:8px;">
+    <button onclick="exportUltraDefenseTimeline()" style="
+      margin:0;
+      padding:6px 9px;
+      border-radius:999px;
+      background:#2563eb;
+      color:white;
+      border:none;
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+    ">
+      Export
+    </button>
+
+    <button onclick="clearUltraDefenseTimeline()" style="
+      margin:0;
+      padding:6px 9px;
+      border-radius:999px;
+      background:#334155;
+      color:white;
+      border:none;
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+    ">
+      Clear
+    </button>
+  </div>
+</div>
+
+    <div id="ultraDefenseTimelineList" style="
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:280px;
+      overflow-y:auto;
+      padding-right:4px;
+    ">
+      <div style="color:#64748b;font-size:13px;">
+        Waiting for defense events...
+      </div>
+    </div>
+  `;
+
+      document.body.appendChild(panel);
+    }
+
+    function updateUltraDefenseTimelinePanel() {
+      const list = document.getElementById("ultraDefenseTimelineList");
+      if (!list) return;
+
+      if (ultraDefenseTimeline.length === 0) {
+        list.innerHTML = `
+      <div style="color:#64748b;font-size:13px;">
+        Waiting for defense events...
+      </div>
+    `;
+        return;
+      }
+
+      const colorMap = {
+        success: "#22c55e",
+        error: "#ef4444",
+        warning: "#facc15",
+        info: "#38bdf8"
+      };
+
+      list.innerHTML = ultraDefenseTimeline.map(item => `
+    <div style="
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+    ">
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:4px;
+      ">
+        <b style="color:${colorMap[item.type] || colorMap.info};">
+          ${item.title}
+        </b>
+
+        <span style="color:#64748b;font-size:11px;">
+          ${item.time}
+        </span>
+      </div>
+
+      <div style="
+        color:#cbd5e1;
+        font-size:12px;
+        line-height:1.45;
+      ">
+        ${item.detail}
+      </div>
+    </div>
+  `).join("");
+    }
+
+    function createUltraSecurityAnalyticsPanel() {
+      if (document.getElementById("ultraSecurityAnalyticsPanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraSecurityAnalyticsPanel";
+      panel.style.cssText = `
+    position:fixed;
+    left:800px;
+    bottom:24px;
+    z-index:9996;
+    width:360px;
+    padding:18px;
+    border-radius:24px;
+    background:rgba(2,6,23,.88);
+    border:1px solid rgba(34,197,94,.22);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(34,197,94,.10);
+    backdrop-filter:blur(18px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+      color:#22c55e;
+      font-weight:900;
+      letter-spacing:.04em;
+      margin-bottom:14px;
+    ">
+      SECURITY ANALYTICS
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    ">
+      <div class="securityAnalyticsItem">
+        <div class="muted">Total Events</div>
+        <b id="securityTotalEvents">0</b>
+      </div>
+
+      <div class="securityAnalyticsItem">
+        <div class="muted">Auto Actions</div>
+        <b id="securityAutoActions">0</b>
+      </div>
+
+      <div class="securityAnalyticsItem">
+        <div class="muted">Manual Actions</div>
+        <b id="securityManualActions">0</b>
+      </div>
+
+      <div class="securityAnalyticsItem">
+        <div class="muted">Errors</div>
+        <b id="securityErrorEvents">0</b>
+      </div>
+    </div>
+
+    <div id="securityAnalyticsSummary" style="
+      margin-top:14px;
+      color:#94a3b8;
+      font-size:13px;
+      line-height:1.5;
+    ">
+      No security activity yet.
+    </div>
+  `;
+
+      document.body.appendChild(panel);
+
+      document.querySelectorAll(".securityAnalyticsItem").forEach(el => {
+        el.style.cssText = `
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:12px;
+    `;
+      });
+    }
+
+    function updateUltraSecurityAnalyticsPanel() {
+      const events = Array.isArray(ultraDefenseTimeline)
+        ? ultraDefenseTimeline
+        : [];
+
+      const totalEvents = events.length;
+
+      const autoActions = events.filter(e =>
+        (e.title || "").toLowerCase().includes("auto")
+      ).length;
+
+      const manualActions = events.filter(e =>
+        (e.detail || "").toLowerCase().includes("manual") ||
+        (e.title || "").toLowerCase().includes("reset") ||
+        (e.title || "").toLowerCase().includes("safe mode")
+      ).length;
+
+      const errorEvents = events.filter(e =>
+        e.type === "error"
+      ).length;
+
+      const lastEvent = events[0];
+
+      const totalEl = document.getElementById("securityTotalEvents");
+      const autoEl = document.getElementById("securityAutoActions");
+      const manualEl = document.getElementById("securityManualActions");
+      const errorEl = document.getElementById("securityErrorEvents");
+      const summaryEl = document.getElementById("securityAnalyticsSummary");
+
+      if (!totalEl) return;
+
+      totalEl.innerText = totalEvents;
+      autoEl.innerText = autoActions;
+      manualEl.innerText = manualActions;
+      errorEl.innerText = errorEvents;
+
+      summaryEl.innerText =
+        totalEvents === 0
+          ? "No security activity yet."
+          : errorEvents > 0
+            ? `Security activity detected. Last event: ${lastEvent.title} at ${lastEvent.time}.`
+            : `System stable. Last event: ${lastEvent.title} at ${lastEvent.time}.`;
+    }
+
+    function updateUltraLiveDefensePanel() {
+      const defense = calculateUltraLiveDefense();
+
+      const levelEl =
+        document.getElementById("defenseLevelBadge");
+
+      const autoEl =
+        document.getElementById("defenseAuto");
+
+      const safeEl =
+        document.getElementById("defenseSafeMode");
+
+      const lockEl =
+        document.getElementById("defenseLockdown");
+
+      const isolationEl =
+        document.getElementById("defenseIsolation");
+
+      const actionsEl =
+        document.getElementById("defenseActions");
+
+      const blockedEl =
+        document.getElementById("defenseBlockedKeys");
+
+      if (!levelEl) return;
+
+      levelEl.innerText = defense.defenseLevel;
+
+      autoEl.innerText =
+        defense.autoDefenseEnabled ? "ON" : "OFF";
+
+      safeEl.innerText =
+        defense.safeMode ? "ON" : "OFF";
+
+      lockEl.innerText =
+        defense.lockdown ? "ON" : "OFF";
+
+      isolationEl.innerText =
+        defense.isolationMode ? "ON" : "OFF";
+
+      actionsEl.innerHTML =
+        defense.suggestedActions.length > 0
+          ? defense.suggestedActions
+            .map(a => `<div>• ${a}</div>`)
+            .join("")
+          : "No actions required.";
+
+      blockedEl.innerHTML =
+        defense.blockedKeys.length > 0
+          ? defense.blockedKeys
+            .map(k => `<div>${k}</div>`)
+            .join("")
+          : "None";
+    }
+
+    function toggleUltraLiveDefense() {
+      ultraLiveDefense.autoDefenseEnabled =
+        !ultraLiveDefense.autoDefenseEnabled;
+
+      showToast(
+        ultraLiveDefense.autoDefenseEnabled
+          ? "Auto Defense Enabled"
+          : "Auto Defense Disabled",
+        ultraLiveDefense.autoDefenseEnabled ? "success" : "warning",
+        3000
+      );
+
+      pushUltraLiveActivity({
+        title: "Defense Control",
+        detail: ultraLiveDefense.autoDefenseEnabled
+          ? "Auto Defense enabled"
+          : "Auto Defense disabled",
+        type: ultraLiveDefense.autoDefenseEnabled ? "success" : "warning"
+      });
+      addUltraDefenseTimeline({
+        title: "Defense Control",
+        detail: ultraLiveDefense.autoDefenseEnabled
+          ? "Auto Defense enabled"
+          : "Auto Defense disabled",
+        type: ultraLiveDefense.autoDefenseEnabled ? "success" : "warning"
+      });
+
+      updateUltraLiveDefensePanel();
+    }
+
+    function toggleUltraSafeMode() {
+      ultraLiveDefense.safeMode =
+        !ultraLiveDefense.safeMode;
+
+      showToast(
+        ultraLiveDefense.safeMode
+          ? "Safe Mode Enabled"
+          : "Safe Mode Disabled",
+        ultraLiveDefense.safeMode ? "warning" : "info",
+        3000
+      );
+
+      pushUltraLiveActivity({
+        title: "Safe Mode",
+        detail: ultraLiveDefense.safeMode
+          ? "Manual Safe Mode enabled"
+          : "Manual Safe Mode disabled",
+        type: ultraLiveDefense.safeMode ? "warning" : "info"
+      });
+      addUltraDefenseTimeline({
+        title: "Safe Mode",
+        detail: ultraLiveDefense.safeMode
+          ? "Manual Safe Mode enabled"
+          : "Manual Safe Mode disabled",
+        type: ultraLiveDefense.safeMode ? "warning" : "info"
+      });
+
+      updateUltraLiveDefensePanel();
+    }
+
+    function triggerUltraEmergencyLockdown() {
+      ultraLiveDefense.lockdown = true;
+      ultraLiveDefense.safeMode = true;
+      ultraLiveDefense.isolationMode = true;
+      ultraLiveDefense.defenseLevel = "Critical";
+
+      showToast("EMERGENCY LOCKDOWN ENABLED", "error", 6000);
+
+      pushUltraLiveActivity({
+        title: "Emergency Lockdown",
+        detail: "Manual lockdown activated",
+        type: "error"
+      });
+      addUltraDefenseTimeline({
+        title: "Emergency Lockdown",
+        detail: "Manual lockdown activated",
+        type: "error"
+      });
+
+      document.body.style.animation =
+        "ultraDangerFlash 1s infinite";
+
+      updateUltraLiveDefensePanel();
+    }
+
+    function resetUltraLiveDefense() {
+      ultraLiveDefense.safeMode = false;
+      ultraLiveDefense.lockdown = false;
+      ultraLiveDefense.isolationMode = false;
+      ultraLiveDefense.blockedKeys = [];
+      ultraLiveDefense.suggestedActions = [];
+      ultraLiveDefense.defenseLevel = "Normal";
+
+      document.body.style.animation = "";
+
+      showToast("Defense System Reset", "success", 3000);
+
+      pushUltraLiveActivity({
+        title: "Defense Reset",
+        detail: "Defense system returned to normal",
+        type: "success"
+      });
+      addUltraDefenseTimeline({
+        title: "Defense Reset",
+        detail: "Defense system returned to normal",
+        type: "success"
+      });
+
+      updateUltraLiveDefensePanel();
+    }
+
     function createUltraLiveActivityStream() {
       if (document.getElementById("ultraLiveActivityStream")) return;
 
@@ -1670,6 +2529,9 @@
         updateUltraLiveTopBar("Online");
         updateUltraLiveHealthPanel();
         updateUltraLiveThreatPanel();
+        updateUltraLiveDefensePanel();
+        runUltraAutoLockdownEngine();
+        runUltraAutoRecoveryEngine();
         ultraLiveReadyForAlerts = true;
       } catch (err) {
         console.log("Ultra Live refresh failed:", err.message);
@@ -1685,6 +2547,9 @@
       createUltraLiveTopBar();
       createUltraLiveHealthPanel();
       createUltraLiveThreatPanel();
+      createUltraLiveDefensePanel();
+      createUltraDefenseTimelinePanel();
+      createUltraSecurityAnalyticsPanel();
       createUltraLiveActivityStream();
       createUltraLiveWidget();
 
