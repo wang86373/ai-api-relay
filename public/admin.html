@@ -688,7 +688,6 @@
       id="commandSearchInput"
       placeholder="Search email, API key, model, tx hash..."
       value="${commandSearchKeyword}"
-      oninput="updateCommandSearch(this.value)"
       style="
         flex:1;
         min-width:260px;
@@ -699,6 +698,22 @@
         color:white;
       "
     />
+
+      <button
+  onclick="renderOverview()"
+  style="
+    padding:14px 20px;
+    border:none;
+    border-radius:14px;
+    background:#2563eb;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+  "
+>
+  Search
+</button>
+
   </div>
 </div>
 
@@ -953,6 +968,8 @@
 
       </div>
     `).join("")}
+    </div>
+</div>
 
       <div style="
 grid-column:1 / -1;
@@ -1175,11 +1192,6 @@ $${Number(stats.revenue).toFixed(6)}
     function updateCommandSearch(value) {
       commandSearchKeyword = value.toLowerCase().trim();
 
-      clearTimeout(window.commandSearchTimer);
-
-      window.commandSearchTimer = setTimeout(() => {
-        renderOverview();
-      }, 300);
     }
 
     function prevKeyPage() {
