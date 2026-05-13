@@ -518,6 +518,9 @@
           : latestModels;
 
       const modelStats = {};
+      let totalProviderCost = 0;
+      let totalProfit = 0;
+      let profitMargin = 0;
 
       filteredModels.forEach(m => {
         const modelName = m.model || "unknown";
@@ -533,7 +536,13 @@
         modelStats[modelName].requests += Number(m.requests || 0);
         modelStats[modelName].tokens += Number(m.tokens || 0);
         modelStats[modelName].revenue += Number(m.revenue || 0);
+        totalProviderCost += Number(m.provider_cost || 0);
+        totalProfit += Number(m.profit || 0);
       });
+      profitMargin =
+        totalCost > 0
+          ? (totalProfit / totalCost) * 100
+          : 0;
 
       const sortedModelStats = Object.entries(modelStats)
         .sort((a, b) => {
@@ -797,6 +806,26 @@
       <div class="muted">Pending USDT</div>
       <h2>${pendingUsdt}</h2>
     </div>
+
+    <div class="item">
+  <div class="muted">Provider Cost</div>
+  <h2>$${totalProviderCost.toFixed(4)}</h2>
+</div>
+
+<div class="item">
+  <div class="muted">Profit</div>
+  <h2 style="color:#22c55e;">
+    $${totalProfit.toFixed(4)}
+  </h2>
+</div>
+
+    <div class="item">
+  <div class="muted">Profit Margin</div>
+
+  <h2 style="color:#38bdf8;">
+    ${profitMargin.toFixed(1)}%
+  </h2>
+</div>
 
    <div style="
   grid-column:1 / -1;
