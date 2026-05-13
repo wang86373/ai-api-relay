@@ -472,49 +472,49 @@
       const todayRequests = todayStats.todayRequests;
       const onlineUsers = todayStats.onlineUsers;
 
-         const filteredActivities =
-  commandSearchKeyword
-    ? latestActivities.filter(a => {
-        const text = `
+      const filteredActivities =
+        commandSearchKeyword
+          ? latestActivities.filter(a => {
+            const text = `
           ${a.email}
           ${a.api_key}
           ${a.model}
         `.toLowerCase();
 
-        return text.includes(commandSearchKeyword);
-      })
-    : latestActivities;
+            return text.includes(commandSearchKeyword);
+          })
+          : latestActivities;
 
-          const filteredKeys =
-  commandSearchKeyword
-    ? latestKeys.filter(k => {
-        const text = `
+      const filteredKeys =
+        commandSearchKeyword
+          ? latestKeys.filter(k => {
+            const text = `
           ${k.user_email || ""}
           ${k.api_key || ""}
           ${k.key_name || ""}
         `.toLowerCase();
 
-        return text.includes(commandSearchKeyword);
-      })
-    : latestKeys;
+            return text.includes(commandSearchKeyword);
+          })
+          : latestKeys;
 
-const topUsers = [...filteredKeys]
-  .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
-  .slice(0, 5);
+      const topUsers = [...filteredKeys]
+        .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
+        .slice(0, 5);
 
-        const filteredModels =
-  commandSearchKeyword
-    ? latestModels.filter(m => {
-        const text = `
+      const filteredModels =
+        commandSearchKeyword
+          ? latestModels.filter(m => {
+            const text = `
           ${m.model || ""}
           ${m.requests || ""}
           ${m.tokens || ""}
           ${m.revenue || ""}
         `.toLowerCase();
 
-        return text.includes(commandSearchKeyword);
-      })
-    : latestModels;
+            return text.includes(commandSearchKeyword);
+          })
+          : latestModels;
 
       document.getElementById("overviewBox").innerHTML = `
       <div style="
@@ -670,7 +670,7 @@ const topUsers = [...filteredKeys]
       id="commandSearchInput"
       placeholder="Search email, API key, model, tx hash..."
       value="${commandSearchKeyword}"
-      oninput="commandSearchKeyword = this.value.toLowerCase().trim(); renderOverview();"
+      oninput="updateCommandSearch(this.value)"
       style="
         flex:1;
         min-width:260px;
@@ -989,8 +989,8 @@ gap:12px;
 ">
 
 ${latestErrors.length === 0
-? `<div class="muted">No system errors detected.</div>`
-: latestErrors.map(err => `
+          ? `<div class="muted">No system errors detected.</div>`
+          : latestErrors.map(err => `
 <div style="
 background:rgba(255,255,255,0.03);
 border:1px solid rgba(255,255,255,0.06);
@@ -1043,6 +1043,16 @@ ${new Date(err.created_at).toLocaleString()}
 
 </div>
 `;
+    }
+
+    function updateCommandSearch(value) {
+      commandSearchKeyword = value.toLowerCase().trim();
+
+      clearTimeout(window.commandSearchTimer);
+
+      window.commandSearchTimer = setTimeout(() => {
+        renderOverview();
+      }, 300);
     }
 
     function prevKeyPage() {
@@ -1524,97 +1534,97 @@ ${k.last_used_at
       }
     }
 
-       async function loadActivityFeed() {
-  try {
-    const res = await fetch(
-      API_BASE + "/admin/activity-feed",
-      {
-        headers: {
-          "x-admin-key": getAdminKey()
-        }
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) return;
-
-    latestActivities = data.activities || [];
-
-    renderOverview();
-
-  } catch (err) {
-    console.log(
-      "Load activity feed failed:",
-      err.message
-    );
-  }
-}
-
-         async function loadErrorLogs() {
-  try {
-    const res = await fetch(API_BASE + "/admin/error-logs", {
-      headers: {
-        "x-admin-key": getAdminKey()
-      }
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) return;
-
-    latestErrors = data.errors || [];
-
-    renderOverview();
-
-  } catch (err) {
-    console.log("Load error logs failed:", err.message);
-  }
-}
-
-    function renderModelPieChart() {
-  const ctx = document.getElementById("modelPieChart");
-
-  if (!ctx || latestModels.length === 0) return;
-
-  if (modelPieChart) {
-    modelPieChart.destroy();
-  }
-
-  modelPieChart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: filteredModels.map(m => m.model || "unknown"),
-      datasets: [
-        {
-          label: "Revenue",
-          data: filteredModels.map(m => Number(m.revenue || 0)),
-          backgroundColor: [
-            "rgba(56,189,248,0.85)",
-            "rgba(34,197,94,0.85)",
-            "rgba(139,92,246,0.85)",
-            "rgba(249,115,22,0.85)",
-            "rgba(236,72,153,0.85)"
-          ],
-          borderColor: "#020617",
-          borderWidth: 3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      cutout: "68%",
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            color: "white"
+    async function loadActivityFeed() {
+      try {
+        const res = await fetch(
+          API_BASE + "/admin/activity-feed",
+          {
+            headers: {
+              "x-admin-key": getAdminKey()
+            }
           }
-        }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        latestActivities = data.activities || [];
+
+        renderOverview();
+
+      } catch (err) {
+        console.log(
+          "Load activity feed failed:",
+          err.message
+        );
       }
     }
-  });
-}
+
+    async function loadErrorLogs() {
+      try {
+        const res = await fetch(API_BASE + "/admin/error-logs", {
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        latestErrors = data.errors || [];
+
+        renderOverview();
+
+      } catch (err) {
+        console.log("Load error logs failed:", err.message);
+      }
+    }
+
+    function renderModelPieChart() {
+      const ctx = document.getElementById("modelPieChart");
+
+      if (!ctx || latestModels.length === 0) return;
+
+      if (modelPieChart) {
+        modelPieChart.destroy();
+      }
+
+      modelPieChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: filteredModels.map(m => m.model || "unknown"),
+          datasets: [
+            {
+              label: "Revenue",
+              data: filteredModels.map(m => Number(m.revenue || 0)),
+              backgroundColor: [
+                "rgba(56,189,248,0.85)",
+                "rgba(34,197,94,0.85)",
+                "rgba(139,92,246,0.85)",
+                "rgba(249,115,22,0.85)",
+                "rgba(236,72,153,0.85)"
+              ],
+              borderColor: "#020617",
+              borderWidth: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          cutout: "68%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                color: "white"
+              }
+            }
+          }
+        }
+      });
+    }
 
     async function loadUsdtChart() {
       try {
