@@ -472,24 +472,6 @@
       const todayRequests = todayStats.todayRequests;
       const onlineUsers = todayStats.onlineUsers;
 
-      const modelStats = {};
-
-      filteredModels.forEach(m => {
-        const modelName = m.model || "unknown";
-
-        if (!modelStats[modelName]) {
-          modelStats[modelName] = {
-            requests: 0,
-            tokens: 0,
-            revenue: 0
-          };
-        }
-
-        modelStats[modelName].requests += Number(m.requests || 0);
-        modelStats[modelName].tokens += Number(m.tokens || 0);
-        modelStats[modelName].revenue += Number(m.revenue || 0);
-      });
-
       const filteredActivities =
         commandSearchKeyword
           ? latestActivities.filter(a => {
@@ -533,6 +515,24 @@
             return text.includes(commandSearchKeyword);
           })
           : latestModels;
+
+      const modelStats = {};
+
+      filteredModels.forEach(m => {
+        const modelName = m.model || "unknown";
+
+        if (!modelStats[modelName]) {
+          modelStats[modelName] = {
+            requests: 0,
+            tokens: 0,
+            revenue: 0
+          };
+        }
+
+        modelStats[modelName].requests += Number(m.requests || 0);
+        modelStats[modelName].tokens += Number(m.tokens || 0);
+        modelStats[modelName].revenue += Number(m.revenue || 0);
+      });
 
       document.getElementById("overviewBox").innerHTML = `
       <div style="
