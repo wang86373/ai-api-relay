@@ -396,6 +396,7 @@
     let latestModels = [];
     let latestActivities = [];
     let commandSearchKeyword = "";
+    let latestErrors = [];
 
     let todayStats = {
       todayRevenue: 0,
@@ -484,9 +485,36 @@
       })
     : latestActivities;
 
-      const topUsers = [...latestKeys]
-        .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
-        .slice(0, 5);
+          const filteredKeys =
+  commandSearchKeyword
+    ? latestKeys.filter(k => {
+        const text = `
+          ${k.user_email || ""}
+          ${k.api_key || ""}
+          ${k.key_name || ""}
+        `.toLowerCase();
+
+        return text.includes(commandSearchKeyword);
+      })
+    : latestKeys;
+
+const topUsers = [...filteredKeys]
+  .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
+  .slice(0, 5);
+
+        const filteredModels =
+  commandSearchKeyword
+    ? latestModels.filter(m => {
+        const text = `
+          ${m.model || ""}
+          ${m.requests || ""}
+          ${m.tokens || ""}
+          ${m.revenue || ""}
+        `.toLowerCase();
+
+        return text.includes(commandSearchKeyword);
+      })
+    : latestModels;
 
       document.getElementById("overviewBox").innerHTML = `
       <div style="
@@ -782,9 +810,9 @@
 ">
   <h3 style="margin-top:0;">Top Models by Revenue</h3>
 
-  ${latestModels.length === 0
+  ${filteredModels.length === 0
           ? `<div class="muted">No model usage yet.</div>`
-          : latestModels.map((m, index) => `
+          : filteredModels.map((m, index) => `
       <div style="
         display:grid;
         grid-template-columns:60px 1.5fr 1fr 1fr 1fr;
@@ -907,6 +935,108 @@
 
       </div>
     `).join("")}
+
+      <div style="
+grid-column:1 / -1;
+background:rgba(120,20,20,0.35);
+border:1px solid rgba(255,80,80,0.18);
+border-radius:20px;
+padding:20px;
+margin-top:18px;
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+">
+  <div>
+    <div style="
+      color:#fca5a5;
+      font-size:13px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    ">
+      Realtime Error Monitor
+    </div>
+
+    <div style="
+      font-size:28px;
+      font-weight:700;
+      margin-top:6px;
+    ">
+      System Errors
+    </div>
+  </div>
+
+  <div style="
+    background:rgba(255,80,80,0.14);
+    color:#f87171;
+    padding:10px 16px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+  ">
+    ${latestErrors.length} Errors
+  </div>
+</div>
+
+<div style="
+display:flex;
+flex-direction:column;
+gap:12px;
+">
+
+${latestErrors.length === 0
+? `<div class="muted">No system errors detected.</div>`
+: latestErrors.map(err => `
+<div style="
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.06);
+border-radius:14px;
+padding:14px 16px;
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+gap:12px;
+flex-wrap:wrap;
+">
+
+<div>
+<div style="
+color:#f87171;
+font-weight:700;
+font-size:15px;
+">
+${err.type || "server_error"}
+</div>
+
+<div style="
+color:#94a3b8;
+font-size:13px;
+margin-top:4px;
+">
+${err.message || "Unknown error"}
+</div>
+</div>
+
+<div style="
+font-size:12px;
+color:#64748b;
+">
+${new Date(err.created_at).toLocaleString()}
+</div>
+
+</div>
+
+</div>
+`).join("")}
+
+</div>
+</div>
 
   </div>
 </div>
@@ -1421,6 +1551,27 @@ ${k.last_used_at
   }
 }
 
+         async function loadErrorLogs() {
+  try {
+    const res = await fetch(API_BASE + "/admin/error-logs", {
+      headers: {
+        "x-admin-key": getAdminKey()
+      }
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    latestErrors = data.errors || [];
+
+    renderOverview();
+
+  } catch (err) {
+    console.log("Load error logs failed:", err.message);
+  }
+}
+
     function renderModelPieChart() {
   const ctx = document.getElementById("modelPieChart");
 
@@ -1433,11 +1584,11 @@ ${k.last_used_at
   modelPieChart = new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: latestModels.map(m => m.model || "unknown"),
+      labels: filteredModels.map(m => m.model || "unknown"),
       datasets: [
         {
           label: "Revenue",
-          data: latestModels.map(m => Number(m.revenue || 0)),
+          data: filteredModels.map(m => Number(m.revenue || 0)),
           backgroundColor: [
             "rgba(56,189,248,0.85)",
             "rgba(34,197,94,0.85)",
@@ -1698,11 +1849,13 @@ ${k.last_used_at
       loadRevenueStats();
       loadTopModels();
       loadActivityFeed();
+      loadErrorLogs();
 
       setInterval(loadRealtimeStats, 30000);
       setInterval(loadRevenueStats, 30000);
       setInterval(loadTopModels, 30000);
       setInterval(loadActivityFeed, 15000);
+      setInterval(loadErrorLogs, 15000);
 
       loadUsdtChart();
       setInterval(loadUsdtChart, 30000);

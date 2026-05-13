@@ -777,6 +777,38 @@ app.get("/admin/revenue-stats", async (req, res) => {
   }
 });
 
+        app.get("/admin/error-logs", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("error_logs")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    return res.json({
+      success: true,
+      errors: data || []
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.get("/admin/usdt-stats", async (req, res) => {
 
   if (!checkAdmin(req, res)) return;
