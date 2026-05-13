@@ -472,6 +472,24 @@
       const todayRequests = todayStats.todayRequests;
       const onlineUsers = todayStats.onlineUsers;
 
+      const modelStats = {};
+
+      filteredModels.forEach(m => {
+        const modelName = m.model || "unknown";
+
+        if (!modelStats[modelName]) {
+          modelStats[modelName] = {
+            requests: 0,
+            tokens: 0,
+            revenue: 0
+          };
+        }
+
+        modelStats[modelName].requests += Number(m.requests || 0);
+        modelStats[modelName].tokens += Number(m.tokens || 0);
+        modelStats[modelName].revenue += Number(m.revenue || 0);
+      });
+
       const filteredActivities =
         commandSearchKeyword
           ? latestActivities.filter(a => {
@@ -1039,6 +1057,115 @@ ${new Date(err.created_at).toLocaleString()}
 </div>
 
   </div>
+</div>
+
+      <div style="
+grid-column:1 / -1;
+background:#0f172a;
+border:1px solid rgba(255,255,255,0.08);
+border-radius:20px;
+padding:24px;
+margin-top:18px;
+">
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+">
+<div>
+<div style="
+font-size:13px;
+letter-spacing:2px;
+color:#38bdf8;
+margin-bottom:8px;
+">
+MODEL ANALYTICS
+</div>
+
+<h3 style="
+margin:0;
+color:white;
+font-size:32px;
+font-weight:800;
+">
+Per Model Usage
+</h3>
+</div>
+
+<div style="
+padding:10px 16px;
+border-radius:999px;
+background:rgba(56,189,248,0.12);
+color:#38bdf8;
+font-weight:700;
+font-size:14px;
+">
+${Object.keys(modelStats).length} Models
+</div>
+</div>
+
+<div style="
+display:flex;
+flex-direction:column;
+gap:14px;
+">
+
+${Object.entries(modelStats)
+          .sort((a, b) => b[1].revenue - a[1].revenue)
+          .map(([modelName, stats]) => `
+<div style="
+background:rgba(255,255,255,0.03);
+border:1px solid rgba(255,255,255,0.06);
+border-radius:16px;
+padding:18px;
+display:grid;
+grid-template-columns:2fr 1fr 1fr 1fr;
+gap:16px;
+align-items:center;
+">
+
+<div>
+<div style="
+color:white;
+font-size:18px;
+font-weight:700;
+margin-bottom:6px;
+">
+${modelName}
+</div>
+
+<div style="
+font-size:12px;
+color:#64748b;
+">
+Realtime model analytics
+</div>
+</div>
+
+<div>
+<div class="muted">Requests</div>
+<b>${stats.requests}</b>
+</div>
+
+<div>
+<div class="muted">Tokens</div>
+<b>${Number(stats.tokens).toLocaleString()}</b>
+</div>
+
+<div>
+<div class="muted">Revenue</div>
+<b style="color:#22c55e;">
+$${Number(stats.revenue).toFixed(6)}
+</b>
+</div>
+
+</div>
+`).join("")}
+
+</div>
+
 </div>
 
 </div>
