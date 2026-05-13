@@ -733,6 +733,50 @@ app.get("/admin/revenue-stats", async (req, res) => {
   }
 });
 
+    app.get("/admin/activity-feed", async (req, res) => {
+  if (!checkAdmin(req, res)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usage_logs")
+      .select("email, api_key, model, total_tokens, cost, created_at")
+      .order("created_at", { ascending: false })
+      .limit(12);
+
+    if (error) {
+      return res.status(500).json({
+        error: {
+          message: error.message
+        }
+      });
+    }
+
+    const activities = data.map(log => ({
+      type: "usage",
+      email: log.email || "Unknown user",
+      api_key: log.api_key
+        ? log.api_key.slice(0, 8) + "..." + log.api_key.slice(-6)
+        : "-",
+      model: log.model || "unknown",
+      tokens: Number(log.total_tokens || 0),
+      revenue: Number(log.cost || 0),
+      created_at: log.created_at
+    }));
+
+    return res.json({
+      success: true,
+      activities
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: {
+        message: err.message
+      }
+    });
+  }
+});
+
 app.get("/admin/usdt-stats", async (req, res) => {
 
   if (!checkAdmin(req, res)) return;

@@ -141,7 +141,6 @@
       color: #94a3b8;
       font-size: 14px;
     }
-
   </style>
 </head>
 
@@ -257,6 +256,9 @@
           <h3>Revenue / Tokens / Requests Trend</h3>
           <canvas id="revenueChart" height="120"></canvas>
 
+          <h3>Model Usage Share</h3>
+          <canvas id="modelPieChart" height="120"></canvas>
+
           <h3>USDT Revenue Trend</h3>
           <canvas id="usdtChart" height="120"></canvas>
 
@@ -283,6 +285,7 @@
     const API_BASE = "https://ai-api-relay.onrender.com";
     let statsChart;
     let revenueChart;
+    let modelPieChart;
     let usdtChart;
     function showAdminSection(sectionId, btn) {
 
@@ -391,6 +394,8 @@
     let latestKeys = [];
     let latestPayments = [];
     let latestModels = [];
+    let latestActivities = [];
+    let commandSearchKeyword = "";
 
     let todayStats = {
       todayRevenue: 0,
@@ -465,6 +470,19 @@
       const todayTokens = todayStats.todayTokens;
       const todayRequests = todayStats.todayRequests;
       const onlineUsers = todayStats.onlineUsers;
+
+         const filteredActivities =
+  commandSearchKeyword
+    ? latestActivities.filter(a => {
+        const text = `
+          ${a.email}
+          ${a.api_key}
+          ${a.model}
+        `.toLowerCase();
+
+        return text.includes(commandSearchKeyword);
+      })
+    : latestActivities;
 
       const topUsers = [...latestKeys]
         .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
@@ -596,6 +614,48 @@
     </div>
   </div>
 </div>
+
+         <div style="
+  grid-column:1 / -1;
+  background:rgba(2,6,23,0.72);
+  border:1px solid rgba(56,189,248,0.18);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 0 30px rgba(56,189,248,0.06);
+">
+  <div style="
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  ">
+    <div style="
+      color:#38bdf8;
+      font-weight:700;
+      min-width:150px;
+    ">
+      Command Search
+    </div>
+
+    <input
+      id="commandSearchInput"
+      placeholder="Search email, API key, model, tx hash..."
+      value="${commandSearchKeyword}"
+      oninput="commandSearchKeyword = this.value.toLowerCase().trim(); renderOverview();"
+      style="
+        flex:1;
+        min-width:260px;
+        padding:14px;
+        border-radius:14px;
+        border:1px solid rgba(56,189,248,0.24);
+        background:#020617;
+        color:white;
+      "
+    />
+  </div>
+</div>
+
   <div style="
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -756,6 +816,101 @@
         </div>
       </div>
     `).join("")}
+  
+     <div style="
+  grid-column:1 / -1;
+  background:#0f172a;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;
+  padding:24px;
+  margin-top:8px;
+">
+
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  ">
+    <h3 style="
+      margin:0;
+      color:white;
+      font-size:22px;
+    ">
+      Live Activity Feed
+    </h3>
+
+    <div style="
+      color:#22c55e;
+      font-size:13px;
+    ">
+      ● LIVE
+    </div>
+  </div>
+
+  <div style="
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  ">
+
+    ${filteredActivities.map(a => `
+      <div style="
+        background:rgba(255,255,255,0.03);
+        border:1px solid rgba(255,255,255,0.06);
+        border-radius:14px;
+        padding:14px 16px;
+        display:flex;
+        justify-content:space-between;
+        gap:16px;
+        flex-wrap:wrap;
+      ">
+
+        <div>
+          <div style="
+            color:white;
+            font-size:14px;
+            font-weight:600;
+          ">
+            ${a.email}
+          </div>
+
+          <div style="
+            color:#94a3b8;
+            font-size:13px;
+            margin-top:4px;
+          ">
+            ${a.model}
+            ·
+            ${a.tokens.toLocaleString()} tokens
+            ·
+            ${a.api_key}
+          </div>
+        </div>
+
+        <div style="text-align:right;">
+          <div style="
+            color:#22c55e;
+            font-weight:700;
+          ">
+            $${Number(a.revenue || 0).toFixed(6)}
+          </div>
+
+          <div style="
+            color:#64748b;
+            font-size:12px;
+            margin-top:4px;
+          ">
+            ${new Date(a.created_at).toLocaleString()}
+          </div>
+        </div>
+
+      </div>
+    `).join("")}
+
+  </div>
+</div>
+
 </div>
 `;
     }
@@ -1231,12 +1386,84 @@ ${k.last_used_at
 
         latestModels = data.models || [];
 
+        renderModelPieChart();
         renderOverview();
 
       } catch (err) {
         console.log("Load top models failed:", err.message);
       }
     }
+
+       async function loadActivityFeed() {
+  try {
+    const res = await fetch(
+      API_BASE + "/admin/activity-feed",
+      {
+        headers: {
+          "x-admin-key": getAdminKey()
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) return;
+
+    latestActivities = data.activities || [];
+
+    renderOverview();
+
+  } catch (err) {
+    console.log(
+      "Load activity feed failed:",
+      err.message
+    );
+  }
+}
+
+    function renderModelPieChart() {
+  const ctx = document.getElementById("modelPieChart");
+
+  if (!ctx || latestModels.length === 0) return;
+
+  if (modelPieChart) {
+    modelPieChart.destroy();
+  }
+
+  modelPieChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: latestModels.map(m => m.model || "unknown"),
+      datasets: [
+        {
+          label: "Revenue",
+          data: latestModels.map(m => Number(m.revenue || 0)),
+          backgroundColor: [
+            "rgba(56,189,248,0.85)",
+            "rgba(34,197,94,0.85)",
+            "rgba(139,92,246,0.85)",
+            "rgba(249,115,22,0.85)",
+            "rgba(236,72,153,0.85)"
+          ],
+          borderColor: "#020617",
+          borderWidth: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      cutout: "68%",
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: "white"
+          }
+        }
+      }
+    }
+  });
+}
 
     async function loadUsdtChart() {
       try {
@@ -1470,10 +1697,12 @@ ${k.last_used_at
       loadRealtimeStats();
       loadRevenueStats();
       loadTopModels();
+      loadActivityFeed();
 
       setInterval(loadRealtimeStats, 30000);
       setInterval(loadRevenueStats, 30000);
       setInterval(loadTopModels, 30000);
+      setInterval(loadActivityFeed, 15000);
 
       loadUsdtChart();
       setInterval(loadUsdtChart, 30000);
