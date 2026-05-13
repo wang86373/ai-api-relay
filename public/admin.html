@@ -500,6 +500,26 @@
           : latestKeys;
 
       const topUsers = [...filteredKeys]
+
+        .map(k => ({
+          ...k,
+          profit:
+            Number(k.total_cost || 0)
+            - Number(k.provider_cost || 0),
+
+          margin:
+            Number(k.total_cost || 0) > 0
+              ? (
+                (
+                  Number(k.total_cost || 0)
+                  - Number(k.provider_cost || 0)
+                )
+                / Number(k.total_cost || 0)
+              ) * 100
+              : 0
+
+        }))
+
         .sort((a, b) => Number(b.total_cost || 0) - Number(a.total_cost || 0))
         .slice(0, 5);
 
@@ -529,13 +549,17 @@
           modelStats[modelName] = {
             requests: 0,
             tokens: 0,
-            revenue: 0
+            revenue: 0,
+            provider_cost: 0,
+            profit: 0
           };
         }
 
         modelStats[modelName].requests += Number(m.requests || 0);
         modelStats[modelName].tokens += Number(m.tokens || 0);
         modelStats[modelName].revenue += Number(m.revenue || 0);
+        modelStats[modelName].provider_cost += Number(m.provider_cost || 0);
+        modelStats[modelName].profit += Number(m.profit || 0);
         totalProviderCost += Number(m.provider_cost || 0);
         totalProfit += Number(m.profit || 0);
       });
@@ -834,14 +858,14 @@
   border-radius:16px;
   padding:20px;
 ">
-  <h3 style="margin-top:0;">Top Users by Revenue</h3>
+  <h3 style="margin-top:0;">Top Users Performance</h3>
 
   ${topUsers.length === 0
           ? `<div class="muted">No users yet.</div>`
           : topUsers.map((u, index) => `
       <div style="
         display:grid;
-        grid-template-columns:60px 1.5fr 1fr 1fr 1fr 1.4fr;
+        grid-template-columns:60px 1.5fr 1fr 1fr 1fr 1fr 1.4fr;
         gap:12px;
         padding:12px 0;
         border-bottom:1px solid rgba(255,255,255,0.06);
@@ -856,6 +880,22 @@
           <div class="muted">Revenue</div>
           <b>$${Number(u.total_cost || 0).toFixed(4)}</b>
         </div>
+
+          <div>
+        <div class="muted">Profit</div>
+
+        <b style="color:#22c55e;">
+        $${Number(u.profit || 0).toFixed(4)}
+       </b>
+       </div>
+       <div>
+  <div class="muted">Margin</div>
+
+  <b style="color:#38bdf8;">
+    ${Number(u.margin || 0).toFixed(1)}%
+  </b>
+</div>
+
         <div>
           <div class="muted">Tokens</div>
           <b>${Number(u.total_tokens || 0).toLocaleString()}</b>
@@ -922,7 +962,7 @@ margin-bottom:18px;
           : sortedModelStats.map(([modelName, stats], index) => `
       <div style="
         display:grid;
-        grid-template-columns:60px 1.5fr 1fr 1fr 1fr;
+        grid-template-columns:60px 1.5fr 1fr 1fr 1fr 1fr 1fr 1.2fr;
         gap:12px;
         padding:12px 0;
         border-bottom:1px solid rgba(255,255,255,0.06);
@@ -941,6 +981,41 @@ margin-bottom:18px;
         </div>
 
         <div>
+  <div class="muted">Profit</div>
+
+  <b style="color:#22c55e;">
+    $$${Number(stats.profit || 0).toFixed(4)}
+  </b>
+</div>
+
+<div>
+  <div class="muted">Margin</div>
+
+  <b style="
+  color:
+    ${Number(stats.revenue || 0) > 0
+              ? (
+                (Number(stats.profit || 0) /
+                  Number(stats.revenue || 0)) * 100
+              ) > 70
+                ? '#22c55e'
+                : (
+                  (Number(stats.profit || 0) /
+                    Number(stats.revenue || 0)) * 100
+                ) > 30
+                  ? '#facc15'
+                  : '#ef4444'
+              : '#38bdf8'
+            };
+">
+    ${Number(stats.revenue || 0) > 0
+              ? ((Number(stats.profit || 0) / Number(stats.revenue || 0)) * 100).toFixed(1)
+              : 0
+            }%
+  </b>
+</div>
+
+        <div>
           <div class="muted">Tokens</div>
           <b>${Number(stats.tokens || 0).toLocaleString()}</b>
         </div>
@@ -949,6 +1024,54 @@ margin-bottom:18px;
           <div class="muted">Requests</div>
           <b>${stats.requests || 0}</b>
         </div>
+
+          <div>
+  <div class="muted">Health</div>
+
+  <b style="
+    color:
+      ${Number(stats.revenue || 0) > 0
+              ? (
+                (Number(stats.profit || 0) /
+                  Number(stats.revenue || 0)) * 100
+              ) > 70
+                ? '#22c55e'
+                : (
+                  (Number(stats.profit || 0) /
+                    Number(stats.revenue || 0)) * 100
+                ) > 40
+                  ? '#facc15'
+                  : (
+                    (Number(stats.profit || 0) /
+                      Number(stats.revenue || 0)) * 100
+                  ) > 15
+                    ? '#fb923c'
+                    : '#ef4444'
+              : '#38bdf8'
+            };
+  ">
+    ${Number(stats.revenue || 0) > 0
+              ? (
+                (Number(stats.profit || 0) /
+                  Number(stats.revenue || 0)) * 100
+              ) > 70
+                ? 'Excellent'
+                : (
+                  (Number(stats.profit || 0) /
+                    Number(stats.revenue || 0)) * 100
+                ) > 40
+                  ? 'Healthy'
+                  : (
+                    (Number(stats.profit || 0) /
+                      Number(stats.revenue || 0)) * 100
+                  ) > 15
+                    ? 'Warning'
+                    : 'Bad'
+              : 'No Data'
+            }
+  </b>
+</div>
+
       </div>
     `).join("")}
   
