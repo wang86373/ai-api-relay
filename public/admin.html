@@ -141,6 +141,12 @@
       color: #94a3b8;
       font-size: 14px;
     }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
@@ -654,6 +660,42 @@
         progress.style.transform = "scaleX(0)";
         removeTimer = setTimeout(removeToast, 1200);
       };
+    }
+
+    function setButtonLoading(button, isLoading, text = "Loading...") {
+      if (!button) return;
+
+      if (isLoading) {
+        button.dataset.originalText = button.innerHTML;
+
+        button.disabled = true;
+        button.style.opacity = "0.75";
+        button.style.cursor = "not-allowed";
+
+        button.innerHTML = `
+      <span style="
+        display:inline-block;
+        width:14px;
+        height:14px;
+        border:2px solid rgba(255,255,255,.45);
+        border-top-color:white;
+        border-radius:999px;
+        margin-right:8px;
+        vertical-align:-2px;
+        animation:spin .8s linear infinite;
+      "></span>
+      ${text}
+    `;
+      } else {
+        button.disabled = false;
+        button.style.opacity = "1";
+        button.style.cursor = "pointer";
+
+        if (button.dataset.originalText) {
+          button.innerHTML = button.dataset.originalText;
+          delete button.dataset.originalText;
+        }
+      }
     }
 
     function getAdminKey() {
@@ -1857,14 +1899,14 @@ ${k.last_used_at
     }
 
     async function deleteKey(apiKey) {
-
+      const button = event.target;
       const ok = await showModal({
         title: "Delete API Key",
         message: "Delete this API key permanently?"
       });
 
       if (!ok) return;
-
+      setButtonLoading(button, true, "Deleting...");
       try {
 
         const res = await fetch(
@@ -1894,8 +1936,9 @@ ${k.last_used_at
         showToast("API key deleted successfully", "success");
 
         loadKeys();
-
+        setButtonLoading(button, false);
       } catch (err) {
+        setButtonLoading(button, false);
         await showModal({
           title: "Error",
           message: err.message
@@ -2315,6 +2358,8 @@ ${k.last_used_at
     }
 
     async function rechargeKey(apiKey) {
+      const button = event.target;
+
       const amount = await showModal({
         title: "Recharge Balance",
         message: "Enter recharge amount",
@@ -2324,30 +2369,46 @@ ${k.last_used_at
 
       if (!amount) return;
 
-      const res = await fetch(API_BASE + "/admin/recharge", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-key": getAdminKey()
-        },
-        body: JSON.stringify({
-          api_key: apiKey,
-          amount: Number(amount)
-        })
-      });
+      setButtonLoading(button, true, "Recharging...");
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        await showModal({
-          title: "Recharge Failed",
-          message: data.error?.message || "Recharge failed"
+      try {
+        const res = await fetch(API_BASE + "/admin/recharge", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": getAdminKey()
+          },
+          body: JSON.stringify({
+            api_key: apiKey,
+            amount: Number(amount)
+          })
         });
-        return;
-      }
 
-      showToast("Balance updated successfully", "success");
-      loadKeys();
+        const data = await res.json();
+
+        if (!res.ok) {
+          setButtonLoading(button, false);
+
+          await showModal({
+            title: "Recharge Failed",
+            message: data.error?.message || "Recharge failed"
+          });
+
+          return;
+        }
+
+        showToast("Balance updated successfully", "success");
+        loadKeys();
+        setButtonLoading(button, false);
+
+      } catch (err) {
+        setButtonLoading(button, false);
+
+        await showModal({
+          title: "Error",
+          message: err.message
+        });
+      }
     }
 
     async function loadPayments() {
