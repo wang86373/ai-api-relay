@@ -441,6 +441,7 @@
           document.querySelector(".sidebar-btn")
         );
         loadTodayStats();
+        startUltraLiveDashboard();
 
       } catch (err) {
 
@@ -455,8 +456,9 @@
     }
 
     function adminLogout() {
+      stopUltraLiveDashboard();
       localStorage.removeItem("admin_key");
-
+    
       document.getElementById("adminPage").style.display =
         "none";
 
@@ -719,6 +721,206 @@
 
     let currentKeyPage = 1;
     const keysPerPage = 10;
+    let ultraLiveTimer = null;
+    let ultraLiveCountdownTimer = null;
+    let ultraLiveRunning = false;
+    let ultraLivePaused = false;
+    let ultraLiveSeconds = 10;
+    let ultraLiveRefreshCount = 0;
+    let ultraLiveLastUpdate = null;
+
+    function createUltraLiveWidget() {
+      if (document.getElementById("ultraLiveWidget")) return;
+
+      const widget = document.createElement("div");
+
+      widget.id = "ultraLiveWidget";
+      widget.style.cssText = `
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:9998;
+    min-width:260px;
+    padding:16px;
+    border-radius:22px;
+    background:rgba(2,6,23,.86);
+    border:1px solid rgba(56,189,248,.22);
+    color:white;
+    box-shadow:
+      0 24px 70px rgba(0,0,0,.55),
+      0 0 35px rgba(56,189,248,.12);
+    backdrop-filter:blur(18px);
+    font-family:Arial,sans-serif;
+  `;
+
+      widget.innerHTML = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    ">
+      <div style="font-weight:800;color:#38bdf8;">
+        Ultra Live
+      </div>
+
+      <div id="ultraLiveDot" style="
+        width:10px;
+        height:10px;
+        border-radius:999px;
+        background:#22c55e;
+        box-shadow:0 0 18px rgba(34,197,94,.9);
+      "></div>
+    </div>
+
+    <div id="ultraLiveStatus" style="
+      color:#cbd5e1;
+      font-size:13px;
+      line-height:1.6;
+    ">
+      Starting live dashboard...
+    </div>
+
+    <div style="
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+    ">
+      <button onclick="manualUltraLiveRefresh()" style="
+        flex:1;
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#2563eb;
+      ">
+        Refresh
+      </button>
+
+      <button id="ultraLivePauseBtn" onclick="toggleUltraLivePause()" style="
+        flex:1;
+        margin:0;
+        padding:10px;
+        border-radius:12px;
+        background:#334155;
+      ">
+        Pause
+      </button>
+    </div>
+  `;
+
+      document.body.appendChild(widget);
+    }
+
+    function updateUltraLiveWidget(status = "Live") {
+      const statusEl = document.getElementById("ultraLiveStatus");
+      const dot = document.getElementById("ultraLiveDot");
+
+      if (!statusEl || !dot) return;
+
+      const lastText = ultraLiveLastUpdate
+        ? new Date(ultraLiveLastUpdate).toLocaleTimeString()
+        : "-";
+
+      statusEl.innerHTML = `
+    Status: <b>${status}</b><br>
+    Next refresh: <b>${ultraLiveSeconds}s</b><br>
+    Last update: <b>${lastText}</b><br>
+    Refresh count: <b>${ultraLiveRefreshCount}</b>
+  `;
+
+      if (ultraLivePaused) {
+        dot.style.background = "#facc15";
+        dot.style.boxShadow = "0 0 18px rgba(250,204,21,.9)";
+      } else {
+        dot.style.background = "#22c55e";
+        dot.style.boxShadow = "0 0 18px rgba(34,197,94,.9)";
+      }
+    }
+
+    async function ultraLiveRefresh() {
+      if (ultraLiveRunning || ultraLivePaused) return;
+      if (document.hidden) return;
+      if (!getAdminKey()) return;
+
+      ultraLiveRunning = true;
+      updateUltraLiveWidget("Refreshing...");
+
+      try {
+        await Promise.allSettled([
+          loadTodayStats(),
+          loadRealtimeStats(),
+          loadRevenueStats(),
+          loadTopModels(),
+          loadActivityFeed(),
+          loadErrorLogs()
+        ]);
+
+        ultraLiveRefreshCount++;
+        ultraLiveLastUpdate = Date.now();
+
+        updateUltraLiveWidget("Live");
+      } catch (err) {
+        console.log("Ultra Live refresh failed:", err.message);
+        updateUltraLiveWidget("Error");
+      } finally {
+        ultraLiveRunning = false;
+        ultraLiveSeconds = 10;
+      }
+    }
+
+    function startUltraLiveDashboard() {
+      createUltraLiveWidget();
+
+      if (ultraLiveTimer) clearInterval(ultraLiveTimer);
+      if (ultraLiveCountdownTimer) clearInterval(ultraLiveCountdownTimer);
+
+      ultraLiveSeconds = 10;
+      ultraLivePaused = false;
+
+      ultraLiveRefresh();
+
+      ultraLiveTimer = setInterval(() => {
+        ultraLiveRefresh();
+      }, 10000);
+
+      ultraLiveCountdownTimer = setInterval(() => {
+        if (!ultraLivePaused && ultraLiveSeconds > 0) {
+          ultraLiveSeconds--;
+        }
+
+        updateUltraLiveWidget(
+          ultraLivePaused ? "Paused" : "Live"
+        );
+      }, 1000);
+    }
+
+    function stopUltraLiveDashboard() {
+      if (ultraLiveTimer) clearInterval(ultraLiveTimer);
+      if (ultraLiveCountdownTimer) clearInterval(ultraLiveCountdownTimer);
+
+      ultraLiveTimer = null;
+      ultraLiveCountdownTimer = null;
+    }
+
+    function toggleUltraLivePause() {
+      ultraLivePaused = !ultraLivePaused;
+
+      const btn = document.getElementById("ultraLivePauseBtn");
+
+      if (btn) {
+        btn.innerText = ultraLivePaused ? "Resume" : "Pause";
+      }
+
+      updateUltraLiveWidget(
+        ultraLivePaused ? "Paused" : "Live"
+      );
+    }
+
+    function manualUltraLiveRefresh() {
+      ultraLiveSeconds = 10;
+      ultraLiveRefresh();
+    }
 
     async function loadTodayStats() {
       try {
@@ -2255,11 +2457,11 @@ ${k.last_used_at
       modelPieChart = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: filteredModels.map(m => m.model || "unknown"),
+          labels: latestModels.map(m => m.model || "unknown"),
           datasets: [
             {
               label: "Revenue",
-              data: filteredModels.map(m => Number(m.revenue || 0)),
+              data: latestModels.map(m => Number(m.revenue || 0)),
               backgroundColor: [
                 "rgba(56,189,248,0.85)",
                 "rgba(34,197,94,0.85)",
@@ -2550,6 +2752,8 @@ ${k.last_used_at
       loadTopModels();
       loadActivityFeed();
       loadErrorLogs();
+
+      startUltraLiveDashboard();
 
       setInterval(loadRealtimeStats, 30000);
       setInterval(loadRevenueStats, 30000);
