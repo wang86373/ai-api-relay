@@ -806,6 +806,83 @@
       wave: 0,
       status: "stable"
     };
+    let ultraCommandCenterOpen = true;
+
+    function createUltraCommandCenterToggle() {
+      if (document.getElementById("ultraCommandCenterToggle")) return;
+
+      const btn = document.createElement("button");
+
+      btn.id = "ultraCommandCenterToggle";
+      btn.innerText = "Command Center";
+
+      btn.style.cssText = `
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:10001;
+    padding:12px 18px;
+    border-radius:999px;
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+    color:white;
+    border:none;
+    font-weight:900;
+    letter-spacing:.03em;
+    box-shadow:
+      0 18px 45px rgba(0,0,0,.38),
+      0 0 28px rgba(124,58,237,.28);
+    cursor:pointer;
+  `;
+
+      btn.onclick = toggleUltraCommandCenter;
+
+      document.body.appendChild(btn);
+    }
+
+    function toggleUltraCommandCenter() {
+      ultraCommandCenterOpen = !ultraCommandCenterOpen;
+
+      updateUltraCommandCenterVisibility();
+
+      showToast(
+        ultraCommandCenterOpen
+          ? "Command Center Opened"
+          : "Command Center Hidden",
+        ultraCommandCenterOpen ? "success" : "info",
+        2500
+      );
+    }
+
+    function updateUltraCommandCenterVisibility() {
+      const ids = [
+        "ultraLiveHealthPanel",
+        "ultraLiveThreatPanel",
+        "ultraLiveDefensePanel",
+        "ultraDefenseTimelinePanel",
+        "ultraSecurityAnalyticsPanel",
+        "ultraThreatRadarPanel",
+        "ultraLiveActivityStream",
+        "ultraLiveWidget"
+      ];
+
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.style.display =
+          ultraCommandCenterOpen ? "" : "none";
+      });
+
+      const btn =
+        document.getElementById("ultraCommandCenterToggle");
+
+      if (btn) {
+        btn.innerText =
+          ultraCommandCenterOpen
+            ? "Hide Command Center"
+            : "Command Center";
+      }
+    }
 
     function createUltraLiveTopBar() {
       if (document.getElementById("ultraLiveTopBar")) return;
@@ -2908,6 +2985,7 @@
     }
 
     function startUltraLiveDashboard() {
+      createUltraCommandCenterToggle();
       createUltraLiveTopBar();
       createUltraLiveHealthPanel();
       createUltraLiveThreatPanel();
