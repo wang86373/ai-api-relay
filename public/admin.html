@@ -1968,20 +1968,19 @@
       </button>
     </div>
   `;
-
       if (!mountUltraPanelToDock(panel, "center")) {
         document.body.appendChild(panel);
       }
+    }
 
-      document.querySelectorAll(".defenseItem").forEach(el => {
-        el.style.cssText = `
+    document.querySelectorAll(".defenseItem").forEach(el => {
+      el.style.cssText = `
       background:rgba(15,23,42,.82);
       border:1px solid rgba(255,255,255,.08);
       border-radius:16px;
       padding:12px;
     `;
-      });
-    }
+    });
 
     function createUltraDefenseTimelinePanel() {
       if (document.getElementById("ultraDefenseTimelinePanel")) return;
@@ -2069,7 +2068,9 @@
     </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "center")) {
+        document.body.appendChild(panel);
+      }
     }
 
     function updateUltraDefenseTimelinePanel() {
@@ -2194,7 +2195,9 @@
     </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "right")) {
+        document.body.appendChild(panel);
+      }
 
       document.querySelectorAll(".securityAnalyticsItem").forEach(el => {
         el.style.cssText = `
@@ -2347,7 +2350,9 @@
 </div>
   `;
 
-      document.body.appendChild(panel);
+      if (!mountUltraPanelToDock(panel, "right")) {
+        document.body.appendChild(panel);
+      }
     }
 
     function updateUltraThreatRadarPanel() {
