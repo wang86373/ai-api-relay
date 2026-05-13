@@ -146,6 +146,80 @@
 
 <body>
 
+  <div id="toastContainer" style="
+  position:fixed;
+  top:24px;
+  right:24px;
+  z-index:10000;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  pointer-events:none;
+"></div>
+
+  <div id="customModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.65);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+">
+    <div style="
+    width:420px;
+    max-width:90%;
+    background:#0f172a;
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:20px;
+    padding:24px;
+    color:white;
+    box-shadow:0 30px 80px rgba(0,0,0,0.55);
+  ">
+      <h3 id="modalTitle" style="margin-top:0;font-size:24px;">Confirm</h3>
+      <p id="modalMessage" style="color:#cbd5e1;"></p>
+
+      <input id="modalInput" style="
+      display:none;
+      width:100%;
+      margin-top:14px;
+      padding:14px;
+      border-radius:12px;
+      border:1px solid rgba(56,189,248,0.35);
+      background:#020617;
+      color:white;
+      font-size:16px;
+    " />
+
+      <div style="
+      display:flex;
+      justify-content:flex-end;
+      gap:12px;
+      margin-top:24px;
+    ">
+        <button onclick="closeCustomModal(false)" style="
+        padding:12px 18px;
+        border:none;
+        border-radius:12px;
+        background:#334155;
+        color:white;
+        font-weight:700;
+        cursor:pointer;
+      ">Cancel</button>
+
+        <button onclick="closeCustomModal(true)" style="
+        padding:12px 18px;
+        border:none;
+        border-radius:12px;
+        background:#2563eb;
+        color:white;
+        font-weight:700;
+        cursor:pointer;
+      ">Confirm</button>
+      </div>
+    </div>
+  </div>
+
   <div id="loginPage" class="container">
     <div class="card">
       <h1>Admin Login</h1>
@@ -385,6 +459,201 @@
 
       document.getElementById("adminKey").value = "";
       document.getElementById("loginAdminKey").value = "";
+    }
+
+    let modalResolver = null;
+
+    function showModal({ title = "Confirm", message = "", input = false, placeholder = "" }) {
+      return new Promise(resolve => {
+        modalResolver = resolve;
+
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalMessage").innerText = message;
+
+        const modalInput = document.getElementById("modalInput");
+        modalInput.style.display = input ? "block" : "none";
+        modalInput.value = "";
+        modalInput.placeholder = placeholder;
+
+        document.getElementById("customModal").style.display = "flex";
+
+        if (input) {
+          setTimeout(() => modalInput.focus(), 50);
+        }
+      });
+    }
+
+    function closeCustomModal(ok) {
+      const modal = document.getElementById("customModal");
+      const input = document.getElementById("modalInput");
+
+      modal.style.display = "none";
+
+      if (!modalResolver) return;
+
+      if (!ok) {
+        modalResolver(null);
+      } else {
+        modalResolver(input.style.display === "block" ? input.value : true);
+      }
+
+      modalResolver = null;
+    }
+
+    function showToast(message, type = "success", duration = 4200) {
+      const container = document.getElementById("toastContainer");
+
+      const toast = document.createElement("div");
+
+      const config = {
+        success: {
+          icon: "✓",
+          title: "Success",
+          bg: "linear-gradient(135deg, rgba(22,163,74,.96), rgba(34,197,94,.96))",
+          glow: "rgba(34,197,94,.35)"
+        },
+        error: {
+          icon: "✕",
+          title: "Error",
+          bg: "linear-gradient(135deg, rgba(220,38,38,.96), rgba(239,68,68,.96))",
+          glow: "rgba(239,68,68,.35)"
+        },
+        warning: {
+          icon: "!",
+          title: "Warning",
+          bg: "linear-gradient(135deg, rgba(217,119,6,.96), rgba(245,158,11,.96))",
+          glow: "rgba(245,158,11,.35)"
+        },
+        info: {
+          icon: "i",
+          title: "Info",
+          bg: "linear-gradient(135deg, rgba(37,99,235,.96), rgba(59,130,246,.96))",
+          glow: "rgba(59,130,246,.35)"
+        }
+      };
+
+      const item = config[type] || config.info;
+
+      toast.style.cssText = `
+    position:relative;
+    min-width:320px;
+    max-width:440px;
+    padding:16px 18px 18px;
+    border-radius:20px;
+    background:${item.bg};
+    color:white;
+    box-shadow:
+      0 24px 60px rgba(0,0,0,.45),
+      0 0 0 1px rgba(255,255,255,.14),
+      0 0 40px ${item.glow};
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    overflow:hidden;
+    transform:translateX(130%) scale(.96);
+    opacity:0;
+    transition:all .38s cubic-bezier(.2,.8,.2,1);
+    pointer-events:auto;
+    backdrop-filter:blur(18px);
+  `;
+
+      toast.innerHTML = `
+    <div style="
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      background:rgba(255,255,255,.22);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      flex-shrink:0;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);
+    ">
+      ${item.icon}
+    </div>
+
+    <div style="flex:1;">
+      <div style="
+        font-size:14px;
+        font-weight:800;
+        margin-bottom:4px;
+      ">
+        ${item.title}
+      </div>
+
+      <div style="
+        font-size:14px;
+        line-height:1.45;
+        opacity:.94;
+      ">
+        ${message}
+      </div>
+    </div>
+
+    <button style="
+      border:none;
+      background:rgba(255,255,255,.16);
+      color:white;
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:16px;
+      line-height:1;
+      flex-shrink:0;
+    ">×</button>
+
+    <div class="toastProgress" style="
+      position:absolute;
+      left:0;
+      bottom:0;
+      height:3px;
+      width:100%;
+      background:rgba(255,255,255,.75);
+      transform-origin:left;
+      transform:scaleX(1);
+    "></div>
+  `;
+
+      const closeBtn = toast.querySelector("button");
+      const progress = toast.querySelector(".toastProgress");
+
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.style.transform = "translateX(0) scale(1)";
+        toast.style.opacity = "1";
+        progress.style.transition = `transform ${duration}ms linear`;
+        progress.style.transform = "scaleX(0)";
+      });
+
+      let removeTimer = setTimeout(removeToast, duration);
+
+      function removeToast() {
+        toast.style.transform = "translateX(130%) scale(.96)";
+        toast.style.opacity = "0";
+
+        setTimeout(() => {
+          toast.remove();
+        }, 380);
+      }
+
+      closeBtn.onclick = () => {
+        clearTimeout(removeTimer);
+        removeToast();
+      };
+
+      toast.onmouseenter = () => {
+        clearTimeout(removeTimer);
+        progress.style.transition = "none";
+      };
+
+      toast.onmouseleave = () => {
+        progress.style.transition = "transform 1200ms linear";
+        progress.style.transform = "scaleX(0)";
+        removeTimer = setTimeout(removeToast, 1200);
+      };
     }
 
     function getAdminKey() {
@@ -1589,9 +1858,10 @@ ${k.last_used_at
 
     async function deleteKey(apiKey) {
 
-      const ok = confirm(
-        "Delete this API key permanently?"
-      );
+      const ok = await showModal({
+        title: "Delete API Key",
+        message: "Delete this API key permanently?"
+      });
 
       if (!ok) return;
 
@@ -1614,16 +1884,22 @@ ${k.last_used_at
         const data = await res.json();
 
         if (!res.ok) {
-          alert(data.error?.message || "Delete failed");
+          await showModal({
+            title: "Delete Failed",
+            message: data.error?.message || "Delete failed"
+          });
           return;
         }
 
-        alert("API key deleted");
+        showToast("API key deleted successfully", "success");
 
         loadKeys();
 
       } catch (err) {
-        alert(err.message);
+        await showModal({
+          title: "Error",
+          message: err.message
+        });
       }
     }
 
@@ -1678,11 +1954,12 @@ ${k.last_used_at
     }
 
     async function toggleKey(keyId, isActive) {
-      const ok = confirm(
-        isActive
+      const ok = await showModal({
+        title: isActive ? "Enable API Key" : "Disable API Key",
+        message: isActive
           ? "Enable this API key?"
           : "Disable this API key?"
-      );
+      });
 
       if (!ok) return;
 
@@ -1701,11 +1978,14 @@ ${k.last_used_at
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error?.message || "Failed");
+        await showModal({
+          title: "Operation Failed",
+          message: data.error?.message || "Failed"
+        });
         return;
       }
 
-      alert("Updated.");
+      showToast("API key updated", "success");
       loadKeys();
     }
 
@@ -2035,7 +2315,12 @@ ${k.last_used_at
     }
 
     async function rechargeKey(apiKey) {
-      const amount = prompt("Recharge amount:");
+      const amount = await showModal({
+        title: "Recharge Balance",
+        message: "Enter recharge amount",
+        input: true,
+        placeholder: "Example: 10"
+      });
 
       if (!amount) return;
 
@@ -2054,11 +2339,14 @@ ${k.last_used_at
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error?.message || "Recharge failed");
+        await showModal({
+          title: "Recharge Failed",
+          message: data.error?.message || "Recharge failed"
+        });
         return;
       }
 
-      alert("Balance updated.");
+      showToast("Balance updated successfully", "success");
       loadKeys();
     }
 
@@ -2145,7 +2433,10 @@ ${k.last_used_at
 
     async function confirmPayment(paymentId) {
       showAdminSection("paymentsSection");
-      const ok = confirm("Confirm this USDT payment?");
+      const ok = await showModal({
+        title: "Confirm Payment",
+        message: "Confirm this USDT payment?"
+      });
       if (!ok) return;
 
       const msg = document.getElementById("msg");
