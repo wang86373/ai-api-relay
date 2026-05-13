@@ -1382,7 +1382,7 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     const cost =
       ((completion.usage?.total_tokens || 0) / 1000) * pricePer1k;
 
-    const { error: logError } = await supabase.from("usage_logs").insert({
+    const { error: usageLogError } = await supabase.from("usage_logs").insert({
       api_key: apiKey,
       email: keyData.user_email,
       model,
@@ -1393,8 +1393,8 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       cost
     });
 
-    if (logError) {
-      console.error("Usage log insert error:", logError.message);
+    if (usageLogError) {
+      console.error("Usage log insert error:", usageLogError.message);
     }
 
     await supabase
@@ -1410,10 +1410,18 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     return res.json(completion);
   } catch (err) {
     console.error("Relay error:", err);
+    const safeApiKey =
+      (req.headers.authorization || "")
+        .replace("Bearer ", "")
+        .trim();
+
+    const safeModel =
+      req.body?.model || "unknown";
     await logError({
-      api_key: apiKey,
-      email: keyData.user_email,
-      model,
+      api_key: safeApiKey,
+      email: null,
+      model: safeModel,
+
       status_code: 500,
       error_message: err.message || "Internal server error",
       endpoint: "/v1/chat/completions"
