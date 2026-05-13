@@ -806,7 +806,7 @@
       wave: 0,
       status: "stable"
     };
-    let ultraCommandCenterOpen = true;
+    let ultraCommandCenterOpen = false;
 
     function createUltraDockLayout() {
       if (document.getElementById("ultraDockLayout")) return;
@@ -3094,6 +3094,7 @@ padding-right:4px;
       createUltraThreatRadarPanel();
       createUltraLiveActivityStream();
       createUltraLiveWidget();
+      updateUltraCommandCenterVisibility();
 
       if (ultraLiveTimer) clearInterval(ultraLiveTimer);
       if (ultraLiveCountdownTimer) clearInterval(ultraLiveCountdownTimer);
