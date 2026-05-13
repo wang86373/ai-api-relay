@@ -311,6 +311,32 @@ const apiLimiter = rateLimit({
   }
 });
 
+async function logError({
+  api_key = null,
+  email = null,
+  model = null,
+  status_code = 500,
+  error_message = "Unknown error",
+  endpoint = null
+}) {
+  try {
+    await supabase
+      .from("error_logs")
+      .insert([
+        {
+          api_key,
+          email,
+          model,
+          status_code,
+          error_message,
+          endpoint
+        }
+      ]);
+  } catch (err) {
+    console.error("Failed to write error log:", err.message);
+  }
+}
+
 function checkAdmin(req, res) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -675,7 +701,7 @@ app.get("/admin/revenue-stats", async (req, res) => {
   }
 });
 
- app.get("/admin/top-models", async (req, res) => {
+app.get("/admin/top-models", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
   try {
@@ -733,7 +759,7 @@ app.get("/admin/revenue-stats", async (req, res) => {
   }
 });
 
-    app.get("/admin/activity-feed", async (req, res) => {
+app.get("/admin/activity-feed", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
   try {
@@ -777,7 +803,7 @@ app.get("/admin/revenue-stats", async (req, res) => {
   }
 });
 
-        app.get("/admin/error-logs", async (req, res) => {
+app.get("/admin/error-logs", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
   try {
@@ -834,7 +860,7 @@ app.get("/admin/usdt-stats", async (req, res) => {
 
       const day =
         new Date(payment.created_at)
-        .toLocaleDateString();
+          .toLocaleDateString();
 
       grouped[day] =
         (grouped[day] || 0)
@@ -1264,6 +1290,12 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
       .single();
 
     if (keyError || !keyData) {
+      await logError({
+        api_key: apiKey,
+        status_code: 401,
+        error_message: "Invalid API key",
+        endpoint: "/v1/chat/completions"
+      });
       return res.status(401).json({
         error: {
           message: "Invalid API key"
@@ -1272,6 +1304,13 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     }
 
     if (Number(keyData.balance || 0) <= 0) {
+      await logError({
+        api_key: apiKey,
+        email: keyData.user_email,
+        status_code: 402,
+        error_message: "Insufficient balance",
+        endpoint: "/v1/chat/completions"
+      });
       return res.status(402).json({
         error: {
           message: "Insufficient balance"
@@ -1371,7 +1410,14 @@ app.post("/v1/chat/completions", apiLimiter, async (req, res) => {
     return res.json(completion);
   } catch (err) {
     console.error("Relay error:", err);
-
+    await logError({
+      api_key: apiKey,
+      email: keyData.user_email,
+      model,
+      status_code: 500,
+      error_message: err.message || "Internal server error",
+      endpoint: "/v1/chat/completions"
+    });
     return res.status(500).json({
       error: {
         message: err.message || "Internal server error"
