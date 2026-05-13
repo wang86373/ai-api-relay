@@ -816,13 +816,13 @@
       dock.id = "ultraDockLayout";
       dock.style.cssText = `
   position:fixed;
-  left:24px;
+  left:430px;
   right:24px;
   top:92px;
   bottom:24px;
   z-index:9994;
   display:grid;
-  grid-template-columns:360px 520px 420px;
+  grid-template-columns:300px 460px 360px;
   gap:18px;
   align-items:start;
   pointer-events:none;
@@ -882,6 +882,8 @@ padding-right:4px;
       panel.style.bottom = "auto";
       panel.style.top = "auto";
       panel.style.width = "100%";
+      panel.style.maxWidth = "100%";
+      panel.style.boxSizing = "border-box";
       panel.style.zIndex = "auto";
 
       dock.appendChild(panel);
