@@ -161,6 +161,23 @@
         background-color: rgba(127, 29, 29, 0);
       }
     }
+
+    @keyframes ultraBlipPulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.55;
+      }
+
+      50% {
+        transform: translate(-50%, -50%) scale(1.8);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.55;
+      }
+    }
   </style>
 </head>
 
@@ -782,6 +799,13 @@
       lastDefenseAt: null
     };
     let ultraDefenseTimeline = [];
+    let ultraThreatRadar = {
+      pulse: 0,
+      intensity: 0,
+      rotation: 0,
+      wave: 0,
+      status: "stable"
+    };
 
     function createUltraLiveTopBar() {
       if (document.getElementById("ultraLiveTopBar")) return;
@@ -2030,6 +2054,345 @@
       });
     }
 
+    function createUltraThreatRadarPanel() {
+      if (document.getElementById("ultraThreatRadarPanel")) return;
+
+      const panel = document.createElement("div");
+
+      panel.id = "ultraThreatRadarPanel";
+
+      panel.style.cssText = `
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:9995;
+    width:320px;
+    height:320px;
+    border-radius:32px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at center,
+      rgba(15,23,42,.95),
+      rgba(2,6,23,.98));
+    border:1px solid rgba(56,189,248,.18);
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.55),
+      0 0 50px rgba(56,189,248,.12);
+    backdrop-filter:blur(20px);
+  `;
+
+      panel.innerHTML = `
+    <div style="
+      position:absolute;
+      top:18px;
+      left:22px;
+      color:#38bdf8;
+      font-weight:900;
+      letter-spacing:.05em;
+      z-index:3;
+    ">
+      NEURAL THREAT RADAR
+    </div>
+
+    <div id="ultraRadarCore" style="
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:110px;
+      height:110px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      background:
+        radial-gradient(circle,
+        rgba(56,189,248,.35),
+        rgba(14,165,233,.08));
+      box-shadow:
+        0 0 35px rgba(56,189,248,.35),
+        inset 0 0 30px rgba(56,189,248,.18);
+      z-index:2;
+    "></div>
+
+    <div id="ultraRadarRing" style="
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:220px;
+      height:220px;
+      border-radius:999px;
+      border:1px solid rgba(56,189,248,.22);
+      transform:translate(-50%,-50%);
+      z-index:1;
+    "></div>
+
+    <div id="ultraRadarSweep" style="
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:220px;
+      height:220px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(56,189,248,.45),
+          transparent 28%
+        );
+      filter:blur(2px);
+      z-index:1;
+    "></div>
+
+    <div id="ultraRadarBlips" style="
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  z-index:2;
+  pointer-events:none;
+"></div>
+
+    <div id="ultraRadarStatus" style="
+      position:absolute;
+      bottom:18px;
+      left:22px;
+      color:#94a3b8;
+      font-size:13px;
+      z-index:3;
+    ">
+      Radar Stable
+    </div>
+       <div id="ultraRadarLegend" style="
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  color:#94a3b8;
+  font-size:11px;
+  line-height:1.6;
+  z-index:3;
+  text-align:right;
+">
+  <div><span style="color:#ef4444;">●</span> Suspicious</div>
+  <div><span style="color:#f97316;">●</span> High Freq</div>
+  <div id="ultraRadarBlipCount">0 threats</div>
+</div>
+  <div id="ultraRadarInspector" style="
+  position:absolute;
+  left:18px;
+  top:52px;
+  right:18px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:rgba(15,23,42,.86);
+  border:1px solid rgba(56,189,248,.16);
+  color:#cbd5e1;
+  font-size:12px;
+  line-height:1.45;
+  z-index:4;
+  display:none;
+">
+  Hover threat blip to inspect.
+</div>
+  `;
+
+      document.body.appendChild(panel);
+    }
+
+    function updateUltraThreatRadarPanel() {
+      const core = document.getElementById("ultraRadarCore");
+      const ring = document.getElementById("ultraRadarRing");
+      const sweep = document.getElementById("ultraRadarSweep");
+      const statusEl = document.getElementById("ultraRadarStatus");
+      const blipsEl = document.getElementById("ultraRadarBlips");
+      const countEl = document.getElementById("ultraRadarBlipCount");
+      const inspectorEl = document.getElementById("ultraRadarInspector");
+
+      if (!core || !ring || !sweep || !statusEl || !blipsEl || !countEl || !inspectorEl) return;
+
+      const risk =
+        Number(ultraLiveThreat.riskScore || 0);
+
+      const mode =
+        ultraLiveThreat.mode || "normal";
+
+      const intensity =
+        Math.min(100, risk);
+
+      ultraThreatRadar.intensity = intensity;
+
+      ultraThreatRadar.rotation =
+        (ultraThreatRadar.rotation + 24) % 360;
+
+      ultraThreatRadar.pulse =
+        1 + intensity / 160;
+
+      const color =
+        mode === "attack"
+          ? "#ef4444"
+          : mode === "danger"
+            ? "#f97316"
+            : mode === "watch"
+              ? "#facc15"
+              : "#38bdf8";
+
+      core.style.transform =
+        `translate(-50%,-50%) scale(${ultraThreatRadar.pulse})`;
+
+      core.style.boxShadow =
+        `0 0 ${30 + intensity}px ${color}66,
+     inset 0 0 ${20 + intensity / 2}px ${color}33`;
+
+      ring.style.borderColor = color + "66";
+
+      ring.style.boxShadow =
+        `0 0 ${20 + intensity / 2}px ${color}44`;
+
+      sweep.style.transform =
+        `translate(-50%,-50%) rotate(${ultraThreatRadar.rotation}deg)`;
+
+      sweep.style.background =
+        `conic-gradient(from 0deg, ${color}aa, transparent 30%)`;
+
+      statusEl.innerText =
+        mode === "attack"
+          ? `Radar Critical · Risk ${risk}`
+          : mode === "danger"
+            ? `Radar Danger · Risk ${risk}`
+            : mode === "watch"
+              ? `Radar Watch · Risk ${risk}`
+              : `Radar Stable · Risk ${risk}`;
+
+      statusEl.style.color = color;
+      const suspicious =
+        Array.isArray(ultraLiveThreat.suspiciousKeys)
+          ? ultraLiveThreat.suspiciousKeys
+          : [];
+
+      const highFreq =
+        Array.isArray(ultraLiveThreat.highFrequencyKeys)
+          ? ultraLiveThreat.highFrequencyKeys
+          : [];
+
+      const blips = [
+        ...suspicious.slice(0, 6).map((k, index) => ({
+          type: "suspicious",
+          label: k.api_key || "unknown",
+          index
+        })),
+
+        ...highFreq.slice(0, 6).map((k, index) => ({
+          type: "frequency",
+          label: k.api_key || "unknown",
+          index: index + 6
+        }))
+      ];
+
+      blipsEl.innerHTML = blips.map((b, i) => {
+        const angle =
+          (i * 47 + ultraThreatRadar.rotation) % 360;
+
+        const radius =
+          65 + ((i * 23) % 70);
+
+        const x =
+          160 + Math.cos(angle * Math.PI / 180) * radius;
+
+        const y =
+          160 + Math.sin(angle * Math.PI / 180) * radius;
+
+        const blipColor =
+          b.type === "frequency"
+            ? "#f97316"
+            : "#ef4444";
+
+        return `
+    <div 
+  onmouseenter="showUltraRadarInspector('${b.type}', '${String(b.label).slice(0, 24)}')"
+  onmouseleave="hideUltraRadarInspector()"
+  onclick="
+  pushUltraLiveActivity({
+    title: 'Radar Blip Selected',
+    detail: '${String(b.label).slice(0, 24)}',
+    type: 'warning'
+  });
+  addUltraDefenseTimeline({
+    title: 'Radar Blip Selected',
+    detail: '${b.type} · ${String(b.label).slice(0, 24)}',
+    type: 'warning'
+  });
+"
+  title="${b.label}" 
+  style="
+      position:absolute;
+      left:${x}px;
+      top:${y}px;
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      background:${blipColor};
+      box-shadow:0 0 18px ${blipColor};
+      opacity:.9;
+      animation:${mode === "attack" ? "ultraBlipPulse .7s infinite" : "none"};
+    "></div>
+  `;
+      }).join("");
+      countEl.innerText =
+        blips.length +
+        (blips.length === 1
+          ? " threat"
+          : " threats");
+    }
+
+    function showUltraRadarInspector(type, label) {
+      const inspector =
+        document.getElementById("ultraRadarInspector");
+
+      if (!inspector) return;
+
+      const mode =
+        type === "frequency"
+          ? "High Frequency"
+          : "Suspicious Activity";
+
+      const color =
+        type === "frequency"
+          ? "#f97316"
+          : "#ef4444";
+
+      inspector.style.display = "block";
+
+      inspector.innerHTML = `
+    <div style="
+      color:${color};
+      font-weight:800;
+      margin-bottom:6px;
+    ">
+      ${mode}
+    </div>
+
+    <div style="margin-bottom:4px;">
+      API Key:
+      <span style="color:white;">
+        ${label}
+      </span>
+    </div>
+
+    <div style="color:#94a3b8;font-size:11px;">
+      Threat detected by Neural Threat Radar AI.
+    </div>
+  `;
+    }
+
+    function hideUltraRadarInspector() {
+      const inspector =
+        document.getElementById("ultraRadarInspector");
+
+      if (!inspector) return;
+
+      inspector.style.display = "none";
+    }
+
     function updateUltraSecurityAnalyticsPanel() {
       const events = Array.isArray(ultraDefenseTimeline)
         ? ultraDefenseTimeline
@@ -2532,6 +2895,7 @@
         updateUltraLiveDefensePanel();
         runUltraAutoLockdownEngine();
         runUltraAutoRecoveryEngine();
+        updateUltraThreatRadarPanel();
         ultraLiveReadyForAlerts = true;
       } catch (err) {
         console.log("Ultra Live refresh failed:", err.message);
@@ -2550,6 +2914,7 @@
       createUltraLiveDefensePanel();
       createUltraDefenseTimelinePanel();
       createUltraSecurityAnalyticsPanel();
+      createUltraThreatRadarPanel();
       createUltraLiveActivityStream();
       createUltraLiveWidget();
 
