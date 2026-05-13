@@ -141,6 +141,7 @@
       color: #94a3b8;
       font-size: 14px;
     }
+
   </style>
 </head>
 
@@ -470,6 +471,131 @@
         .slice(0, 5);
 
       document.getElementById("overviewBox").innerHTML = `
+      <div style="
+  grid-column:1 / -1;
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  padding:32px;
+  background:
+    linear-gradient(135deg,
+      rgba(15,23,42,0.96),
+      rgba(30,41,59,0.88)
+    );
+  border:1px solid rgba(56,189,248,0.18);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.45),
+    0 0 40px rgba(56,189,248,0.08);
+  margin-bottom:22px;
+">
+
+  <div style="
+    position:absolute;
+    width:420px;
+    height:420px;
+    border-radius:999px;
+    background:rgba(56,189,248,0.12);
+    filter:blur(90px);
+    top:-160px;
+    right:-120px;
+  "></div>
+
+  <div style="
+    position:absolute;
+    width:260px;
+    height:260px;
+    border-radius:999px;
+    background:rgba(139,92,246,0.12);
+    filter:blur(80px);
+    bottom:-120px;
+    left:-80px;
+  "></div>
+
+  <div style="position:relative; z-index:2;">
+    <div style="
+      color:#38bdf8;
+      font-size:13px;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      margin-bottom:12px;
+    ">
+      AI API RELAY CONTROL CENTER
+    </div>
+
+    <h1 style="
+      margin:0;
+      font-size:48px;
+      line-height:1;
+      font-weight:800;
+      letter-spacing:-0.05em;
+      color:white;
+    ">
+      Admin Overview
+    </h1>
+
+    <div style="
+      margin-top:14px;
+      color:#94a3b8;
+      font-size:16px;
+      max-width:720px;
+      line-height:1.7;
+    ">
+      Realtime monitoring for revenue, usage, requests,
+      active users, API models and platform analytics.
+    </div>
+
+    <div style="
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-top:28px;
+    ">
+
+      <div style="
+        min-width:220px;
+        background:rgba(2,6,23,0.55);
+        border:1px solid rgba(56,189,248,0.16);
+        border-radius:18px;
+        padding:18px;
+      ">
+        <div style="color:#94a3b8;font-size:13px;">
+          Today Revenue
+        </div>
+
+        <div style="
+          margin-top:8px;
+          font-size:34px;
+          font-weight:700;
+          color:#22c55e;
+        ">
+          $${todayRevenue.toFixed(4)}
+        </div>
+      </div>
+
+      <div style="
+        min-width:220px;
+        background:rgba(2,6,23,0.55);
+        border:1px solid rgba(56,189,248,0.16);
+        border-radius:18px;
+        padding:18px;
+      ">
+        <div style="color:#94a3b8;font-size:13px;">
+          Online Users
+        </div>
+
+        <div style="
+          margin-top:8px;
+          font-size:34px;
+          font-weight:700;
+          color:#38bdf8;
+        ">
+          ${onlineUsers}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
   <div style="
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -581,6 +707,52 @@
               ? new Date(u.last_used_at).toLocaleString()
               : "Never"}
           </b>
+        </div>
+      </div>
+    `).join("")}
+</div>
+
+<div style="
+  grid-column:1 / -1;
+  background:#111827;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:20px;
+  margin-top:16px;
+">
+  <h3 style="margin-top:0;">Top Models by Revenue</h3>
+
+  ${latestModels.length === 0
+          ? `<div class="muted">No model usage yet.</div>`
+          : latestModels.map((m, index) => `
+      <div style="
+        display:grid;
+        grid-template-columns:60px 1.5fr 1fr 1fr 1fr;
+        gap:12px;
+        padding:12px 0;
+        border-bottom:1px solid rgba(255,255,255,0.06);
+        align-items:center;
+      ">
+        <div>#${index + 1}</div>
+
+        <div>
+          <div class="muted">Model</div>
+          <b>${m.model || "unknown"}</b>
+        </div>
+
+        <div>
+          <div class="muted">Revenue</div>
+          <b>$${Number(m.revenue || 0).toFixed(4)}</b>
+        </div>
+
+        <div>
+          <div class="muted">Tokens</div>
+          <b>${Number(m.tokens || 0).toLocaleString()}</b>
+        </div>
+
+        <div>
+          <div class="muted">Requests</div>
+          <b>${m.requests || 0}</b>
         </div>
       </div>
     `).join("")}
@@ -1046,25 +1218,25 @@ ${k.last_used_at
     }
 
     async function loadTopModels() {
-  try {
-    const res = await fetch(API_BASE + "/admin/top-models", {
-      headers: {
-        "x-admin-key": getAdminKey()
+      try {
+        const res = await fetch(API_BASE + "/admin/top-models", {
+          headers: {
+            "x-admin-key": getAdminKey()
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) return;
+
+        latestModels = data.models || [];
+
+        renderOverview();
+
+      } catch (err) {
+        console.log("Load top models failed:", err.message);
       }
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) return;
-
-    latestModels = data.models || [];
-
-    renderOverview();
-
-  } catch (err) {
-    console.log("Load top models failed:", err.message);
-  }
-}
+    }
 
     async function loadUsdtChart() {
       try {
@@ -1297,9 +1469,11 @@ ${k.last_used_at
       loadPayments();
       loadRealtimeStats();
       loadRevenueStats();
+      loadTopModels();
 
       setInterval(loadRealtimeStats, 30000);
       setInterval(loadRevenueStats, 30000);
+      setInterval(loadTopModels, 30000);
 
       loadUsdtChart();
       setInterval(loadUsdtChart, 30000);
