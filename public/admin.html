@@ -932,89 +932,193 @@ height:100vh;
   max-width:none;
 ">
 
-    <div class="card admin-section" id="logsSection">
+        <div class="card admin-section" id="overviewSection">
+          <h2>Admin Overview</h2>
 
-    <h2>Usage Logs</h2>
+          <div id="overviewBox">
+            <div class="stats-grid-premium">
+              <div class="stats-metric-card">
+                <div class="label">System Status</div>
+                <div class="value">Online</div>
+              </div>
 
-    <div id="logsBox">
-      Please select an API Key from API Keys → View Logs
+              <div class="stats-metric-card">
+                <div class="label">Dashboard Mode</div>
+                <div class="value">Ultra</div>
+              </div>
+
+              <div class="stats-metric-card">
+                <div class="label">Command Center</div>
+                <div class="value">Ready</div>
+              </div>
+
+              <div class="stats-metric-card">
+                <div class="label">Next Step</div>
+                <div class="value">Stats</div>
+              </div>
+            </div>
+
+            <div style="
+      margin-top:24px;
+      padding:24px;
+      border-radius:24px;
+      background:rgba(2,6,23,.72);
+      border:1px solid rgba(56,189,248,.16);
+    ">
+              <h3 style="margin-top:0;">Admin Control Center</h3>
+
+              <div class="muted">
+                Use Stats to view classified analytics: Overview, Users, Models, Activity and Errors.
+              </div>
+
+              <button onclick="showAdminSection('statsSection', document.querySelectorAll('.sidebar-btn')[3])">
+                Open Stats Command Center
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card admin-section" id="keysSection">
+          <div class="keys-hero">
+
+            <div class="keys-hero-top">
+              <div>
+                <div class="section-eyebrow">
+                  ENTERPRISE KEY MANAGER
+                </div>
+
+                <h2 class="ultra-title">
+                  API Keys Control Center
+                </h2>
+
+                <div class="muted">
+                  Realtime API key management, usage monitoring and balance intelligence.
+                </div>
+              </div>
+
+              <div class="keys-live-badge">
+                ● LIVE
+              </div>
+            </div>
+
+            <div class="keys-toolbar">
+              <div class="keys-search-shell">
+                <div class="keys-search-icon">
+                  ⌕
+                </div>
+
+                <input id="searchInput" class="ultra-search" placeholder="Search email / api key / key name" />
+              </div>
+
+              <select id="keySortSelect" class="ultra-select" onchange="loadKeys()">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="requests_desc">Requests High → Low</option>
+                <option value="requests_asc">Requests Low → High</option>
+                <option value="tokens_desc">Tokens High → Low</option>
+                <option value="tokens_asc">Tokens Low → High</option>
+                <option value="balance_desc">Balance High → Low</option>
+                <option value="balance_asc">Balance Low → High</option>
+              </select>
+
+              <button class="ultra-btn" onclick="searchKeys()">
+                Search
+              </button>
+
+              <button class="ultra-btn primary" onclick="loadKeys()">
+                Load API Keys
+              </button>
+            </div>
+          </div>
+
+          <div id="keysBox">
+            No keys loaded.
+          </div>
+        </div>
+
+        <div class="card admin-section" id="logsSection">
+
+          <h2>Usage Logs</h2>
+
+          <div id="logsBox">
+            Please select an API Key from API Keys → View Logs
+          </div>
+        </div>
+        <div class="card admin-section stats-shell" id="statsSection">
+
+          <h2>Realtime Stats</h2>
+          <div class="muted">
+            Ultra classified command analytics for overview, users, models, activity and errors.
+          </div>
+
+          <div class="stats-tabs">
+            <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
+          </div>
+
+          <div id="statsOverviewTab" class="stats-panel active">
+            <div id="statsOverviewBox" class="stats-grid-premium"></div>
+
+            <div class="ultra-chart-card">
+              <h3>Requests Trend</h3>
+              <canvas id="statsChart" height="120"></canvas>
+            </div>
+
+            <div class="ultra-chart-card">
+              <h3>Revenue / Tokens / Requests Trend</h3>
+              <canvas id="revenueChart" height="120"></canvas>
+            </div>
+
+            <div class="ultra-chart-card">
+              <h3>USDT Revenue Trend</h3>
+              <canvas id="usdtChart" height="120"></canvas>
+            </div>
+          </div>
+
+          <div id="statsUsersTab" class="stats-panel">
+            <h3>Top Users Performance</h3>
+            <div id="statsUsersBox"></div>
+          </div>
+
+          <div id="statsModelsTab" class="stats-panel">
+            <h3>Top Models / Per Model Usage</h3>
+            <div id="statsModelsBox"></div>
+
+            <div class="ultra-chart-card">
+              <h3>Model Usage Share</h3>
+              <canvas id="modelPieChart" height="120"></canvas>
+            </div>
+          </div>
+
+          <div id="statsActivityTab" class="stats-panel">
+            <h3>Live Activity Feed</h3>
+            <div id="statsActivityBox"></div>
+          </div>
+
+          <div id="statsErrorsTab" class="stats-panel">
+            <h3>System Errors</h3>
+            <div id="statsErrorsBox"></div>
+          </div>
+
+        </div>
+        <div class="card admin-section" id="paymentsSection">
+          <h2>Payment Requests</h2>
+          <select id="paymentStatusFilter" onchange="loadPayments()">
+            <option value="all">All Payments</option>
+            <option value="pending">Pending Only</option>
+            <option value="confirmed">Confirmed Only</option>
+          </select>
+          <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
+
+          <div class="msg" id="msg"></div>
+          <div id="paymentsBox">No data loaded.</div>
+        </div>
+
+      </main>
     </div>
-  </div>
-  <div class="card admin-section stats-shell" id="statsSection">
-
-    <h2>Realtime Stats</h2>
-    <div class="muted">
-      Ultra classified command analytics for overview, users, models, activity and errors.
-    </div>
-
-    <div class="stats-tabs">
-      <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
-      <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
-      <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
-      <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
-      <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
-    </div>
-
-    <div id="statsOverviewTab" class="stats-panel active">
-      <div id="statsOverviewBox" class="stats-grid-premium"></div>
-
-      <div class="ultra-chart-card">
-        <h3>Requests Trend</h3>
-        <canvas id="statsChart" height="120"></canvas>
-      </div>
-
-      <div class="ultra-chart-card">
-        <h3>Revenue / Tokens / Requests Trend</h3>
-        <canvas id="revenueChart" height="120"></canvas>
-      </div>
-
-      <div class="ultra-chart-card">
-        <h3>USDT Revenue Trend</h3>
-        <canvas id="usdtChart" height="120"></canvas>
-      </div>
-    </div>
-
-    <div id="statsUsersTab" class="stats-panel">
-      <h3>Top Users Performance</h3>
-      <div id="statsUsersBox"></div>
-    </div>
-
-    <div id="statsModelsTab" class="stats-panel">
-      <h3>Top Models / Per Model Usage</h3>
-      <div id="statsModelsBox"></div>
-
-      <div class="ultra-chart-card">
-        <h3>Model Usage Share</h3>
-        <canvas id="modelPieChart" height="120"></canvas>
-      </div>
-    </div>
-
-    <div id="statsActivityTab" class="stats-panel">
-      <h3>Live Activity Feed</h3>
-      <div id="statsActivityBox"></div>
-    </div>
-
-    <div id="statsErrorsTab" class="stats-panel">
-      <h3>System Errors</h3>
-      <div id="statsErrorsBox"></div>
-    </div>
-
-  </div>
-  <div class="card admin-section" id="paymentsSection">
-    <h2>Payment Requests</h2>
-    <select id="paymentStatusFilter" onchange="loadPayments()">
-      <option value="all">All Payments</option>
-      <option value="pending">Pending Only</option>
-      <option value="confirmed">Confirmed Only</option>
-    </select>
-    <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
-
-    <div class="msg" id="msg"></div>
-    <div id="paymentsBox">No data loaded.</div>
-  </div>
-
-  </main>
-  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
