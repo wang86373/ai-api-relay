@@ -2075,6 +2075,12 @@ height:100vh;
         topModelsUsage: "Top Models / Per Model Usage",
         modelUsageShare: "Model Usage Share",
         users: "Users",
+        topModels: "Top Models",
+        liveActivityFeed: "Live Activity Feed",
+        live: "LIVE",
+        realtimeErrorMonitor: "REALTIME ERROR MONITOR",
+        systemErrors: "System Errors",
+        errorsCount: "Errors"
       },
 
       zh: {
@@ -2194,6 +2200,12 @@ height:100vh;
         topModelsUsage: "热门模型 / 单模型用量",
         modelUsageShare: "模型使用占比",
         users: "用户",
+        topModels: "热门模型",
+        liveActivityFeed: "实时活动记录",
+        live: "实时",
+        realtimeErrorMonitor: "实时错误监控",
+        systemErrors: "系统错误",
+        errorsCount: "错误"
       }
 
     };
@@ -5616,8 +5628,8 @@ padding-right:4px;
           margin-bottom:22px;
         ">
 
-          <h2 style="margin:0;" data-i18n="topModels">
-  Top Models
+          <h2 style="margin:0;">
+  ${LANG[currentLang].topModels}
 </h2>
 
           <div style="
@@ -5626,21 +5638,15 @@ padding-right:4px;
           ">
 
             <button class="stats-tab-btn active">
-  <span data-i18n="revenue">
-    Revenue
-  </span>
+  ${LANG[currentLang].revenue}
 </button>
 
 <button class="stats-tab-btn">
-  <span data-i18n="requests">
-    Requests
-  </span>
+  ${LANG[currentLang].requests}
 </button>
 
 <button class="stats-tab-btn">
-  <span data-i18n="tokens">
-    Tokens
-  </span>
+  ${LANG[currentLang].tokens}
 </button>
 
           </div>
@@ -5785,7 +5791,7 @@ padding-right:4px;
   font-size:28px;
   line-height:1.1;
 ">
-            Live Activity Feed
+            ${LANG[currentLang].liveActivityFeed}
           </h2>
 
           <div style="
@@ -5794,7 +5800,7 @@ padding-right:4px;
   font-weight:700;
 ">
             <div class="keys-live-badge">
-  • <span data-i18n="live">LIVE</span>
+  ${LANG[currentLang].live}
           </div>
 
         </div>
@@ -5904,14 +5910,14 @@ padding-right:4px;
               letter-spacing:.12em;
               margin-bottom:8px;
             ">
-              Realtime Error Monitor
+              ${LANG[currentLang].realtimeErrorMonitor}
             </div>
 
             <h2 style="
               margin:0;
               color:white;
             ">
-              System Errors
+              ${LANG[currentLang].systemErrors}
             </h2>
 
           </div>
@@ -5925,7 +5931,7 @@ padding-right:4px;
             color:#fca5a5;
             font-weight:900;
           ">
-            ${latestErrors.length} Errors
+            ${latestErrors.length} ${LANG[currentLang].errorsCount}
           </div>
 
         </div>
