@@ -1479,6 +1479,10 @@ height:100vh;
 
           </div>
 
+          <div class="card" style="margin-bottom:22px;">
+            <canvas id="paymentsRevenueChart"></canvas>
+          </div>
+
           <div id="paymentsBox">
             No data loaded.
           </div>
@@ -1495,6 +1499,7 @@ height:100vh;
     let revenueChart;
     let modelPieChart;
     let usdtChart;
+    let paymentsRevenueChart;
     let paymentsAutoRefreshTimer = null;
     let paymentsAutoRefreshEnabled = true;
     function showAdminSection(sectionId, btn) {
@@ -5995,9 +6000,10 @@ padding-right:4px;
         }
 
         msg.innerText = "";
-        latestPayments = data.payments || [];
+        latestPayments = filteredPayments || [];
         checkUltraLiveNewPayments(latestPayments);
         renderOverview();
+        renderPaymentsRevenueChart(filteredPayments);
 
         if (!data.payments || data.payments.length === 0) {
           box.innerHTML = "No payment requests.";
@@ -6149,6 +6155,74 @@ padding-right:4px;
       } catch (err) {
         msg.innerText = err.message;
       }
+    }
+
+    function renderPaymentsRevenueChart(payments) {
+      const canvas = document.getElementById("paymentsRevenueChart");
+
+      if (!canvas) return;
+
+      const dailyRevenue = {};
+
+      payments
+        .filter(p => p.status === "confirmed")
+        .forEach(p => {
+          const day = p.created_at
+            ? new Date(p.created_at).toLocaleDateString()
+            : "Unknown";
+
+          dailyRevenue[day] =
+            (dailyRevenue[day] || 0) + Number(p.amount || 0);
+        });
+
+      const labels = Object.keys(dailyRevenue);
+      const values = Object.values(dailyRevenue);
+
+      if (paymentsRevenueChart) {
+        paymentsRevenueChart.destroy();
+      }
+
+      paymentsRevenueChart = new Chart(canvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "Confirmed USDT Revenue",
+            data: values,
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: {
+                color: "#cbd5e1"
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: "#94a3b8"
+              },
+              grid: {
+                color: "rgba(148,163,184,.08)"
+              }
+            },
+            y: {
+              ticks: {
+                color: "#94a3b8"
+              },
+              grid: {
+                color: "rgba(148,163,184,.08)"
+              }
+            }
+          }
+        }
+      });
     }
 
     function startPaymentsAutoRefresh() {
