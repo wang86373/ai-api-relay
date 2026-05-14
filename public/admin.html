@@ -2047,6 +2047,30 @@ height:100vh;
         recharge: "Recharge",
         viewLogs: "View Logs",
         delete: "Delete",
+        enable: "Enable",
+        totalUsers: "TOTAL USERS",
+        activeKeys: "ACTIVE KEYS",
+        totalBalance: "TOTAL BALANCE",
+        todayRevenue: "TODAY REVENUE",
+        todayTokens: "TODAY TOKENS",
+        todayRequests: "TODAY REQUESTS",
+        onlineUsers: "ONLINE USERS",
+        pendingUsdt: "PENDING USDT",
+        profitMargin: "PROFIT MARGIN",
+
+        totalPayments: "TOTAL PAYMENTS",
+        pending: "PENDING",
+        confirmed: "CONFIRMED",
+        usdtRevenue: "USDT REVENUE",
+        id: "ID",
+        amount: "AMOUNT",
+        txHash: "TX HASH",
+        status: "STATUS",
+        created: "CREATED",
+        action: "ACTION",
+        copy: "Copy",
+        details: "Details",
+        confirm: "Confirm",
       },
 
       zh: {
@@ -2138,6 +2162,30 @@ height:100vh;
         recharge: "充值",
         viewLogs: "查看日志",
         delete: "删除",
+        enable: "启用",
+        totalUsers: "总用户数",
+        activeKeys: "启用密钥",
+        totalBalance: "总余额",
+        todayRevenue: "今日收入",
+        todayTokens: "今日 Token",
+        todayRequests: "今日请求",
+        onlineUsers: "在线用户",
+        pendingUsdt: "待确认 USDT",
+        profitMargin: "利润率",
+
+        totalPayments: "总支付数",
+        pending: "待确认",
+        confirmed: "已确认",
+        usdtRevenue: "USDT 收入",
+        id: "编号",
+        amount: "金额",
+        txHash: "交易哈希",
+        status: "状态",
+        created: "创建时间",
+        action: "操作",
+        copy: "复制",
+        details: "详情",
+        confirm: "确认",
       }
 
     };
@@ -6189,7 +6237,7 @@ padding-right:4px;
   ">
 
     <button onclick="toggleKey(${k.id}, ${!k.is_active})">
-      ${k.is_active ? "Disable" : "Enable"}
+      ${k.is_active ? LANG[currentLang].disable : LANG[currentLang].enable}
     </button>
 
     <button onclick="rechargeKey('${k.api_key}')">
@@ -6818,8 +6866,8 @@ padding-right:4px;
 
   <div class="payment-analytics-card">
     <div class="payment-analytics-label">
-      Total Payments
-    </div>
+  ${LANG[currentLang].totalPayments}
+</div>
 
     <div class="payment-analytics-value payment-live-value">
       ${filteredPayments.length}
@@ -6828,8 +6876,8 @@ padding-right:4px;
 
   <div class="payment-analytics-card">
     <div class="payment-analytics-label">
-      Pending
-    </div>
+  ${LANG[currentLang].pending}
+</div>
 
     <div class="payment-analytics-value">
       ${filteredPayments.filter(p => p.status === "pending").length}
@@ -6838,7 +6886,7 @@ padding-right:4px;
 
   <div class="payment-analytics-card">
     <div class="payment-analytics-label">
-      Confirmed
+      ${LANG[currentLang].confirmed}
     </div>
 
     <div class="payment-analytics-value">
@@ -6848,7 +6896,7 @@ padding-right:4px;
 
   <div class="payment-analytics-card">
     <div class="payment-analytics-label">
-      USDT Revenue
+      ${LANG[currentLang].usdtRevenue}
     </div>
 
     <div class="payment-analytics-value payment-live-value">
@@ -6862,13 +6910,13 @@ padding-right:4px;
  </div>
             <div class="payments-premium-head">
 
-              <div>ID</div>
-              <div>API Key</div>
-              <div>Amount</div>
-              <div>Tx Hash</div>
-              <div>Status</div>
-              <div>Created</div>
-              <div>Action</div>
+              <div>${LANG[currentLang].id}</div>
+              <div>${LANG[currentLang].apiKeyLabel}</div>
+              <div>${LANG[currentLang].amount}</div>
+              <div>${LANG[currentLang].txHash}</div>
+              <div>${LANG[currentLang].status}</div>
+              <div>${LANG[currentLang].created}</div>
+              <div>${LANG[currentLang].action}</div>
 
             </div>
 
@@ -6885,7 +6933,7 @@ padding-right:4px;
   class="payment-detail-btn"
   onclick="openPaymentDetail(${p.id})"
 >
-  Details
+  ${LANG[currentLang].details}
 </button>
 </div>
 
@@ -6910,7 +6958,7 @@ padding-right:4px;
           ${p.tx_hash
                 ? `
 <button onclick="copyText('${p.tx_hash || ""}')">
-  Copy
+  ${LANG[currentLang].copy}
 </button>
 `
                 : ""
@@ -6920,12 +6968,10 @@ padding-right:4px;
 
         <div>
 
-          <div class="payment-status-pill ${p.status}">
-  ${p.status}
+          ${p.status === "confirmed"
+                ? LANG[currentLang].confirmed
+                : LANG[currentLang].pending}
 </div>
-
-        </div>
-
         <div>
           ${p.created_at
                 ? new Date(p.created_at).toLocaleString()
@@ -6939,7 +6985,7 @@ padding-right:4px;
 
                 ? `
 <span class="payment-status-pill confirmed">
-  Confirmed
+  ${LANG[currentLang].confirmed}
 </span>
 `
 
@@ -6948,7 +6994,7 @@ padding-right:4px;
   class="payment-confirm-btn"
   onclick="confirmPayment(${p.id})"
 >
-  Confirm
+  ${LANG[currentLang].confirm}
 </button>
 `
               }
