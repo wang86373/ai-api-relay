@@ -347,6 +347,232 @@
         opacity: 0.55;
       }
     }
+
+    .stats-shell {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+    }
+
+    .stats-shell::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        radial-gradient(circle at top left,
+          rgba(56, 189, 248, .18),
+          transparent 34%),
+        radial-gradient(circle at bottom right,
+          rgba(124, 58, 237, .16),
+          transparent 34%);
+      pointer-events: none;
+    }
+
+    .stats-tabs {
+      position: relative;
+      z-index: 1;
+
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      margin: 22px 0 28px;
+    }
+
+    .stats-tab-btn {
+      position: relative;
+      overflow: hidden;
+
+      padding: 14px 20px;
+
+      border-radius: 999px;
+
+      border: 1px solid rgba(56, 189, 248, .18);
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .88),
+          rgba(2, 6, 23, .96));
+
+      color: #cbd5e1;
+
+      font-weight: 900;
+      letter-spacing: .03em;
+
+      cursor: pointer;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .05);
+
+      transition: .22s ease;
+    }
+
+    .stats-tab-btn:hover {
+      transform: translateY(-2px);
+
+      color: white;
+
+      border-color:
+        rgba(56, 189, 248, .45);
+
+      box-shadow:
+        0 0 26px rgba(37, 99, 235, .22);
+    }
+
+    .stats-tab-btn.active {
+      color: white;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #4f46e5,
+          #7c3aed);
+
+      border-color:
+        rgba(125, 211, 252, .45);
+
+      box-shadow:
+        0 16px 38px rgba(37, 99, 235, .34),
+        0 0 30px rgba(124, 58, 237, .26);
+    }
+
+    .stats-panel {
+      position: relative;
+      z-index: 1;
+
+      display: none;
+
+      animation:
+        statsPanelIn .24s ease;
+    }
+
+    .stats-panel.active {
+      display: block;
+    }
+
+    .stats-grid-premium {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+
+      gap: 16px;
+    }
+
+    .stats-metric-card {
+      position: relative;
+      overflow: hidden;
+
+      padding: 20px;
+
+      border-radius: 22px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .9),
+          rgba(2, 6, 23, .96));
+
+      border:
+        1px solid rgba(56, 189, 248, .13);
+
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, .28),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+
+      transition: .22s;
+    }
+
+    .stats-metric-card::after {
+      content: "";
+
+      position: absolute;
+
+      left: -60%;
+      top: 0;
+
+      width: 45%;
+      height: 100%;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .14),
+          transparent);
+
+      transform: skewX(-18deg);
+
+      transition: .45s;
+    }
+
+    .stats-metric-card:hover::after {
+      left: 130%;
+    }
+
+    .stats-metric-card:hover {
+      transform: translateY(-3px);
+
+      border-color:
+        rgba(56, 189, 248, .35);
+
+      box-shadow:
+        0 0 34px rgba(37, 99, 235, .18);
+    }
+
+    .stats-metric-card .label {
+      color: #94a3b8;
+
+      font-size: 13px;
+
+      font-weight: 800;
+
+      letter-spacing: .04em;
+
+      text-transform: uppercase;
+    }
+
+    .stats-metric-card .value {
+      margin-top: 10px;
+
+      font-size: 30px;
+
+      font-weight: 900;
+
+      color: white;
+    }
+
+    .ultra-chart-card {
+      position: relative;
+      z-index: 1;
+
+      background:
+        rgba(2, 6, 23, .64);
+
+      border:
+        1px solid rgba(56, 189, 248, .14);
+
+      border-radius: 24px;
+
+      padding: 24px;
+
+      margin-bottom: 20px;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    @keyframes statsPanelIn {
+      from {
+        opacity: 0;
+        transform:
+          translateY(10px) scale(.99);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0) scale(1);
+      }
+    }
   </style>
 </head>
 
@@ -539,21 +765,64 @@ height:100vh;
             Please select an API Key from API Keys → View Logs
           </div>
         </div>
-        <div class="card admin-section" id="statsSection">
+        <div class="card admin-section stats-shell" id="statsSection">
 
           <h2>Realtime Stats</h2>
+          <div class="muted">
+            Ultra classified command analytics for overview, users, models, activity and errors.
+          </div>
 
-          <h3>Requests Trend</h3>
-          <canvas id="statsChart" height="120"></canvas>
+          <div class="stats-tabs">
+            <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
+          </div>
 
-          <h3>Revenue / Tokens / Requests Trend</h3>
-          <canvas id="revenueChart" height="120"></canvas>
+          <div id="statsOverviewTab" class="stats-panel active">
+            <div id="statsOverviewBox" class="stats-grid-premium"></div>
 
-          <h3>Model Usage Share</h3>
-          <canvas id="modelPieChart" height="120"></canvas>
+            <div class="ultra-chart-card">
+              <h3>Requests Trend</h3>
+              <canvas id="statsChart" height="120"></canvas>
+            </div>
 
-          <h3>USDT Revenue Trend</h3>
-          <canvas id="usdtChart" height="120"></canvas>
+            <div class="ultra-chart-card">
+              <h3>Revenue / Tokens / Requests Trend</h3>
+              <canvas id="revenueChart" height="120"></canvas>
+            </div>
+
+            <div class="ultra-chart-card">
+              <h3>USDT Revenue Trend</h3>
+              <canvas id="usdtChart" height="120"></canvas>
+            </div>
+          </div>
+
+          <div id="statsUsersTab" class="stats-panel">
+            <h3>Top Users Performance</h3>
+            <div id="statsUsersBox"></div>
+          </div>
+
+          <div id="statsModelsTab" class="stats-panel">
+            <h3>Top Models / Per Model Usage</h3>
+            <div id="statsModelsBox"></div>
+
+            <div class="ultra-chart-card">
+              <h3>Model Usage Share</h3>
+              <canvas id="modelPieChart" height="120"></canvas>
+            </div>
+          </div>
+
+          <div id="statsActivityTab" class="stats-panel">
+            <h3>Live Activity Feed</h3>
+            <div id="statsActivityBox"></div>
+          </div>
+
+          <div id="statsErrorsTab" class="stats-panel">
+            <h3>System Errors</h3>
+            <div id="statsErrorsBox"></div>
+          </div>
 
         </div>
         <div class="card admin-section" id="paymentsSection">
@@ -600,6 +869,24 @@ height:100vh;
         btn.style.background = "#2563eb";
         btn.style.borderColor = "#2563eb";
       }
+    }
+
+    function showStatsTab(tabId, btn) {
+
+      document.querySelectorAll(".stats-panel")
+        .forEach(panel => {
+          panel.classList.remove("active");
+        });
+
+      document.getElementById(tabId)
+        ?.classList.add("active");
+
+      document.querySelectorAll(".stats-tab-btn")
+        .forEach(tab => {
+          tab.classList.remove("active");
+        });
+
+      btn?.classList.add("active");
     }
 
     async function adminLogin() {
@@ -4327,6 +4614,308 @@ $${Number(stats.revenue).toFixed(6)}
 
 </div>
 `;
+      renderStatsTabs();
+    }
+
+    function renderStatsTabs() {
+
+      const users =
+        new Set(
+          latestKeys
+            .map(k => k.user_email)
+            .filter(Boolean)
+        );
+
+      const totalKeys =
+        latestKeys.length;
+
+      const activeKeys =
+        latestKeys.filter(k => k.is_active)
+          .length;
+
+      const totalBalance =
+        latestKeys.reduce((sum, k) => {
+          return sum + Number(k.balance || 0);
+        }, 0);
+
+      const totalRequests =
+        latestKeys.reduce((sum, k) => {
+          return sum + Number(k.total_requests || 0);
+        }, 0);
+
+      const totalTokens =
+        latestKeys.reduce((sum, k) => {
+          return sum + Number(k.total_tokens || 0);
+        }, 0);
+
+      const totalCost =
+        latestKeys.reduce((sum, k) => {
+          return sum + Number(k.total_cost || 0);
+        }, 0);
+
+      const pendingUsdt =
+        latestPayments.filter(p =>
+          p.status !== "confirmed"
+        ).length;
+
+      const overviewBox =
+        document.getElementById("statsOverviewBox");
+
+      if (overviewBox) {
+
+        const cards = [
+          ["Total Users", users.size],
+          ["API Keys", totalKeys],
+          ["Active Keys", activeKeys],
+          ["Total Balance", "$" + totalBalance.toFixed(4)],
+          ["Requests", totalRequests],
+          ["Tokens", totalTokens.toLocaleString()],
+          ["Total Cost", "$" + totalCost.toFixed(4)],
+          ["Today Revenue", "$" + Number(todayStats.todayRevenue || 0).toFixed(4)],
+          ["Today Tokens", Number(todayStats.todayTokens || 0).toLocaleString()],
+          ["Today Requests", todayStats.todayRequests || 0],
+          ["Online Users", todayStats.onlineUsers || 0],
+          ["Pending USDT", pendingUsdt]
+        ];
+
+        overviewBox.innerHTML =
+          cards.map(card => `
+        <div class="stats-metric-card">
+
+          <div class="label">
+            ${card[0]}
+          </div>
+
+          <div class="value">
+            ${card[1]}
+          </div>
+
+        </div>
+      `).join("");
+      }
+
+      const usersBox =
+        document.getElementById("statsUsersBox");
+
+      if (usersBox) {
+
+        const topUsers =
+          [...latestKeys]
+            .sort((a, b) =>
+              Number(b.total_cost || 0) -
+              Number(a.total_cost || 0)
+            )
+            .slice(0, 10);
+
+        usersBox.innerHTML =
+          topUsers.map((u, i) => `
+        <div class="item" style="
+          margin-bottom:14px;
+        ">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+          ">
+
+            <div>
+
+              <div style="
+                font-weight:800;
+                font-size:16px;
+              ">
+                #${i + 1}
+                ${u.user_email || "Unknown"}
+              </div>
+
+              <div class="muted">
+                Requests:
+                ${u.total_requests || 0}
+              </div>
+
+            </div>
+
+            <div style="
+              text-align:right;
+            ">
+
+              <div style="
+                color:#22c55e;
+                font-weight:900;
+                font-size:20px;
+              ">
+                $${Number(u.total_cost || 0).toFixed(4)}
+              </div>
+
+              <div class="muted">
+                ${Number(u.total_tokens || 0).toLocaleString()} tokens
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      `).join("");
+      }
+
+      const modelsBox =
+        document.getElementById("statsModelsBox");
+
+      if (modelsBox) {
+
+        modelsBox.innerHTML =
+          latestModels.map(model => `
+        <div class="item" style="
+          margin-bottom:14px;
+        ">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+          ">
+
+            <div>
+
+              <div style="
+                font-weight:800;
+                font-size:17px;
+              ">
+                ${model.model}
+              </div>
+
+              <div class="muted">
+                ${model.requests} requests
+              </div>
+
+            </div>
+
+            <div style="
+              text-align:right;
+            ">
+
+              <div style="
+                color:#60a5fa;
+                font-size:20px;
+                font-weight:900;
+              ">
+                $${Number(model.revenue || 0).toFixed(4)}
+              </div>
+
+              <div class="muted">
+                ${Number(model.tokens || 0).toLocaleString()} tokens
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      `).join("");
+      }
+
+      const activityBox =
+        document.getElementById("statsActivityBox");
+
+      if (activityBox) {
+
+        activityBox.innerHTML =
+          latestActivities.map(item => `
+        <div class="item" style="
+          margin-bottom:14px;
+        ">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:16px;
+          ">
+
+            <div>
+
+              <div style="
+                font-weight:800;
+              ">
+                ${item.email || "Unknown"}
+              </div>
+
+              <div class="muted">
+                ${item.model || "unknown"}
+              </div>
+
+            </div>
+
+            <div style="
+              text-align:right;
+            ">
+
+              <div style="
+                color:#22c55e;
+                font-weight:800;
+              ">
+                $${Number(item.cost || 0).toFixed(4)}
+              </div>
+
+              <div class="muted">
+                ${Number(item.total_tokens || 0).toLocaleString()} tokens
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      `).join("");
+      }
+
+      const errorsBox =
+        document.getElementById("statsErrorsBox");
+
+      if (errorsBox) {
+
+        if (!latestErrors.length) {
+
+          errorsBox.innerHTML = `
+        <div class="item">
+
+          <div style="
+            color:#22c55e;
+            font-weight:900;
+            font-size:18px;
+          ">
+            No system errors detected
+          </div>
+
+        </div>
+      `;
+
+        } else {
+
+          errorsBox.innerHTML =
+            latestErrors.map(err => `
+          <div class="item" style="
+            margin-bottom:14px;
+            border-color:rgba(239,68,68,.22);
+          ">
+
+            <div style="
+              color:#ef4444;
+              font-weight:900;
+              margin-bottom:8px;
+            ">
+              ${err.error_message || "Unknown Error"}
+            </div>
+
+            <div class="muted">
+              ${err.model || "unknown model"}
+            </div>
+
+          </div>
+        `).join("");
+        }
+      }
     }
 
     function updateCommandSearch(value) {
