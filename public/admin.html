@@ -1117,6 +1117,35 @@
           translateY(0) scale(1);
       }
     }
+
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      margin: 18px 0 26px;
+    }
+
+    .lang-switcher button {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, .18);
+      background: rgba(15, 23, 42, .85);
+      color: #cbd5e1;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .22s;
+    }
+
+    .lang-switcher button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, .45);
+      color: white;
+      box-shadow: 0 12px 28px rgba(56, 189, 248, .18);
+    }
+
+    .lang-switcher button.active {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+    }
   </style>
 </head>
 
@@ -1198,12 +1227,16 @@
 
   <div id="loginPage" class="container">
     <div class="card">
-      <h1>Admin Login</h1>
-      <p>Enter ADMIN_SECRET to access admin dashboard.</p>
+      <h1 id="loginTitle">
+        Admin Login
+      </h1>
+      <p id="loginDesc">
+        Enter ADMIN_SECRET to access admin dashboard.
+      </p>
 
       <input id="loginAdminKey" placeholder="ADMIN_SECRET" type="password" />
 
-      <button onclick="adminLogin()">
+      <button onclick="adminLogin()" id="loginButton">
         Login
       </button>
 
@@ -1230,40 +1263,61 @@ height:100vh;
 ">
 
         <h2>AI API Relay</h2>
+        <div class="lang-switcher">
+          <button onclick="setLanguage('en')">
+            EN
+          </button>
+
+          <button onclick="setLanguage('zh')">
+            中文
+          </button>
+        </div>
 
         <button class="sidebar-btn active" onclick="showAdminSection('overviewSection', this)">
           <span class="navIcon">◆</span>
-          <span>Overview</span>
+          <span data-i18n="overview">
+            Overview
+          </span>
           <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
           <span class="navIcon">◈</span>
-          <span>API Keys</span>
+          <span data-i18n="apiKeys">
+            API Keys
+          </span>
           <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
           <span class="navIcon">⬢</span>
-          <span>Usage Logs</span>
+          <span data-i18n="usageLogs">
+            Usage Logs
+          </span>
           <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
           <span class="navIcon">◉</span>
-          <span>Stats</span>
+          <span data-i18n="stats">
+            Stats
+          </span>
           <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
           <span class="navIcon">✦</span>
-          <span>Payments</span>
+          <span data-i18n="payments">
+            Payments
+          </span>
           <span class="scan"></span>
         </button>
 
         <button onclick="adminLogout()" class="danger">
           <span class="navIcon">⎋</span>
-          <span>Logout</span>
+          <span data-i18n="logout">
+            Logout
+          </span>
         </button>
 
       </aside>
@@ -1530,6 +1584,91 @@ height:100vh;
     let paymentsRevenueChart;
     let paymentsAutoRefreshTimer = null;
     let paymentsAutoRefreshEnabled = true;
+    const LANG = {
+
+      en: {
+        overview: "Overview",
+        apiKeys: "API Keys",
+        usageLogs: "Usage Logs",
+        stats: "Stats",
+        payments: "Payments",
+        logout: "Logout",
+        dashboard: "AI API Relay",
+        loginTitle: "Admin Login",
+        loginDesc: "Enter ADMIN_SECRET to access admin dashboard.",
+        loginButton: "Login",
+      },
+
+      zh: {
+        overview: "总览",
+        apiKeys: "API 密钥",
+        usageLogs: "使用日志",
+        stats: "数据统计",
+        payments: "支付中心",
+        logout: "退出登录",
+        dashboard: "AI API 中转站",
+        loginTitle: "管理员登录",
+        loginDesc: "输入 ADMIN_SECRET 进入后台管理系统。",
+        loginButton: "登录",
+      }
+
+    };
+
+    function setLanguage(lang) {
+
+      localStorage.setItem("admin_lang", lang);
+
+      const t = LANG[lang];
+
+      if (!t) return;
+      document
+        .querySelectorAll("[data-i18n]")
+        .forEach(el => {
+
+          const key =
+            el.getAttribute("data-i18n");
+
+          if (t[key]) {
+            el.innerText = t[key];
+          }
+
+        });
+
+      document.querySelector("h2").innerText =
+        t.dashboard;
+
+      document
+        .querySelectorAll(".lang-switcher button")
+        .forEach(btn => {
+          btn.classList.remove("active");
+        });
+
+      const activeBtn =
+        document.querySelector(
+          `.lang-switcher button[onclick="setLanguage('${lang}')"]`
+        );
+
+      const loginTitle =
+        document.getElementById("loginTitle");
+
+      const loginDesc =
+        document.getElementById("loginDesc");
+
+      const loginButton =
+        document.getElementById("loginButton");
+
+      if (loginTitle)
+        loginTitle.innerText = t.loginTitle;
+
+      if (loginDesc)
+        loginDesc.innerText = t.loginDesc;
+
+      if (loginButton)
+        loginButton.innerText = t.loginButton;
+
+      activeBtn?.classList.add("active");
+    }
+
     function showAdminSection(sectionId, btn) {
 
       document.querySelectorAll(".admin-section")
@@ -1569,6 +1708,10 @@ height:100vh;
 
       btn?.classList.add("active");
     }
+    const savedLang =
+      localStorage.getItem("admin_lang") || "en";
+
+    setLanguage(savedLang);
 
     async function adminLogin() {
 
