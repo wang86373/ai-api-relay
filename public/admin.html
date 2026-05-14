@@ -1495,6 +1495,8 @@ height:100vh;
     let revenueChart;
     let modelPieChart;
     let usdtChart;
+    let paymentsAutoRefreshTimer = null;
+    let paymentsAutoRefreshEnabled = true;
     function showAdminSection(sectionId, btn) {
 
       document.querySelectorAll(".admin-section")
@@ -1603,6 +1605,7 @@ height:100vh;
 
     function adminLogout() {
       stopUltraLiveDashboard();
+      stopPaymentsAutoRefresh();
       localStorage.removeItem("admin_key");
 
       document.getElementById("adminPage").style.display =
@@ -2107,36 +2110,45 @@ padding-right:4px;
   `;
 
       bar.innerHTML = `
-    <span style="color:#38bdf8;font-weight:800;">
-      ULTRA LIVE DASHBOARD
-    </span>
+  <span style="color:#38bdf8;font-weight:900;letter-spacing:.08em;">
+    ● AI API RELAY LIVE
+  </span>
 
-    <span>
-      API Health:
-      <b id="ultraApiHealth" style="color:#22c55e;">Online</b>
-    </span>
+  <span>
+    Health:
+    <b id="ultraApiHealth" style="color:#22c55e;">Online</b>
+  </span>
 
-    <span>
-      Today Revenue:
-      <b id="ultraTopRevenue" style="color:#22c55e;">$0.0000</b>
-    </span>
+  <span>
+    Revenue Today:
+    <b id="ultraTopRevenue" style="color:#22c55e;">$0.0000</b>
+  </span>
 
-    <span>
-      Requests:
-      <b id="ultraTopRequests" style="color:#60a5fa;">0</b>
-    </span>
+  <span>
+    Requests:
+    <b id="ultraTopRequests" style="color:#60a5fa;">0</b>
+  </span>
 
-    <span>
-      Online Users:
-      <b id="ultraTopUsers" style="color:#a78bfa;">0</b>
-    </span>
+  <span>
+    Online Users:
+    <b id="ultraTopUsers" style="color:#a78bfa;">0</b>
+  </span>
 
-    <span>
-      Last Update:
-      <b id="ultraTopUpdate">-</b>
-    </span>
-  `;
+  <span>
+    Pending USDT:
+    <b id="ultraTopPending" style="color:#facc15;">0</b>
+  </span>
 
+  <span>
+    Auto Refresh:
+    <b id="ultraTopRefresh" style="color:#22c55e;">ON</b>
+  </span>
+
+  <span>
+    Last Update:
+    <b id="ultraTopUpdate">-</b>
+  </span>
+`;
       document.body.appendChild(bar);
 
       document.body.style.paddingTop = "70px";
@@ -2636,6 +2648,8 @@ padding-right:4px;
       const requestsEl = document.getElementById("ultraTopRequests");
       const usersEl = document.getElementById("ultraTopUsers");
       const updateEl = document.getElementById("ultraTopUpdate");
+      const pendingEl = document.getElementById("ultraTopPending");
+      const refreshEl = document.getElementById("ultraTopRefresh");
 
       if (!healthEl) return;
 
@@ -2653,6 +2667,19 @@ padding-right:4px;
 
       usersEl.innerText =
         Number(todayStats.onlineUsers || 0).toLocaleString();
+
+      if (pendingEl) {
+        pendingEl.innerText =
+          latestPayments.filter(p => p.status !== "confirmed").length;
+      }
+
+      if (refreshEl) {
+        refreshEl.innerText =
+          paymentsAutoRefreshEnabled ? "ON" : "OFF";
+
+        refreshEl.style.color =
+          paymentsAutoRefreshEnabled ? "#22c55e" : "#ef4444";
+      }
 
       updateEl.innerText =
         ultraLiveLastUpdate
@@ -6124,6 +6151,32 @@ padding-right:4px;
       }
     }
 
+    function startPaymentsAutoRefresh() {
+      if (paymentsAutoRefreshTimer) {
+        clearInterval(paymentsAutoRefreshTimer);
+      }
+
+      paymentsAutoRefreshTimer = setInterval(() => {
+        const paymentsSection =
+          document.getElementById("paymentsSection");
+
+        if (
+          paymentsAutoRefreshEnabled &&
+          paymentsSection &&
+          paymentsSection.style.display !== "none"
+        ) {
+          loadPayments();
+        }
+      }, 15000);
+    }
+
+    function stopPaymentsAutoRefresh() {
+      if (paymentsAutoRefreshTimer) {
+        clearInterval(paymentsAutoRefreshTimer);
+        paymentsAutoRefreshTimer = null;
+      }
+    }
+
     async function confirmPayment(paymentId) {
       showAdminSection("paymentsSection");
       const ok = await showModal({
@@ -6184,6 +6237,7 @@ padding-right:4px;
       loadErrorLogs();
 
       startUltraLiveDashboard();
+      startPaymentsAutoRefresh();
 
       setInterval(loadRealtimeStats, 30000);
       setInterval(loadRevenueStats, 30000);
