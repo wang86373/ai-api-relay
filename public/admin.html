@@ -870,6 +870,28 @@
       align-items: center;
     }
 
+    .payment-row.flash {
+      animation:
+        paymentRowIn .28s ease both,
+        paymentFlash 1.2s ease;
+    }
+
+    @keyframes paymentFlash {
+      0% {
+        box-shadow:
+          inset 0 0 0 1px rgba(56, 189, 248, .6),
+          0 0 40px rgba(56, 189, 248, .35);
+
+        background:
+          rgba(56, 189, 248, .12);
+      }
+
+      100% {
+        box-shadow: none;
+        background: transparent;
+      }
+    }
+
     .payments-premium-head {
       padding: 18px 22px;
 
@@ -977,6 +999,32 @@
       font-size: 30px;
       font-weight: 900;
       color: white;
+    }
+
+    .payment-live-value {
+      color: #22c55e;
+      text-shadow:
+        0 0 18px rgba(34, 197, 94, .45);
+
+      animation:
+        paymentLivePulse 1.6s infinite;
+    }
+
+    @keyframes paymentLivePulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.04);
+        opacity: .86;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .payment-status-pill.confirmed {
@@ -5861,7 +5909,7 @@ padding-right:4px;
       Total Payments
     </div>
 
-    <div class="payment-analytics-value">
+    <div class="payment-analytics-value payment-live-value">
       ${data.payments.length}
     </div>
   </div>
@@ -5891,7 +5939,7 @@ padding-right:4px;
       USDT Revenue
     </div>
 
-    <div class="payment-analytics-value">
+    <div class="payment-analytics-value payment-live-value">
       $${data.payments
             .filter(p => p.status === "confirmed")
             .reduce((sum, p) =>
@@ -5912,9 +5960,9 @@ padding-right:4px;
 
             </div>
 
-    ${data.payments.map(p => `
+    ${data.payments.map((p, i) => `
 
-      <div class="payment-row item">
+      <div class="payment-row item ${i === 0 ? "flash" : ""}">
 
         <div>
           #${p.id}
