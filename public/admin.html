@@ -5914,7 +5914,7 @@ padding-right:4px;
 
     ${data.payments.map(p => `
 
-      <div class="payment-row">
+      <div class="payment-row item">
 
         <div>
           #${p.id}
@@ -5951,12 +5951,9 @@ padding-right:4px;
 
         <div>
 
-          <span class="
-            payment-status-pill
-            ${p.status}
-          ">
-            ${p.status}
-          </span>
+          <div class="payment-status-pill ${p.status}">
+  ${p.status}
+</div>
 
         </div>
 
@@ -5978,7 +5975,10 @@ padding-right:4px;
 `
 
                 : `
-<button onclick="confirmPayment(${p.id})">
+<button
+  class="payment-confirm-btn"
+  onclick="confirmPayment(${p.id})"
+>
   Confirm
 </button>
 `
