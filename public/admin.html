@@ -1151,6 +1151,40 @@
       box-shadow: 0 8px 24px rgba(37, 99, 235, .35);
     }
 
+    #mobileSidebarToggle {
+      display: none;
+
+      position: fixed;
+      left: 16px;
+      top: 84px;
+
+      width: 54px;
+      height: 54px;
+
+      border: none;
+      border-radius: 18px;
+
+      background:
+        linear-gradient(135deg, #2563eb, #7c3aed);
+
+      color: white;
+      font-size: 24px;
+      font-weight: 900;
+
+      z-index: 99999;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 18px 45px rgba(37, 99, 235, .35);
+
+      backdrop-filter: blur(12px);
+    }
+
+    #mobileSidebarToggle:hover {
+      transform: scale(1.05);
+    }
+
     #loginPage {
       min-height: 100vh;
       display: flex;
@@ -1386,11 +1420,26 @@
       }
 
       #adminPage aside {
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        position: fixed !important;
+
+        left: -320px;
+        top: 0;
+
+        width: 280px !important;
+        height: 100vh !important;
+
+        z-index: 99998;
+
+        transition: .28s ease;
+
+        background: #020617 !important;
+
+        padding-top: 110px !important;
+
+        overflow-y: auto;
+
+        display: flex;
+        flex-direction: column;
         gap: 14px;
       }
 
@@ -1411,6 +1460,26 @@
         top: 10px;
         right: 12px;
       }
+
+      #mobileSidebarToggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #adminPage aside.mobile-open {
+        left: 0;
+      }
+    }
+
+    #loginPage {
+      width: 100vw;
+      max-width: none;
+      padding: 0;
+    }
+
+    #loginPage .card {
+      margin: auto;
     }
   </style>
 </head>
@@ -1520,6 +1589,9 @@
   </div>
 
   <div id="adminPage" style="display:none;">
+    <button id="mobileSidebarToggle" onclick="toggleMobileSidebar()">
+      ☰
+    </button>
 
     <div style="
   display:flex;
@@ -2095,6 +2167,14 @@ height:100vh;
     function copyText(text) {
       navigator.clipboard.writeText(text);
       showToast("Copied!", "success");
+    }
+
+    function toggleMobileSidebar() {
+
+      const sidebar =
+        document.querySelector("#adminPage aside");
+
+      sidebar.classList.toggle("mobile-open");
     }
 
     function adminLogout() {
