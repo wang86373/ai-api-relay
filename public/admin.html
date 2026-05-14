@@ -1060,52 +1060,6 @@ height:100vh;
 
       </div>
 
-      <div class="keys-stats-row">
-
-        <div class="mini-stat-card">
-          <div class="mini-stat-label">
-            Total Keys
-          </div>
-
-          <div class="mini-stat-value" id="keysTotalStat">
-            --
-          </div>
-        </div>
-
-        <div class="mini-stat-card">
-          <div class="mini-stat-label">
-            Active Keys
-          </div>
-
-          <div class="mini-stat-value" id="keysActiveStat">
-            --
-          </div>
-        </div>
-
-        <div class="mini-stat-card">
-          <div class="mini-stat-label">
-            Total Requests
-          </div>
-
-          <div class="mini-stat-value" id="keysRequestsStat">
-            --
-          </div>
-        </div>
-
-        <div class="mini-stat-card">
-          <div class="mini-stat-label">
-            Total Tokens
-          </div>
-
-          <div class="mini-stat-value" id="keysTokensStat">
-            --
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
     <div id="keysBox">
       No keys loaded.
     </div>
@@ -1213,13 +1167,13 @@ height:100vh;
 
       document.querySelectorAll(".sidebar-btn")
         .forEach(el => {
-          el.style.background = "transparent";
-          el.style.borderColor = "rgba(255,255,255,0.08)";
+          el.classList.remove("active");
+          el.style.background = "";
+          el.style.borderColor = "";
         });
 
       if (btn) {
-        btn.style.background = "#2563eb";
-        btn.style.borderColor = "#2563eb";
+        btn.classList.add("active");
       }
     }
 
