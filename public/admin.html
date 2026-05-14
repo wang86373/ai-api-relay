@@ -195,6 +195,38 @@
         0 16px 36px rgba(37, 99, 235, .38);
     }
 
+    .navIcon {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg,
+          rgba(37, 99, 235, .22),
+          rgba(99, 102, 241, .18));
+      border: 1px solid rgba(255, 255, 255, .08);
+      color: #7dd3fc;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 0 18px rgba(37, 99, 235, .16);
+      flex-shrink: 0;
+      transition: .18s;
+    }
+
+    .sidebar-btn:hover .navIcon {
+      transform: scale(1.08) rotate(-4deg);
+      box-shadow: 0 0 22px rgba(59, 130, 246, .28);
+    }
+
+    .sidebar-btn.active .navIcon {
+      background: linear-gradient(135deg,
+          #2563eb,
+          #4f46e5);
+      color: white;
+      box-shadow: 0 0 26px rgba(59, 130, 246, .45);
+    }
+
     .item {
       background: #111827;
       border: 1px solid rgba(255, 255, 255, 0.08);
