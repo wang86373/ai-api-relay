@@ -2099,6 +2099,7 @@ height:100vh;
 
     function adminLogout() {
       stopUltraLiveDashboard();
+      document.body.style.paddingTop = "0";
       stopPaymentsAutoRefresh();
       localStorage.removeItem("admin_key");
 
