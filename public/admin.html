@@ -103,6 +103,7 @@
     }
 
     .sidebar-btn {
+      overflow: hidden;
       position: relative;
       width: 100%;
       padding: 18px 22px;
@@ -172,6 +173,7 @@
     }
 
     .sidebar-btn.active {
+      transform: translateX(8px);
       background:
         linear-gradient(135deg,
           #2563eb,
@@ -186,6 +188,65 @@
 
     .sidebar-btn.active::before {
       opacity: 1;
+    }
+
+    .sidebar-btn::after {
+      content: "";
+
+      position: absolute;
+      left: -20px;
+      top: 0;
+
+      width: 4px;
+      height: 100%;
+
+      border-radius: 999px;
+
+      background:
+        linear-gradient(180deg,
+          #38bdf8,
+          #2563eb);
+
+      opacity: 0;
+
+      transition: .18s;
+    }
+
+    .sidebar-btn.active::after {
+      left: 0;
+      opacity: 1;
+
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, .55);
+    }
+
+    .sidebar-btn .scan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sidebar-btn .scan::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -80%;
+
+      width: 55%;
+      height: 100%;
+
+      background: linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .18),
+          transparent);
+
+      transform: skewX(-18deg);
+      transition: left .45s ease;
+    }
+
+    .sidebar-btn:hover .scan::before {
+      left: 130%;
     }
 
     .sidebar-btn.active:hover {
@@ -403,26 +464,31 @@ height:100vh;
         <button class="sidebar-btn active" onclick="showAdminSection('overviewSection', this)">
           <span class="navIcon">◆</span>
           <span>Overview</span>
+          <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
           <span class="navIcon">◈</span>
           <span>API Keys</span>
+          <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
           <span class="navIcon">⬢</span>
           <span>Usage Logs</span>
+          <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
           <span class="navIcon">◉</span>
           <span>Stats</span>
+          <span class="scan"></span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
           <span class="navIcon">✦</span>
           <span>Payments</span>
+          <span class="scan"></span>
         </button>
 
         <button onclick="adminLogout()" class="danger">
