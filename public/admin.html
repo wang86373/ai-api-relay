@@ -1420,16 +1420,68 @@ height:100vh;
 
         </div>
         <div class="card admin-section" id="paymentsSection">
-          <h2>Payment Requests</h2>
-          <select id="paymentStatusFilter" onchange="loadPayments()">
-            <option value="all">All Payments</option>
-            <option value="pending">Pending Only</option>
-            <option value="confirmed">Confirmed Only</option>
-          </select>
-          <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
+          <div class="keys-hero">
 
-          <div class="msg" id="msg"></div>
-          <div id="paymentsBox">No data loaded.</div>
+            <div class="keys-hero-top">
+
+              <div>
+
+                <div class="section-eyebrow">
+                  PAYMENT COMMAND CENTER
+                </div>
+
+                <h2 class="ultra-title">
+                  USDT Payments Dashboard
+                </h2>
+
+                <div class="muted">
+                  Monitor realtime payment activity, confirmations and revenue analytics.
+                </div>
+
+              </div>
+
+              <div class="keys-live-badge">
+                ● LIVE
+              </div>
+
+            </div>
+
+            <div class="keys-toolbar">
+
+              <select id="paymentStatusFilter" class="ultra-select" onchange="loadPayments()">
+
+                <option value="all">
+                  All Payments
+                </option>
+
+                <option value="pending">
+                  Pending Only
+                </option>
+
+                <option value="confirmed">
+                  Confirmed Only
+                </option>
+
+              </select>
+
+              <input id="paymentSearch" class="ultra-input" placeholder="Search tx hash / api key"
+                oninput="loadPayments()" />
+
+              <button class="ultra-btn" onclick="loadPayments()">
+                Refresh
+              </button>
+
+            </div>
+
+            <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
+
+            <div class="msg" id="msg"></div>
+
+          </div>
+
+          <div id="paymentsBox">
+            No data loaded.
+          </div>
         </div>
 
       </main>
@@ -5877,6 +5929,32 @@ padding-right:4px;
 
         const data = await res.json();
 
+        const keyword =
+          document.getElementById("paymentSearch")
+            ?.value
+            ?.toLowerCase()
+            ?.trim() || "";
+
+        let filteredPayments =
+          data.payments || [];
+
+        if (keyword) {
+          filteredPayments =
+            filteredPayments.filter(p => {
+              return (
+                String(p.api_key || "")
+                  .toLowerCase()
+                  .includes(keyword) ||
+                String(p.tx_hash || "")
+                  .toLowerCase()
+                  .includes(keyword) ||
+                String(p.status || "")
+                  .toLowerCase()
+                  .includes(keyword)
+              );
+            });
+        }
+
         if (!res.ok) {
           msg.innerText = data.error?.message || "Failed to load payments";
           return;
@@ -5910,7 +5988,7 @@ padding-right:4px;
     </div>
 
     <div class="payment-analytics-value payment-live-value">
-      ${data.payments.length}
+      ${filteredPayments.length}
     </div>
   </div>
 
@@ -5920,7 +5998,7 @@ padding-right:4px;
     </div>
 
     <div class="payment-analytics-value">
-      ${data.payments.filter(p => p.status === "pending").length}
+      ${filteredPayments.filter(p => p.status === "pending").length}
     </div>
   </div>
 
@@ -5930,7 +6008,7 @@ padding-right:4px;
     </div>
 
     <div class="payment-analytics-value">
-      ${data.payments.filter(p => p.status === "confirmed").length}
+      ${filteredPayments.filter(p => p.status === "confirmed").length}
     </div>
   </div>
 
@@ -5940,14 +6018,14 @@ padding-right:4px;
     </div>
 
     <div class="payment-analytics-value payment-live-value">
-      $${data.payments
+      $${filteredPayments
             .filter(p => p.status === "confirmed")
             .reduce((sum, p) =>
               sum + Number(p.amount || 0), 0)
             .toFixed(2)}
-    </div>
+    </div>  
   </div>
-
+ </div>
             <div class="payments-premium-head">
 
               <div>ID</div>
@@ -5960,7 +6038,7 @@ padding-right:4px;
 
             </div>
 
-    ${data.payments.map((p, i) => `
+    ${filteredPayments.map((p, i) => `
 
       <div class="payment-row item ${i === 0 ? "flash" : ""}">
 
