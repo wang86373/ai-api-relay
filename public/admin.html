@@ -1366,61 +1366,53 @@ height:100vh;
 
         <h2>AI API Relay</h2>
         <div class="lang-switcher">
-          <button onclick="setLanguage('en')">
-            EN
+
+          <button class="sidebar-btn active" onclick="showAdminSection('overviewSection', this)">
+            <span class="navIcon">◆</span>
+            <span data-i18n="overview">
+              Overview
+            </span>
+            <span class="scan"></span>
           </button>
 
-          <button onclick="setLanguage('zh')">
-            中文
+          <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
+            <span class="navIcon">◈</span>
+            <span data-i18n="apiKeys">
+              API Keys
+            </span>
+            <span class="scan"></span>
           </button>
-        </div>
 
-        <button class="sidebar-btn active" onclick="showAdminSection('overviewSection', this)">
-          <span class="navIcon">◆</span>
-          <span data-i18n="overview">
-            Overview
-          </span>
-          <span class="scan"></span>
-        </button>
+          <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
+            <span class="navIcon">⬢</span>
+            <span data-i18n="usageLogs">
+              Usage Logs
+            </span>
+            <span class="scan"></span>
+          </button>
 
-        <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
-          <span class="navIcon">◈</span>
-          <span data-i18n="apiKeys">
-            API Keys
-          </span>
-          <span class="scan"></span>
-        </button>
+          <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
+            <span class="navIcon">◉</span>
+            <span data-i18n="stats">
+              Stats
+            </span>
+            <span class="scan"></span>
+          </button>
 
-        <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
-          <span class="navIcon">⬢</span>
-          <span data-i18n="usageLogs">
-            Usage Logs
-          </span>
-          <span class="scan"></span>
-        </button>
+          <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
+            <span class="navIcon">✦</span>
+            <span data-i18n="payments">
+              Payments
+            </span>
+            <span class="scan"></span>
+          </button>
 
-        <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
-          <span class="navIcon">◉</span>
-          <span data-i18n="stats">
-            Stats
-          </span>
-          <span class="scan"></span>
-        </button>
-
-        <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
-          <span class="navIcon">✦</span>
-          <span data-i18n="payments">
-            Payments
-          </span>
-          <span class="scan"></span>
-        </button>
-
-        <button onclick="adminLogout()" class="danger">
-          <span class="navIcon">⎋</span>
-          <span data-i18n="logout">
-            Logout
-          </span>
-        </button>
+          <button onclick="adminLogout()" class="danger">
+            <span class="navIcon">⎋</span>
+            <span data-i18n="logout">
+              Logout
+            </span>
+          </button>
 
       </aside>
 
@@ -2425,6 +2417,18 @@ padding-right:4px;
   <span>
     Last Update:
     <b id="ultraTopUpdate">-</b>
+
+    <span class="topbar-lang">
+
+  <button onclick="setLanguage('en')">
+    EN
+  </button>
+
+  <button onclick="setLanguage('zh')">
+    中文
+  </button>
+
+</span>
   </span>
 `;
       document.body.appendChild(bar);
