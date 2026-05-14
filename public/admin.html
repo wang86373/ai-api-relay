@@ -103,20 +103,96 @@
     }
 
     .sidebar-btn {
+      position: relative;
       width: 100%;
+      padding: 18px 22px;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(255, 255, 255, .06);
+
+      background:
+        linear-gradient(180deg,
+          rgba(8, 15, 30, .95),
+          rgba(4, 8, 22, .98));
+
+      color: #f8fafc;
+
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .02em;
+
       text-align: left;
-      margin-bottom: 10px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: white;
-      padding: 12px;
-      border-radius: 10px;
+
       cursor: pointer;
-      transition: 0.2s;
+
+      overflow: hidden;
+
+      transition:
+        transform .18s ease,
+        border .22s ease,
+        box-shadow .22s ease,
+        background .22s ease;
+    }
+
+    .sidebar-btn::before {
+      content: "";
+
+      position: absolute;
+
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+
+      width: 4px;
+
+      border-radius: 999px;
+
+      background: linear-gradient(180deg,
+          #38bdf8,
+          #6366f1);
+
+      opacity: 0;
+
+      transition: opacity .2s ease;
     }
 
     .sidebar-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+
+      border-color: rgba(56, 189, 248, .26);
+
+      box-shadow:
+        0 0 26px rgba(37, 99, 235, .18),
+        inset 0 0 0 1px rgba(255, 255, 255, .03);
+    }
+
+    .sidebar-btn:hover::before {
+      opacity: .65;
+    }
+
+    .sidebar-btn.active {
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #4f46e5);
+      color: white;
+
+      border-color: rgba(96, 165, 250, .36);
+
+      box-shadow:
+        0 12px 32px rgba(37, 99, 235, .32);
+    }
+
+    .sidebar-btn.active::before {
+      opacity: 1;
+    }
+
+    .sidebar-btn.active:hover {
+      transform: translateX(5px);
+
+      box-shadow:
+        0 16px 36px rgba(37, 99, 235, .38);
     }
 
     .item {
@@ -281,39 +357,47 @@
 ">
 
       <aside style="
-      width:240px;
-      background:#020617;
-      border-right:1px solid rgba(255,255,255,0.08);
-      padding:24px;
-      position:sticky;
-      top:0;
-      height:100vh;
-    ">
+width:240px;
+background:#020617;
+border-right:1px solid rgba(255,255,255,0.08);
+padding:24px;
+position:sticky;
+top:0;
+height:100vh;
+">
+
         <h2>AI API Relay</h2>
 
-        <button class="sidebar-btn" onclick="showAdminSection('overviewSection', this)">
-          Overview
+        <button class="sidebar-btn active" onclick="showAdminSection('overviewSection', this)">
+          <span class="navIcon">◆</span>
+          <span>Overview</span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('keysSection', this)">
-          API Keys
+          <span class="navIcon">◈</span>
+          <span>API Keys</span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('logsSection', this)">
-          Usage Logs
+          <span class="navIcon">⬢</span>
+          <span>Usage Logs</span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('statsSection', this)">
-          Stats
+          <span class="navIcon">◉</span>
+          <span>Stats</span>
         </button>
 
         <button class="sidebar-btn" onclick="showAdminSection('paymentsSection', this)">
-          Payments
+          <span class="navIcon">✦</span>
+          <span>Payments</span>
         </button>
 
         <button onclick="adminLogout()" class="danger">
-          Logout
+          <span class="navIcon">⎋</span>
+          <span>Logout</span>
         </button>
+
       </aside>
 
       <main style="
