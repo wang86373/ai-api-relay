@@ -560,6 +560,207 @@
         inset 0 1px 0 rgba(255, 255, 255, .04);
     }
 
+    .keys-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 32px;
+      border-radius: 32px;
+
+      background:
+        linear-gradient(145deg,
+          rgba(10, 18, 35, .96),
+          rgba(18, 30, 55, .94));
+
+      border: 1px solid rgba(56, 189, 248, .16);
+
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, .45),
+        0 0 40px rgba(37, 99, 235, .08);
+
+      margin-bottom: 28px;
+    }
+
+    .keys-hero::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+
+      background:
+        radial-gradient(circle at top left,
+          rgba(56, 189, 248, .16),
+          transparent 32%),
+        radial-gradient(circle at bottom right,
+          rgba(124, 58, 237, .14),
+          transparent 34%);
+
+      pointer-events: none;
+    }
+
+    .keys-hero-top {
+      position: relative;
+      z-index: 1;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .section-eyebrow {
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .ultra-title {
+      font-size: 42px;
+      font-weight: 900;
+      color: white;
+      margin: 0 0 14px;
+    }
+
+    .ultra-subtitle {
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .keys-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ultra-action-btn {
+      border: none;
+      cursor: pointer;
+
+      padding: 16px 24px;
+      border-radius: 18px;
+
+      font-weight: 800;
+      color: white;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #4f46e5);
+
+      box-shadow:
+        0 16px 40px rgba(37, 99, 235, .28);
+
+      transition: .22s;
+    }
+
+    .ultra-action-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+
+      box-shadow:
+        0 24px 50px rgba(37, 99, 235, .34);
+    }
+
+    .keys-toolbar {
+      position: relative;
+      z-index: 1;
+
+      margin-top: 28px;
+
+      display: grid;
+      grid-template-columns:
+        minmax(260px, 1.4fr) 220px auto auto;
+
+      gap: 14px;
+    }
+
+    .ultra-input,
+    .ultra-select {
+      width: 100%;
+
+      padding: 18px 18px;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(56, 189, 248, .14);
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .92),
+          rgba(2, 6, 23, .96));
+
+      color: white;
+      font-size: 15px;
+
+      outline: none;
+
+      transition: .22s;
+    }
+
+    .ultra-input:focus,
+    .ultra-select:focus {
+      border-color: rgba(56, 189, 248, .42);
+
+      box-shadow:
+        0 0 0 4px rgba(56, 189, 248, .08);
+    }
+
+    .keys-mini-stats {
+      position: relative;
+      z-index: 1;
+
+      margin-top: 26px;
+
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+
+      gap: 16px;
+    }
+
+    .mini-stat-card {
+      position: relative;
+      overflow: hidden;
+
+      padding: 22px;
+      border-radius: 24px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .94),
+          rgba(2, 6, 23, .98));
+
+      border: 1px solid rgba(56, 189, 248, .12);
+
+      transition: .22s;
+    }
+
+    .mini-stat-card:hover {
+      transform: translateY(-3px);
+
+      border-color:
+        rgba(56, 189, 248, .32);
+
+      box-shadow:
+        0 22px 45px rgba(0, 0, 0, .32);
+    }
+
+    .mini-stat-label {
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .mini-stat-value {
+      color: white;
+      font-size: 30px;
+      font-weight: 900;
+    }
+
     @keyframes statsPanelIn {
       from {
         opacity: 0;
@@ -775,107 +976,221 @@ height:100vh;
         </div>
     </div>
 
-    <div class="card admin-section" id="keysSection">
-      <h2>API Keys</h2>
-      <input id="searchInput" placeholder="Search email / api key / key name" />
-      <select id="keySortSelect" onchange="loadKeys()">
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-        <option value="requests_desc">Requests High → Low</option>
-        <option value="requests_asc">Requests Low → High</option>
-        <option value="tokens_desc">Tokens High → Low</option>
-        <option value="tokens_asc">Tokens Low → High</option>
-        <option value="balance_desc">Balance High → Low</option>
-        <option value="balance_asc">Balance Low → High</option>
-      </select>
+    <div class="keys-hero">
 
-      <button onclick="searchKeys()">
-        Search
-      </button>
-      <button onclick="loadKeys()">Load API Keys</button>
-      <div id="keysBox">No keys loaded.</div>
-    </div>
-    <div class="card admin-section" id="logsSection">
-      <h2>Usage Logs</h2>
+      <div class="keys-hero-top">
 
-      <div id="logsBox">
-        Please select an API Key from API Keys → View Logs
-      </div>
-    </div>
-    <div class="card admin-section stats-shell" id="statsSection">
+        <div>
 
-      <h2>Realtime Stats</h2>
-      <div class="muted">
-        Ultra classified command analytics for overview, users, models, activity and errors.
-      </div>
+          <div class="section-eyebrow">
+            ENTERPRISE KEY MANAGER
+          </div>
 
-      <div class="stats-tabs">
-        <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
-        <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
-        <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
-        <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
-        <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
-      </div>
+          <h2 class="ultra-title">
+            API Keys Control Center
+          </h2>
 
-      <div id="statsOverviewTab" class="stats-panel active">
-        <div id="statsOverviewBox" class="stats-grid-premium"></div>
+          <div class="muted">
+            Realtime API key management, usage monitoring and balance intelligence.
+          </div>
 
-        <div class="ultra-chart-card">
-          <h3>Requests Trend</h3>
-          <canvas id="statsChart" height="120"></canvas>
         </div>
 
-        <div class="ultra-chart-card">
-          <h3>Revenue / Tokens / Requests Trend</h3>
-          <canvas id="revenueChart" height="120"></canvas>
+        <div class="keys-live-badge">
+          ● LIVE
         </div>
 
-        <div class="ultra-chart-card">
-          <h3>USDT Revenue Trend</h3>
-          <canvas id="usdtChart" height="120"></canvas>
+      </div>
+
+      <div class="keys-toolbar">
+
+        <div class="keys-search-shell">
+
+          <div class="keys-search-icon">
+            ⌕
+          </div>
+
+          <input id="searchInput" class="ultra-search" placeholder="Search email / api key / key name" />
+
         </div>
+
+        <select id="keySortSelect" class="ultra-select" onchange="loadKeys()">
+
+          <option value="newest">
+            Newest
+          </option>
+
+          <option value="oldest">
+            Oldest
+          </option>
+
+          <option value="requests_desc">
+            Requests High → Low
+          </option>
+
+          <option value="requests_asc">
+            Requests Low → High
+          </option>
+
+          <option value="tokens_desc">
+            Tokens High → Low
+          </option>
+
+          <option value="tokens_asc">
+            Tokens Low → High
+          </option>
+
+          <option value="balance_desc">
+            Balance High → Low
+          </option>
+
+          <option value="balance_asc">
+            Balance Low → High
+          </option>
+
+        </select>
+
+        <button class="ultra-btn" onclick="searchKeys()">
+          Search
+        </button>
+
+        <button class="ultra-btn primary" onclick="loadKeys()">
+          Load API Keys
+        </button>
+
       </div>
 
-      <div id="statsUsersTab" class="stats-panel">
-        <h3>Top Users Performance</h3>
-        <div id="statsUsersBox"></div>
-      </div>
+      <div class="keys-stats-row">
 
-      <div id="statsModelsTab" class="stats-panel">
-        <h3>Top Models / Per Model Usage</h3>
-        <div id="statsModelsBox"></div>
+        <div class="mini-stat-card">
+          <div class="mini-stat-label">
+            Total Keys
+          </div>
 
-        <div class="ultra-chart-card">
-          <h3>Model Usage Share</h3>
-          <canvas id="modelPieChart" height="120"></canvas>
+          <div class="mini-stat-value" id="keysTotalStat">
+            --
+          </div>
         </div>
-      </div>
 
-      <div id="statsActivityTab" class="stats-panel">
-        <h3>Live Activity Feed</h3>
-        <div id="statsActivityBox"></div>
-      </div>
+        <div class="mini-stat-card">
+          <div class="mini-stat-label">
+            Active Keys
+          </div>
 
-      <div id="statsErrorsTab" class="stats-panel">
-        <h3>System Errors</h3>
-        <div id="statsErrorsBox"></div>
+          <div class="mini-stat-value" id="keysActiveStat">
+            --
+          </div>
+        </div>
+
+        <div class="mini-stat-card">
+          <div class="mini-stat-label">
+            Total Requests
+          </div>
+
+          <div class="mini-stat-value" id="keysRequestsStat">
+            --
+          </div>
+        </div>
+
+        <div class="mini-stat-card">
+          <div class="mini-stat-label">
+            Total Tokens
+          </div>
+
+          <div class="mini-stat-value" id="keysTokensStat">
+            --
+          </div>
+        </div>
+
       </div>
 
     </div>
-    <div class="card admin-section" id="paymentsSection">
-      <h2>Payment Requests</h2>
-      <select id="paymentStatusFilter" onchange="loadPayments()">
-        <option value="all">All Payments</option>
-        <option value="pending">Pending Only</option>
-        <option value="confirmed">Confirmed Only</option>
-      </select>
-      <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
 
-      <div class="msg" id="msg"></div>
-      <div id="paymentsBox">No data loaded.</div>
+    <div id="keysBox">
+      No keys loaded.
+    </div>
+  </div>
+  <div class="card admin-section" id="logsSection">
+    <h2>Usage Logs</h2>
+
+    <div id="logsBox">
+      Please select an API Key from API Keys → View Logs
+    </div>
+  </div>
+  <div class="card admin-section stats-shell" id="statsSection">
+
+    <h2>Realtime Stats</h2>
+    <div class="muted">
+      Ultra classified command analytics for overview, users, models, activity and errors.
     </div>
 
-    </main>
+    <div class="stats-tabs">
+      <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
+      <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
+      <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
+      <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
+      <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
+    </div>
+
+    <div id="statsOverviewTab" class="stats-panel active">
+      <div id="statsOverviewBox" class="stats-grid-premium"></div>
+
+      <div class="ultra-chart-card">
+        <h3>Requests Trend</h3>
+        <canvas id="statsChart" height="120"></canvas>
+      </div>
+
+      <div class="ultra-chart-card">
+        <h3>Revenue / Tokens / Requests Trend</h3>
+        <canvas id="revenueChart" height="120"></canvas>
+      </div>
+
+      <div class="ultra-chart-card">
+        <h3>USDT Revenue Trend</h3>
+        <canvas id="usdtChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div id="statsUsersTab" class="stats-panel">
+      <h3>Top Users Performance</h3>
+      <div id="statsUsersBox"></div>
+    </div>
+
+    <div id="statsModelsTab" class="stats-panel">
+      <h3>Top Models / Per Model Usage</h3>
+      <div id="statsModelsBox"></div>
+
+      <div class="ultra-chart-card">
+        <h3>Model Usage Share</h3>
+        <canvas id="modelPieChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div id="statsActivityTab" class="stats-panel">
+      <h3>Live Activity Feed</h3>
+      <div id="statsActivityBox"></div>
+    </div>
+
+    <div id="statsErrorsTab" class="stats-panel">
+      <h3>System Errors</h3>
+      <div id="statsErrorsBox"></div>
+    </div>
+
+  </div>
+  <div class="card admin-section" id="paymentsSection">
+    <h2>Payment Requests</h2>
+    <select id="paymentStatusFilter" onchange="loadPayments()">
+      <option value="all">All Payments</option>
+      <option value="pending">Pending Only</option>
+      <option value="confirmed">Confirmed Only</option>
+    </select>
+    <input id="adminKey" placeholder="ADMIN_SECRET" style="display:none;" />
+
+    <div class="msg" id="msg"></div>
+    <div id="paymentsBox">No data loaded.</div>
+  </div>
+
+  </main>
   </div>
   </div>
 
