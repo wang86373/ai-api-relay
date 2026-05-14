@@ -1741,15 +1741,15 @@ height:100vh;
 
             <div class="keys-hero-top">
               <div>
-                <div class="section-eyebrow">
+                <div class="section-eyebrow" data-i18n="keyManager">
                   ENTERPRISE KEY MANAGER
                 </div>
 
-                <h2 class="ultra-title">
+                <h2 class="ultra-title" data-i18n="apiKeysControlCenter">
                   API Keys Control Center
                 </h2>
 
-                <div class="muted">
+                <div class="muted" data-i18n="apiKeysDesc">
                   Realtime API key management, usage monitoring and balance intelligence.
                 </div>
               </div>
@@ -1765,7 +1765,8 @@ height:100vh;
                   ⌕
                 </div>
 
-                <input id="searchInput" class="ultra-search" placeholder="Search email / api key / key name" />
+                <input id="searchInput" class="ultra-search" data-i18n-placeholder="searchPlaceholder"
+                  placeholder="Search email / api key / key name" />
               </div>
 
               <select id="keySortSelect" class="ultra-select" onchange="loadKeys()">
@@ -1779,11 +1780,11 @@ height:100vh;
                 <option value="balance_asc">Balance Low → High</option>
               </select>
 
-              <button class="ultra-btn" onclick="searchKeys()">
+              <button class="ultra-btn" onclick="searchKeys()" data-i18n="search">
                 Search
               </button>
 
-              <button class="ultra-btn primary" onclick="loadKeys()">
+              <button class="ultra-btn primary" onclick="loadKeys()" data-i18n="loadApiKeys">
                 Load API Keys
               </button>
             </div>
@@ -1989,6 +1990,20 @@ height:100vh;
         providerCost: "Provider Cost",
         profit: "Profit",
         time: "Time",
+        keyManager: "ENTERPRISE KEY MANAGER",
+        apiKeysControlCenter: "API Keys Control Center",
+        apiKeysDesc: "Realtime API key management, usage monitoring and balance intelligence.",
+        live: "LIVE",
+        searchPlaceholder: "Search email / api key / key name",
+        search: "Search",
+        loadApiKeys: "Load API Keys",
+        balance: "Balance",
+        active: "ACTIVE",
+        disabled: "DISABLED",
+        apiKeyLabel: "API KEY",
+        lastUsed: "Last Used",
+        never: "Never",
+        totalCost: "Total Cost",
       },
 
       zh: {
@@ -2020,7 +2035,7 @@ height:100vh;
         statsDesc: "用于总览、用户、模型、活动和错误的高级分类分析。",
         revenue: "收入",
         requests: "请求",
-        tokens: "Tokens",
+        tokens: "Token 用量",
         topModels: "热门模型",
         errorRate: "错误率",
         totalTokens: "总 Tokens",
@@ -2029,6 +2044,20 @@ height:100vh;
         providerCost: "供应商成本",
         profit: "利润",
         time: "时间",
+        keyManager: "企业密钥管理",
+        apiKeysControlCenter: "API 密钥控制中心",
+        apiKeysDesc: "实时管理 API 密钥、用量监控和余额分析。",
+        live: "实时",
+        searchPlaceholder: "搜索邮箱 / API 密钥 / 密钥名称",
+        search: "搜索",
+        loadApiKeys: "加载 API 密钥",
+        balance: "余额",
+        active: "启用中",
+        disabled: "已停用",
+        apiKeyLabel: "API 密钥",
+        lastUsed: "最后使用",
+        never: "从未使用",
+        totalCost: "总成本",
       }
 
     };
@@ -2054,6 +2083,15 @@ height:100vh;
             el.innerText = t[key];
           }
 
+        });
+      document
+        .querySelectorAll("[data-i18n-placeholder]")
+        .forEach(el => {
+          const key = el.getAttribute("data-i18n-placeholder");
+
+          if (t[key]) {
+            el.placeholder = t[key];
+          }
         });
 
       document.querySelector("h2").innerText =
@@ -2089,6 +2127,10 @@ height:100vh;
         loginButton.innerText = t.loginButton;
 
       activeBtn?.classList.add("active");
+
+      if (typeof loadKeys === "function") {
+        loadKeys();
+      }
     }
 
     function showAdminSection(sectionId, btn) {
@@ -5610,7 +5652,8 @@ padding-right:4px;
             color:#22c55e;
             font-size:24px;
           ">
-            • LIVE
+            <div class="keys-live-badge">
+  • <span data-i18n="live">LIVE</span>
           </div>
 
         </div>
@@ -5980,7 +6023,7 @@ padding-right:4px;
             ? "rgba(34,197,94,.28)"
             : "rgba(239,68,68,.28)"};
     ">
-      ${k.is_active ? "● ACTIVE" : "● DISABLED"}
+      ${k.is_active ? "● " + LANG[currentLang].active : "● " + LANG[currentLang].disabled}
     </div>
 
   </div>
@@ -5993,28 +6036,28 @@ padding-right:4px;
   ">
 
     <div>
-      <div class="muted">Balance</div>
+      <div class="muted">${LANG[currentLang].balance}</div>
       <div style="font-size:28px;font-weight:900;">
         $${Number(k.balance || 0).toFixed(4)}
       </div>
     </div>
 
     <div>
-      <div class="muted">Requests</div>
+      <div class="muted">${LANG[currentLang].requests}</div>
       <div style="font-size:28px;font-weight:900;">
         ${k.total_requests || 0}
       </div>
     </div>
 
     <div>
-      <div class="muted">Tokens</div>
+      <div class="muted">${LANG[currentLang].tokens}</div>
       <div style="font-size:28px;font-weight:900;">
         ${k.total_tokens || 0}
       </div>
     </div>
 
     <div>
-      <div class="muted">Total Cost</div>
+      <div class="muted">${LANG[currentLang].totalCost}</div>
       <div style="font-size:28px;font-weight:900;">
         $${Number(k.total_cost || 0).toFixed(4)}
       </div>
@@ -6031,7 +6074,7 @@ padding-right:4px;
   ">
 
     <div class="muted">
-      API KEY
+      ${LANG[currentLang].apiKeyLabel}
     </div>
 
     <div style="
@@ -6049,10 +6092,10 @@ padding-right:4px;
       color:#94a3b8;
       font-size:13px;
     ">
-      Last Used:
+      ${LANG[currentLang].lastUsed}:
       ${k.last_used_at
             ? new Date(k.last_used_at).toLocaleString()
-            : "Never"
+            : LANG[currentLang].never
           }
     </div>
 
