@@ -3893,39 +3893,63 @@ padding-right:4px;
           p.status !== "confirmed"
         ).length;
 
+      const providerCost =
+        latestModels.reduce((sum, m) => {
+          return sum + Number(m.provider_cost || 0);
+        }, 0);
+
+      const profit =
+        totalCost - providerCost;
+
+      const profitMargin =
+        totalCost > 0
+          ? (profit / totalCost) * 100
+          : 0;
+
       const overviewBox =
         document.getElementById("statsOverviewBox");
 
       if (overviewBox) {
 
         const cards = [
-          ["Total Users", users.size],
-          ["API Keys", totalKeys],
-          ["Active Keys", activeKeys],
-          ["Total Balance", "$" + totalBalance.toFixed(4)],
-          ["Requests", totalRequests],
-          ["Tokens", totalTokens.toLocaleString()],
-          ["Total Cost", "$" + totalCost.toFixed(4)],
-          ["Today Revenue", "$" + Number(todayStats.todayRevenue || 0).toFixed(4)],
-          ["Today Tokens", Number(todayStats.todayTokens || 0).toLocaleString()],
-          ["Today Requests", todayStats.todayRequests || 0],
-          ["Online Users", todayStats.onlineUsers || 0],
-          ["Pending USDT", pendingUsdt]
+
+          ["TOTAL USERS", users.size, "#60a5fa"],
+          ["API KEYS", totalKeys, "#38bdf8"],
+          ["ACTIVE KEYS", activeKeys, "#22c55e"],
+          ["TOTAL BALANCE", "$" + totalBalance.toFixed(4), "#22c55e"],
+
+          ["REQUESTS", totalRequests, "#818cf8"],
+          ["TOKENS", totalTokens.toLocaleString(), "#06b6d4"],
+          ["TOTAL COST", "$" + totalCost.toFixed(4), "#f59e0b"],
+          ["TODAY REVENUE", "$" + Number(todayStats.todayRevenue || 0).toFixed(4), "#a855f7"],
+
+          ["TODAY TOKENS", Number(todayStats.todayTokens || 0).toLocaleString(), "#6366f1"],
+          ["TODAY REQUESTS", todayStats.todayRequests || 0, "#3b82f6"],
+          ["ONLINE USERS", todayStats.onlineUsers || 0, "#22c55e"],
+          ["PENDING USDT", pendingUsdt, "#06b6d4"],
+
+          ["PROVIDER COST", "$" + providerCost.toFixed(4), "#ef4444"],
+          ["PROFIT", "$" + profit.toFixed(4), "#22c55e"],
+          ["PROFIT MARGIN", profitMargin.toFixed(1) + "%", "#38bdf8"]
+
         ];
 
         overviewBox.innerHTML =
           cards.map(card => `
+
         <div class="stats-metric-card">
 
           <div class="label">
             ${card[0]}
           </div>
 
-          <div class="value">
+          <div class="value"
+            style="color:${card[2]};">
             ${card[1]}
           </div>
 
         </div>
+
       `).join("");
       }
 
@@ -3942,57 +3966,151 @@ padding-right:4px;
             )
             .slice(0, 10);
 
-        usersBox.innerHTML =
-          topUsers.map((u, i) => `
-        <div class="item" style="
-          margin-bottom:14px;
+        usersBox.innerHTML = `
+
+      <div class="ultra-chart-card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:22px;
         ">
 
+          <h2 style="margin:0;">
+            Top Users Performance
+          </h2>
+
           <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+            color:#22c55e;
+            font-weight:900;
           ">
+            ${topUsers.length} Users
+          </div>
 
-            <div>
+        </div>
 
-              <div style="
-                font-weight:800;
-                font-size:16px;
-              ">
-                #${i + 1}
-                ${u.user_email || "Unknown"}
-              </div>
+        ${topUsers.map((u, i) => `
 
-              <div class="muted">
-                Requests:
-                ${u.total_requests || 0}
-              </div>
-
-            </div>
-
-            <div style="
-              text-align:right;
+          <div class="item"
+            style="
+              margin-bottom:16px;
+              border-radius:20px;
             ">
 
-              <div style="
-                color:#22c55e;
-                font-weight:900;
-                font-size:20px;
-              ">
-                $${Number(u.total_cost || 0).toFixed(4)}
+            <div style="
+              display:grid;
+              grid-template-columns:
+                70px 2fr 1fr 1fr 1fr 1fr 1fr;
+              gap:18px;
+              align-items:center;
+            ">
+
+              <div>
+
+                <div style="
+                  font-size:34px;
+                  font-weight:900;
+                  color:#f8fafc;
+                ">
+                  #${i + 1}
+                </div>
+
               </div>
 
-              <div class="muted">
-                ${Number(u.total_tokens || 0).toLocaleString()} tokens
+              <div>
+
+                <div class="muted">
+                  Email
+                </div>
+
+                <div style="
+                  font-size:18px;
+                  font-weight:800;
+                ">
+                  ${u.user_email || "Unknown"}
+                </div>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Revenue
+                </div>
+
+                <b style="
+                  color:#f8fafc;
+                  font-size:18px;
+                ">
+                  $${Number(u.total_cost || 0).toFixed(4)}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Profit
+                </div>
+
+                <b style="
+                  color:#22c55e;
+                  font-size:18px;
+                ">
+                  $${Number(u.total_cost || 0).toFixed(4)}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Margin
+                </div>
+
+                <b style="
+                  color:#38bdf8;
+                  font-size:18px;
+                ">
+                  100.0%
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Tokens
+                </div>
+
+                <b>
+                  ${Number(u.total_tokens || 0).toLocaleString()}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Requests
+                </div>
+
+                <b>
+                  ${u.total_requests || 0}
+                </b>
+
               </div>
 
             </div>
 
           </div>
 
-        </div>
-      `).join("");
+        `).join("")}
+
+      </div>
+
+    `;
       }
 
       const modelsBox =
@@ -4000,55 +4118,157 @@ padding-right:4px;
 
       if (modelsBox) {
 
-        modelsBox.innerHTML =
-          latestModels.map(model => `
-        <div class="item" style="
-          margin-bottom:14px;
+        modelsBox.innerHTML = `
+
+      <div class="ultra-chart-card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:22px;
         ">
+
+          <h2 style="margin:0;">
+            Top Models
+          </h2>
 
           <div style="
             display:flex;
-            justify-content:space-between;
-            align-items:center;
+            gap:12px;
           ">
 
-            <div>
+            <button class="stats-tab-btn active">
+              Revenue
+            </button>
 
-              <div style="
-                font-weight:800;
-                font-size:17px;
-              ">
-                ${model.model}
-              </div>
+            <button class="stats-tab-btn">
+              Requests
+            </button>
 
-              <div class="muted">
-                ${model.requests} requests
-              </div>
+            <button class="stats-tab-btn">
+              Tokens
+            </button>
 
-            </div>
+          </div>
 
-            <div style="
-              text-align:right;
+        </div>
+
+        ${latestModels.map((model, i) => `
+
+          <div class="item"
+            style="
+              margin-bottom:16px;
+              border-radius:20px;
             ">
 
-              <div style="
-                color:#60a5fa;
-                font-size:20px;
-                font-weight:900;
-              ">
-                $${Number(model.revenue || 0).toFixed(4)}
+            <div style="
+              display:grid;
+              grid-template-columns:
+                70px 2fr 1fr 1fr 1fr 1fr 1fr;
+              gap:18px;
+              align-items:center;
+            ">
+
+              <div>
+
+                <div style="
+                  font-size:34px;
+                  font-weight:900;
+                ">
+                  #${i + 1}
+                </div>
+
               </div>
 
-              <div class="muted">
-                ${Number(model.tokens || 0).toLocaleString()} tokens
+              <div>
+
+                <div class="muted">
+                  Model
+                </div>
+
+                <div style="
+                  font-size:18px;
+                  font-weight:800;
+                ">
+                  ${model.model}
+                </div>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Revenue
+                </div>
+
+                <b>
+                  $${Number(model.revenue || 0).toFixed(4)}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Profit
+                </div>
+
+                <b style="
+                  color:#22c55e;
+                ">
+                  $${Number(model.profit || 0).toFixed(4)}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Margin
+                </div>
+
+                <b style="
+                  color:#ef4444;
+                ">
+                  ${Number(model.margin || 0).toFixed(1)}%
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Tokens
+                </div>
+
+                <b>
+                  ${Number(model.tokens || 0).toLocaleString()}
+                </b>
+
+              </div>
+
+              <div>
+
+                <div class="muted">
+                  Requests
+                </div>
+
+                <b>
+                  ${model.requests || 0}
+                </b>
+
               </div>
 
             </div>
 
           </div>
 
-        </div>
-      `).join("");
+        `).join("")}
+
+      </div>
+
+    `;
       }
 
       const activityBox =
@@ -4056,53 +4276,98 @@ padding-right:4px;
 
       if (activityBox) {
 
-        activityBox.innerHTML =
-          latestActivities.map(item => `
-        <div class="item" style="
-          margin-bottom:14px;
+        activityBox.innerHTML = `
+
+      <div class="ultra-chart-card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:22px;
         ">
 
+          <h2 style="margin:0;">
+            Live Activity Feed
+          </h2>
+
           <div style="
-            display:flex;
-            justify-content:space-between;
-            gap:16px;
+            color:#22c55e;
+            font-size:24px;
           ">
+            • LIVE
+          </div>
 
-            <div>
+        </div>
 
-              <div style="
-                font-weight:800;
-              ">
-                ${item.email || "Unknown"}
-              </div>
+        ${latestActivities.map(item => `
 
-              <div class="muted">
-                ${item.model || "unknown"}
-              </div>
-
-            </div>
-
-            <div style="
-              text-align:right;
+          <div class="item"
+            style="
+              margin-bottom:14px;
+              border-radius:18px;
+              background:
+                rgba(255,255,255,.02);
             ">
 
-              <div style="
-                color:#22c55e;
-                font-weight:800;
-              ">
-                $${Number(item.cost || 0).toFixed(4)}
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+            ">
+
+              <div>
+
+                <div style="
+                  font-size:18px;
+                  font-weight:800;
+                ">
+                  ${item.email || "Unknown user"}
+                </div>
+
+                <div class="muted"
+                  style="margin-top:4px;">
+
+                  ${item.model || "unknown"} ·
+                  ${Number(item.total_tokens || 0).toLocaleString()} tokens
+
+                </div>
+
               </div>
 
-              <div class="muted">
-                ${Number(item.total_tokens || 0).toLocaleString()} tokens
+              <div style="
+                text-align:right;
+              ">
+
+                <div style="
+                  color:#22c55e;
+                  font-size:18px;
+                  font-weight:900;
+                ">
+                  $${Number(item.cost || 0).toFixed(6)}
+                </div>
+
+                <div class="muted"
+                  style="margin-top:4px;">
+
+                  ${item.created_at
+            ? new Date(item.created_at)
+              .toLocaleString()
+            : "-"}
+
+                </div>
+
               </div>
 
             </div>
 
           </div>
 
-        </div>
-      `).join("");
+        `).join("")}
+
+      </div>
+
+    `;
       }
 
       const errorsBox =
@@ -4110,46 +4375,129 @@ padding-right:4px;
 
       if (errorsBox) {
 
-        if (!latestErrors.length) {
+        errorsBox.innerHTML = `
 
-          errorsBox.innerHTML = `
-        <div class="item">
+      <div class="ultra-chart-card"
+        style="
+          background:
+            linear-gradient(
+              135deg,
+              rgba(127,29,29,.42),
+              rgba(69,10,10,.52)
+            );
+
+          border:
+            1px solid rgba(248,113,113,.16);
+        ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:22px;
+        ">
+
+          <div>
+
+            <div style="
+              color:#fca5a5;
+              text-transform:uppercase;
+              letter-spacing:.12em;
+              margin-bottom:8px;
+            ">
+              Realtime Error Monitor
+            </div>
+
+            <h2 style="
+              margin:0;
+              color:white;
+            ">
+              System Errors
+            </h2>
+
+          </div>
 
           <div style="
-            color:#22c55e;
+            padding:12px 18px;
+            border-radius:999px;
+            background:
+              rgba(248,113,113,.12);
+
+            color:#fca5a5;
             font-weight:900;
-            font-size:18px;
           ">
-            No system errors detected
+            ${latestErrors.length} Errors
           </div>
 
         </div>
-      `;
 
-        } else {
+        ${latestErrors.length === 0
+            ? `
+            <div class="item">
 
-          errorsBox.innerHTML =
+              <div style="
+                color:#22c55e;
+                font-size:20px;
+                font-weight:900;
+              ">
+                No system errors detected
+              </div>
+
+            </div>
+          `
+            :
             latestErrors.map(err => `
-          <div class="item" style="
-            margin-bottom:14px;
-            border-color:rgba(239,68,68,.22);
-          ">
 
-            <div style="
-              color:#ef4444;
-              font-weight:900;
-              margin-bottom:8px;
-            ">
-              ${err.error_message || "Unknown Error"}
+            <div class="item"
+              style="
+                margin-bottom:14px;
+                border-radius:18px;
+                border-color:
+                  rgba(248,113,113,.16);
+              ">
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+              ">
+
+                <div>
+
+                  <div style="
+                    color:#f87171;
+                    font-size:18px;
+                    font-weight:900;
+                    margin-bottom:4px;
+                  ">
+                    ${err.type || "server_error"}
+                  </div>
+
+                  <div class="muted">
+                    ${err.error_message || "Unknown error"}
+                  </div>
+
+                </div>
+
+                <div class="muted">
+
+                  ${err.created_at
+                ? new Date(err.created_at)
+                  .toLocaleString()
+                : "-"}
+
+                </div>
+
+              </div>
+
             </div>
 
-            <div class="muted">
-              ${err.model || "unknown model"}
-            </div>
+          `).join("")
+          }
 
-          </div>
-        `).join("");
-        }
+      </div>
+
+    `;
       }
     }
 
