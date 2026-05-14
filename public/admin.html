@@ -2100,6 +2100,7 @@ height:100vh;
     function adminLogout() {
       stopUltraLiveDashboard();
       document.body.style.paddingTop = "0";
+      document.getElementById("ultraLiveTopBar")?.remove();
       stopPaymentsAutoRefresh();
       localStorage.removeItem("admin_key");
 
