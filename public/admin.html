@@ -1669,27 +1669,43 @@ height:100vh;
 ">
 
         <div class="card admin-section" id="overviewSection">
-          <h2>Admin Overview</h2>
+          <h2 data-i18n="adminOverview">
+            Admin Overview
+          </h2>
 
           <div id="overviewBox">
             <div class="stats-grid-premium">
               <div class="stats-metric-card">
-                <div class="label">System Status</div>
-                <div class="value">Online</div>
+                <div class="label" data-i18n="systemStatus">
+                  System Status
+                </div>
+                <div class="value" data-i18n="online">
+                  Online
+                </div>
               </div>
 
               <div class="stats-metric-card">
-                <div class="label">Dashboard Mode</div>
-                <div class="value">Ultra</div>
+                <div class="label" data-i18n="dashboardMode">
+                  Dashboard Mode
+                </div>
+                <div class="value" data-i18n="ultra">
+                  Ultra
+                </div>
               </div>
 
               <div class="stats-metric-card">
-                <div class="label">Command Center</div>
-                <div class="value">Ready</div>
+                <div class="label" data-i18n="commandCenter">
+                  Command Center
+                </div>
+                <div class="value" data-i18n="ready">
+                  Ready
+                </div>
               </div>
 
               <div class="stats-metric-card">
-                <div class="label">Next Step</div>
+                <div class="label" data-i18n="nextStep">
+                  Next Step
+                </div>
                 <div class="value">Stats</div>
               </div>
             </div>
@@ -1701,14 +1717,18 @@ height:100vh;
       background:rgba(2,6,23,.72);
       border:1px solid rgba(56,189,248,.16);
     ">
-              <h3 style="margin-top:0;">Admin Control Center</h3>
+              <h3 style="margin-top:0;" data-i18n="adminControlCenter">
+                Admin Control Center
+              </h3>
 
               <div class="muted">
                 Use Stats to view classified analytics: Overview, Users, Models, Activity and Errors.
               </div>
 
               <button onclick="showAdminSection('statsSection', document.querySelectorAll('.sidebar-btn')[3])">
-                Open Stats Command Center
+                <span data-i18n="openStatsCommandCenter">
+                  Open Stats Command Center
+                </span>
               </button>
             </div>
           </div>
@@ -1936,6 +1956,16 @@ height:100vh;
         loginTitle: "Admin Login",
         loginDesc: "Enter ADMIN_SECRET to access admin dashboard.",
         loginButton: "Login",
+        adminOverview: "Admin Overview",
+        systemStatus: "System Status",
+        dashboardMode: "Dashboard Mode",
+        commandCenter: "Command Center",
+        nextStep: "Next Step",
+        adminControlCenter: "Admin Control Center",
+        openStatsCommandCenter: "Open Stats Command Center",
+        online: "Online",
+        ultra: "Ultra",
+        ready: "Ready",
       },
 
       zh: {
@@ -1949,6 +1979,16 @@ height:100vh;
         loginTitle: "管理员登录",
         loginDesc: "输入 ADMIN_SECRET 进入后台管理系统。",
         loginButton: "登录",
+        adminOverview: "管理员总览",
+        systemStatus: "系统状态",
+        dashboardMode: "仪表盘模式",
+        commandCenter: "指挥中心",
+        nextStep: "下一步",
+        adminControlCenter: "后台控制中心",
+        openStatsCommandCenter: "打开数据指挥中心",
+        online: "在线",
+        ultra: "超级模式",
+        ready: "已就绪",
       }
 
     };
