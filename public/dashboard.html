@@ -769,10 +769,43 @@
       </div>
 
       <div class="card ultra-card">
-        <div class="section-label">Balance</div>
-        <h2>Account Balance</h2>
-        <div class="balance" id="balanceText">$0</div>
-        <p class="muted">Your API usage will automatically deduct from this balance.</p>
+        <div class="section-label">
+          Financial Center
+        </div>
+
+        <h2 style="
+  font-size:38px;
+  margin:10px 0 14px;
+  font-weight:900;
+">
+          Account Balance
+        </h2>
+
+        <p style="
+  color:#94a3b8;
+  line-height:1.7;
+  margin-bottom:24px;
+">
+          Monitor your available balance,
+          API infrastructure credit,
+          and realtime usage deduction.
+        </p>
+        <div class="balance" id="balanceText" style="
+  text-shadow:
+    0 0 24px rgba(34,197,94,.28);
+">
+          $0
+        </div>
+        <div class="ultra-live-pill">
+          BALANCE ACTIVE
+        </div>
+
+        <p class="muted" style="
+  margin-top:18px;
+">
+          Your API usage will automatically deduct
+          from your available infrastructure credit.
+        </p>
       </div>
     </div>
 
@@ -1028,25 +1061,63 @@ padding-top:20px;
       </div>
     </div>
 
-    <div class="card" id="rechargeSection">
-      <h2>Recharge</h2>
-      <div style="
-  background: rgba(255,255,255,0.04);
-border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:16px;
+    <div class="card ultra-card" id="rechargeSection" style="
+  border-radius:32px;
+  margin-top:28px;
 ">
+      <div class="section-label">
+        Billing Center
+      </div>
 
-        <div style="margin-bottom:8px;">
-          <b>USDT Network:</b> TRC20
-        </div>
+      <h2 style="
+  font-size:42px;
+  margin:10px 0 16px;
+  font-weight:900;
+">
+        Recharge Infrastructure
+      </h2>
 
-        <div style="margin-bottom:8px;">
-          <b>Wallet Address:</b>
-        </div>
+      <p style="
+  color:#94a3b8;
+  line-height:1.8;
+  max-width:760px;
+  margin-bottom:28px;
+">
+        Recharge your account balance,
+        maintain API infrastructure uptime,
+        and manage premium AI platform access.
+      </p>
+      <div style="
+      position:relative;
+      overflow:hidden;
 
-        <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
+      background:
+      linear-gradient(145deg,
+      rgba(8,15,30,.96),
+      rgba(15,23,42,.92));
+
+      border:1px solid rgba(56,189,248,.14);
+
+      border-radius:24px;
+
+      padding:22px;
+
+      margin-bottom:22px;
+
+      box-shadow:
+      0 20px 50px rgba(0,0,0,.28),
+      inset 0 1px 0 rgba(255,255,255,.04);
+      ">
+
+      <div style="margin-bottom:8px;">
+        <b>USDT Network:</b> TRC20
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <b>Wallet Address:</b>
+      </div>
+
+      <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
       width:100%;
       background:#081226;
       color:#00ff99;
@@ -1056,43 +1127,43 @@ border:1px solid rgba(255,255,255,0.08);
       font-size:14px;
     " />
 
-        <button onclick="copyUsdtAddress()">
-          Copy USDT Address
-        </button>
+      <button onclick="copyUsdtAddress()">
+        Copy USDT Address
+      </button>
 
-        <div style="margin-top:14px;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-            alt="USDT TRC20 QR Code" style="
+      <div style="margin-top:14px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+          alt="USDT TRC20 QR Code" style="
       background:white;
       padding:10px;
       border-radius:12px;
       width:220px;
       height:220px;
     " />
-        </div>
-
-        <p class="muted" style="margin-top:10px;">
-          Send USDT via TRC20 network only.
-        </p>
-
       </div>
-      <p class="muted">Stripe and USDT payment will be added next.</p>
 
-      <button onclick="stripeCheckout()">
-        Pay with Stripe
-      </button>
-      <input id="usdtAmount" placeholder="USDT Amount" />
-      <input id="usdtTxHash" placeholder="Transaction Hash" />
+      <p class="muted" style="margin-top:10px;">
+        Send USDT via TRC20 network only.
+      </p>
 
-      <button id="usdtSubmitBtn" onclick="usdtPayment()">
-        Submit USDT Payment
-      </button>
     </div>
+    <p class="muted">Stripe and USDT payment will be added next.</p>
 
-    <div class="card">
-      <h2>Account</h2>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
+    <button onclick="stripeCheckout()">
+      Pay with Stripe
+    </button>
+    <input id="usdtAmount" placeholder="USDT Amount" />
+    <input id="usdtTxHash" placeholder="Transaction Hash" />
+
+    <button id="usdtSubmitBtn" onclick="usdtPayment()">
+      Submit USDT Payment
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Account</h2>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 
   </div>
 
