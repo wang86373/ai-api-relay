@@ -5996,7 +5996,8 @@ padding-right:4px;
           document.getElementById("paymentStatusFilter")?.value || "all";
 
         if (statusFilter !== "all") {
-          data.payments = data.payments.filter(p => p.status === statusFilter);
+          filteredPayments =
+            filteredPayments.filter(p => p.status === statusFilter);
         }
 
         msg.innerText = "";
@@ -6005,7 +6006,7 @@ padding-right:4px;
         renderOverview();
         renderPaymentsRevenueChart(filteredPayments);
 
-        if (!data.payments || data.payments.length === 0) {
+        if (!filteredPayments || filteredPayments.length === 0) {
           box.innerHTML = "No payment requests.";
           return;
         }
