@@ -5392,24 +5392,24 @@ padding-right:4px;
 
         const cards = [
 
-          ["TOTAL USERS", users.size, "#60a5fa"],
-          ["API KEYS", totalKeys, "#38bdf8"],
-          ["ACTIVE KEYS", activeKeys, "#22c55e"],
-          ["TOTAL BALANCE", "$" + totalBalance.toFixed(4), "#22c55e"],
+            [LANG[currentLang].totalUsers, users.size, "#60a5fa"],
+            [LANG[currentLang].apiKeys, totalKeys, "#38bdf8"],
+            [LANG[currentLang].activeKeys, activeKeys, "#22c55e"],
+            [LANG[currentLang].totalBalance, "$" + totalBalance.toFixed(4), "#22c55e"],
 
-          ["REQUESTS", totalRequests, "#818cf8"],
-          ["TOKENS", totalTokens.toLocaleString(), "#06b6d4"],
-          ["TOTAL COST", "$" + totalCost.toFixed(4), "#f59e0b"],
-          ["TODAY REVENUE", "$" + Number(todayStats.todayRevenue || 0).toFixed(4), "#a855f7"],
+            [LANG[currentLang].requests, totalRequests, "#818cf8"],
+            [LANG[currentLang].tokens, totalTokens.toLocaleString(), "#06b6d4"],
+            [LANG[currentLang].totalCost, "$" + totalCost.toFixed(4), "#f59e0b"],
+            [LANG[currentLang].todayRevenue, "$" + Number(todayStats.todayRevenue || 0).toFixed(4), "#a855f7"],
 
-          ["TODAY TOKENS", Number(todayStats.todayTokens || 0).toLocaleString(), "#6366f1"],
-          ["TODAY REQUESTS", todayStats.todayRequests || 0, "#3b82f6"],
-          ["ONLINE USERS", todayStats.onlineUsers || 0, "#22c55e"],
-          ["PENDING USDT", pendingUsdt, "#06b6d4"],
+            [LANG[currentLang].todayTokens, Number(todayStats.todayTokens || 0).toLocaleString(), "#6366f1"],
+            [LANG[currentLang].todayRequests, todayStats.todayRequests || 0, "#3b82f6"],
+            [LANG[currentLang].onlineUsers, todayStats.onlineUsers || 0, "#22c55e"],
+            [LANG[currentLang].pendingUsdt, pendingUsdt, "#06b6d4"],
 
-          ["PROVIDER COST", "$" + providerCost.toFixed(4), "#ef4444"],
-          ["PROFIT", "$" + profit.toFixed(4), "#22c55e"],
-          ["PROFIT MARGIN", profitMargin.toFixed(1) + "%", "#38bdf8"]
+            [LANG[currentLang].providerCost, "$" + providerCost.toFixed(4), "#ef4444"],
+            [LANG[currentLang].profit, "$" + profit.toFixed(4), "#22c55e"],
+            [LANG[currentLang].profitMargin, profitMargin.toFixed(1) + "%", "#38bdf8"]
 
         ];
 
