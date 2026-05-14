@@ -1847,16 +1847,16 @@ height:100vh;
           </div>
 
           <div id="statsUsersTab" class="stats-panel">
-            <h3 data-i18n="topUsersPerformance">Top Users Performance</h3>
+            <h3 data-i18n="topUsersPerformance">${LANG[currentLang].topUsersPerformance}</h3>
             <div id="statsUsersBox"></div>
           </div>
 
           <div id="statsModelsTab" class="stats-panel">
-            <h3 data-i18n="topModelsUsage">Top Models / Per Model Usage</h3>
+            <h3 data-i18n="topModelsUsage">${LANG[currentLang].topModelsUsage}</h3>
             <div id="statsModelsBox"></div>
 
             <div class="ultra-chart-card">
-              <h3 data-i18n="modelUsageShare">Model Usage Share</h3>
+              <h3 data-i18n="modelUsageShare">${LANG[currentLang].modelUsageShare}</h3>
               <canvas id="modelPieChart" height="120"></canvas>
             </div>
           </div>
@@ -2071,6 +2071,10 @@ height:100vh;
         copy: "Copy",
         details: "Details",
         confirm: "Confirm",
+        topUsersPerformance: "Top Users Performance",
+        topModelsUsage: "Top Models / Per Model Usage",
+        modelUsageShare: "Model Usage Share",
+        users: "Users",
       },
 
       zh: {
@@ -2186,6 +2190,10 @@ height:100vh;
         copy: "复制",
         details: "详情",
         confirm: "确认",
+        topUsersPerformance: "用户表现排行",
+        topModelsUsage: "热门模型 / 单模型用量",
+        modelUsageShare: "模型使用占比",
+        users: "用户",
       }
 
     };
@@ -5392,24 +5400,24 @@ padding-right:4px;
 
         const cards = [
 
-            [LANG[currentLang].totalUsers, users.size, "#60a5fa"],
-            [LANG[currentLang].apiKeys, totalKeys, "#38bdf8"],
-            [LANG[currentLang].activeKeys, activeKeys, "#22c55e"],
-            [LANG[currentLang].totalBalance, "$" + totalBalance.toFixed(4), "#22c55e"],
+          [LANG[currentLang].totalUsers, users.size, "#60a5fa"],
+          [LANG[currentLang].apiKeys, totalKeys, "#38bdf8"],
+          [LANG[currentLang].activeKeys, activeKeys, "#22c55e"],
+          [LANG[currentLang].totalBalance, "$" + totalBalance.toFixed(4), "#22c55e"],
 
-            [LANG[currentLang].requests, totalRequests, "#818cf8"],
-            [LANG[currentLang].tokens, totalTokens.toLocaleString(), "#06b6d4"],
-            [LANG[currentLang].totalCost, "$" + totalCost.toFixed(4), "#f59e0b"],
-            [LANG[currentLang].todayRevenue, "$" + Number(todayStats.todayRevenue || 0).toFixed(4), "#a855f7"],
+          [LANG[currentLang].requests, totalRequests, "#818cf8"],
+          [LANG[currentLang].tokens, totalTokens.toLocaleString(), "#06b6d4"],
+          [LANG[currentLang].totalCost, "$" + totalCost.toFixed(4), "#f59e0b"],
+          [LANG[currentLang].todayRevenue, "$" + Number(todayStats.todayRevenue || 0).toFixed(4), "#a855f7"],
 
-            [LANG[currentLang].todayTokens, Number(todayStats.todayTokens || 0).toLocaleString(), "#6366f1"],
-            [LANG[currentLang].todayRequests, todayStats.todayRequests || 0, "#3b82f6"],
-            [LANG[currentLang].onlineUsers, todayStats.onlineUsers || 0, "#22c55e"],
-            [LANG[currentLang].pendingUsdt, pendingUsdt, "#06b6d4"],
+          [LANG[currentLang].todayTokens, Number(todayStats.todayTokens || 0).toLocaleString(), "#6366f1"],
+          [LANG[currentLang].todayRequests, todayStats.todayRequests || 0, "#3b82f6"],
+          [LANG[currentLang].onlineUsers, todayStats.onlineUsers || 0, "#22c55e"],
+          [LANG[currentLang].pendingUsdt, pendingUsdt, "#06b6d4"],
 
-            [LANG[currentLang].providerCost, "$" + providerCost.toFixed(4), "#ef4444"],
-            [LANG[currentLang].profit, "$" + profit.toFixed(4), "#22c55e"],
-            [LANG[currentLang].profitMargin, profitMargin.toFixed(1) + "%", "#38bdf8"]
+          [LANG[currentLang].providerCost, "$" + providerCost.toFixed(4), "#ef4444"],
+          [LANG[currentLang].profit, "$" + profit.toFixed(4), "#22c55e"],
+          [LANG[currentLang].profitMargin, profitMargin.toFixed(1) + "%", "#38bdf8"]
 
         ];
 
@@ -5457,14 +5465,14 @@ padding-right:4px;
         ">
 
           <h2 style="margin:0;">
-            Top Users Performance
+            ${LANG[currentLang].topUsersPerformance}
           </h2>
 
           <div style="
             color:#22c55e;
             font-weight:900;
           ">
-            ${topUsers.length} Users
+            ${topUsers.length} ${LANG[currentLang].users}
           </div>
 
         </div>
