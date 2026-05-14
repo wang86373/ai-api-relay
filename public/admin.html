@@ -6077,8 +6077,17 @@ padding-right:4px;
       <div class="payment-row item ${i === 0 ? "flash" : ""}">
 
         <div>
-          #${p.id}
-        </div>
+  <div style="font-weight:900;">
+    #${p.id}
+  </div>
+
+  <button
+    style="margin-top:10px;"
+    onclick="openPaymentDetail(${p.id})"
+  >
+    Details
+  </button>
+</div>
 
         <div class="payment-hash">
           ${p.api_key}
@@ -6250,6 +6259,41 @@ padding-right:4px;
         clearInterval(paymentsAutoRefreshTimer);
         paymentsAutoRefreshTimer = null;
       }
+    }
+
+    async function openPaymentDetail(paymentId) {
+
+      const payment =
+        latestPayments.find(
+          p => Number(p.id) === Number(paymentId)
+        );
+
+      if (!payment) {
+        showToast("Payment not found", "error");
+        return;
+      }
+
+      await showModal({
+        title: "Payment Details",
+        message:
+          `Payment ID: ${payment.id}
+
+Status: ${payment.status}
+
+Amount: $${payment.amount}
+
+API Key:
+${payment.api_key}
+
+TX Hash:
+${payment.tx_hash || "N/A"}
+
+Created:
+${payment.created_at
+            ? new Date(payment.created_at).toLocaleString()
+            : "-"}`,
+      });
+
     }
 
     async function confirmPayment(paymentId) {
