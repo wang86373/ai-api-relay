@@ -42,6 +42,25 @@
       min-height: 100vh;
     }
 
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, .03);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background:
+        linear-gradient(180deg, #2563eb, #7c3aed);
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background:
+        linear-gradient(180deg, #3b82f6, #8b5cf6);
+    }
+
     .container {
       max-width: 1100px;
       margin: auto;
@@ -297,6 +316,43 @@
       z-index: -1;
     }
 
+    .ultra-user-shell::after {
+      content: "";
+
+      position: fixed;
+      inset: 0;
+
+      background-image:
+        linear-gradient(rgba(56, 189, 248, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, .05) 1px, transparent 1px);
+
+      background-size: 60px 60px;
+
+      mask-image:
+        radial-gradient(circle at center,
+          black,
+          transparent 85%);
+
+      pointer-events: none;
+
+      animation:
+        ultraGridMove 18s linear infinite;
+
+      opacity: .45;
+
+      z-index: -1;
+    }
+
+    @keyframes ultraGridMove {
+      0% {
+        transform: translateY(0px);
+      }
+
+      100% {
+        transform: translateY(60px);
+      }
+    }
+
     .ultra-card {
       position: relative;
       overflow: hidden;
@@ -341,6 +397,60 @@
       box-shadow: 0 28px 70px rgba(37, 99, 235, .22);
     }
 
+    .ultra-key-card {
+      transition: .25s ease;
+    }
+
+    .ultra-key-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent, rgba(56, 189, 248, .12), transparent);
+      transform: translateX(-120%);
+      transition: .8s ease;
+      pointer-events: none;
+    }
+
+    .ultra-key-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56, 189, 248, .42) !important;
+      box-shadow:
+        0 28px 70px rgba(37, 99, 235, .24),
+        inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+    }
+
+    .ultra-key-card:hover::before {
+      transform: translateX(120%);
+    }
+
+    .ultra-log-card {
+      transition: .25s ease;
+    }
+
+    .ultra-log-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent, rgba(16, 185, 129, .12), transparent);
+      transform: translateX(-120%);
+      transition: .8s ease;
+      pointer-events: none;
+    }
+
+    .ultra-log-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(16, 185, 129, .38) !important;
+      box-shadow:
+        0 26px 60px rgba(16, 185, 129, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+    }
+
+    .ultra-log-card:hover::before {
+      transform: translateX(120%);
+    }
+
     .ultra-live-pill {
       display: inline-flex;
       align-items: center;
@@ -352,6 +462,32 @@
       color: #4ade80;
       font-size: 12px;
       font-weight: 900;
+    }
+
+    .ultra-live-pill,
+    .ultra-status-pill {
+      animation:
+        ultraPulseGlow 2.2s infinite;
+    }
+
+    @keyframes ultraPulseGlow {
+      0% {
+        box-shadow:
+          0 0 0 rgba(34, 197, 94, 0),
+          0 0 18px rgba(34, 197, 94, .22);
+      }
+
+      50% {
+        box-shadow:
+          0 0 24px rgba(34, 197, 94, .38),
+          0 0 42px rgba(34, 197, 94, .18);
+      }
+
+      100% {
+        box-shadow:
+          0 0 0 rgba(34, 197, 94, 0),
+          0 0 18px rgba(34, 197, 94, .22);
+      }
     }
 
     .ultra-live-pill::before {
@@ -369,14 +505,48 @@
         grid-template-columns: 1fr;
       }
 
-      .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 18px;
+      .hero {
+        padding: 30px !important;
       }
 
       .hero h1 {
-        font-size: 42px;
+        font-size: 52px !important;
+        line-height: 1.05 !important;
+      }
+
+      .ultra-card,
+      .ultra-stat-card {
+        border-radius: 24px !important;
+      }
+
+      #apiKeyList {
+        grid-template-columns: 1fr !important;
+      }
+
+      .api-actions {
+        flex-direction: column;
+        align-items: stretch !important;
+      }
+
+      .api-actions button,
+      .api-actions input {
+        width: 100%;
+      }
+
+      #toggleKeysBtn {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
       }
 
       .api-box {
@@ -570,9 +740,30 @@
     </div>
     <div class="stats-grid">
       <div class="card ultra-card">
-        <div class="section-label">Analytics</div>
-        <h2>Usage Summary</h2>
-        <div id="usageSummary">
+        <div class="section-label">
+          Analytics Center
+        </div>
+
+        <h2 style="
+  font-size:38px;
+  margin:10px 0 14px;
+  font-weight:900;
+">
+          Usage Intelligence
+        </h2>
+
+        <p style="
+  color:#94a3b8;
+  line-height:1.7;
+  margin-bottom:22px;
+">
+          Track API consumption, model usage,
+          token flow, and estimated platform cost.
+        </p>
+        <div id="usageSummary" style="
+  display:grid;
+  gap:14px;
+">
           Loading usage summary...
         </div>
       </div>
@@ -1103,9 +1294,50 @@ border:1px solid rgba(255,255,255,0.08);
         }, 0);
 
         document.getElementById("usageSummary").innerHTML = `
-      <p>Total Requests: ${totalRequests}</p>
-      <p>Total Tokens: ${totalTokens}</p>
-    `;
+  <div style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+  ">
+
+    <div class="ultra-stat-card">
+      <div class="section-label">Requests</div>
+
+      <div style="
+        font-size:34px;
+        font-weight:900;
+        color:white;
+        margin-top:10px;
+      ">
+        ${totalRequests || 0}
+      </div>
+    </div>
+
+    <div class="ultra-stat-card">
+      <div class="section-label">Tokens</div>
+
+      <div style="
+        font-size:34px;
+        font-weight:900;
+        color:white;
+        margin-top:10px;
+      ">
+        ${(totalTokens || 0).toLocaleString()}
+      </div>
+    </div>
+
+    <div class="ultra-stat-card">
+      <div class="section-label">Status</div>
+
+      <div class="ultra-live-pill" style="
+        margin-top:16px;
+      ">
+        SYSTEM HEALTHY
+      </div>
+    </div>
+
+  </div>
+`;
 
       } catch (err) {
 
@@ -1573,8 +1805,7 @@ border:1px solid rgba(255,255,255,0.08);
         });
 
         const data = await res.json();
-        document.getElementById("activeKeys").innerText =
-          data.keys.length;
+        animateNumber("activeKeys", filteredKeys.length);
 
         if (!res.ok) return;
 
@@ -1624,7 +1855,7 @@ border:1px solid rgba(255,255,255,0.08);
               };
 
               list.innerHTML += `
-  <div style="
+  <div class="ultra-key-card" style="
     position:relative;
     overflow:hidden;
     padding:24px;
@@ -1665,7 +1896,7 @@ border:1px solid rgba(255,255,255,0.08);
         </div>
       </div>
 
-      <div style="
+      <div class="ultra-status-pill" style="
         padding:8px 13px;
         border-radius:999px;
         background:rgba(34,197,94,.12);
@@ -1782,7 +2013,7 @@ border:1px solid rgba(255,255,255,0.08);
         data.logs.forEach(log => {
 
           container.innerHTML += `
-  <div style="
+  <div class="ultra-log-card" style="
     position:relative;
     overflow:hidden;
     padding:22px;
@@ -1824,7 +2055,7 @@ border:1px solid rgba(255,255,255,0.08);
         </div>
       </div>
 
-      <div style="
+      <div class="ultra-status-pill" style="
         padding:8px 13px;
         border-radius:999px;
         background:rgba(34,197,94,.12);
@@ -1882,6 +2113,42 @@ border:1px solid rgba(255,255,255,0.08);
 
     }
 
+    function animateNumber(id, target, options = {}) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const prefix = options.prefix || "";
+      const suffix = options.suffix || "";
+      const decimals = options.decimals || 0;
+
+      const start = Number(el.dataset.value || 0);
+      const end = Number(target || 0);
+      const duration = 700;
+      const startTime = performance.now();
+
+      el.dataset.value = end;
+
+      function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (end - start) * eased;
+
+        el.innerText =
+          prefix +
+          current.toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+          }) +
+          suffix;
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
     async function loadUsageStats() {
 
       const email = localStorage.getItem("email");
@@ -1902,14 +2169,14 @@ border:1px solid rgba(255,255,255,0.08);
 
         if (!res.ok) return;
 
-        document.getElementById("todayRequests").innerText =
-          data.totalRequests;
+        animateNumber("todayRequests", data.totalRequests);
 
-        document.getElementById("tokenUsage").innerText =
-          data.totalTokens.toLocaleString();
+        animateNumber("tokenUsage", data.totalTokens);
 
-        document.getElementById("estimatedCost").innerText =
-          "$" + Number(data.totalCost).toFixed(4);
+        animateNumber("estimatedCost", Number(data.totalCost), {
+          prefix: "$",
+          decimals: 4
+        });
 
       } catch (err) {
 
