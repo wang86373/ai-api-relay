@@ -1119,9 +1119,14 @@
     }
 
     .topbar-lang {
+      position: fixed;
+      top: 14px;
+      right: 22px;
+
       display: flex;
       gap: 8px;
-      margin-left: 8px;
+
+      z-index: 99999;
     }
 
     .topbar-lang button {
@@ -1134,6 +1139,7 @@
       font-weight: 800;
       cursor: pointer;
       transition: .22s;
+      backdrop-filter: blur(10px);
     }
 
     .topbar-lang button:hover {
@@ -1150,10 +1156,79 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+      overflow: hidden;
       background:
         radial-gradient(circle at top left, rgba(56, 189, 248, .18), transparent 34%),
         radial-gradient(circle at bottom right, rgba(124, 58, 237, .18), transparent 34%),
         #020617;
+    }
+
+    #loginPage::before,
+    #loginPage::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: .18;
+      pointer-events: none;
+    }
+
+    #loginPage::before {
+      background: #2563eb;
+      top: -120px;
+      left: -120px;
+      animation: orbFloatA 9s ease-in-out infinite;
+    }
+
+    #loginPage::after {
+      background: #7c3aed;
+      bottom: -160px;
+      right: -120px;
+      animation: orbFloatB 11s ease-in-out infinite;
+    }
+
+    #loginPage .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      background-image:
+        linear-gradient(rgba(56, 189, 248, .04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, .04) 1px, transparent 1px);
+
+      background-size: 26px 26px;
+
+      mask-image:
+        linear-gradient(to bottom, black, transparent 85%);
+
+      pointer-events: none;
+    }
+
+    @keyframes orbFloatA {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(24px);
+      }
+    }
+
+    @keyframes orbFloatB {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-24px);
+      }
     }
 
     #loginPage .card {
@@ -1205,6 +1280,19 @@
       box-shadow: 0 18px 42px rgba(37, 99, 235, .35);
     }
 
+    #loginButton {
+      position: relative;
+      overflow: hidden;
+    }
+
+    #loginButton:hover {
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 24px 60px rgba(37, 99, 235, .45),
+        0 0 28px rgba(124, 58, 237, .35);
+    }
+
     #loginMsg {
       margin-top: 16px;
     }
@@ -1236,6 +1324,93 @@
       margin-top: 4px;
       color: #94a3b8;
       font-size: 13px;
+    }
+
+    #loginPage .card {
+      position: relative;
+      overflow: hidden;
+      animation: loginCardIn .45s ease both;
+    }
+
+    #loginPage .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .16),
+          transparent);
+      transform: translateX(-120%);
+      animation: loginScan 3.8s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes loginCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes loginScan {
+      0% {
+        transform: translateX(-120%);
+      }
+
+      45% {
+        transform: translateX(120%);
+      }
+
+      100% {
+        transform: translateX(120%);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 900px) {
+      #adminPage>div {
+        flex-direction: column;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      #adminPage aside {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      #adminPage aside h2 {
+        grid-column: 1 / -1;
+      }
+
+      .sidebar-btn,
+      #adminPage aside .danger {
+        width: 100%;
+      }
+
+      #adminPage main {
+        padding: 24px !important;
+      }
+
+      .topbar-lang {
+        top: 10px;
+        right: 12px;
+      }
     }
   </style>
 </head>
@@ -1336,7 +1511,7 @@
 
       <input id="loginAdminKey" placeholder="ADMIN_SECRET" type="password" />
 
-      <button onclick="adminLogin()" id="loginButton">
+      <button onclick="adminLogin(this)" id="loginButton">
         Login
       </button>
 
@@ -1805,7 +1980,8 @@ height:100vh;
 
     setLanguage(savedLang);
 
-    async function adminLogin() {
+    async function adminLogin(btn) {
+      setButtonLoading(btn, true, "Verifying...");
 
       const key =
         document.getElementById("loginAdminKey")
@@ -1815,7 +1991,7 @@ height:100vh;
       if (!key) {
         document.getElementById("loginMsg").innerText =
           "Enter ADMIN_SECRET";
-
+        setButtonLoading(btn, false);
         return;
       }
 
@@ -1838,7 +2014,7 @@ height:100vh;
 
           document.getElementById("loginMsg").innerText =
             data.error?.message || "Invalid ADMIN_SECRET";
-
+          setButtonLoading(btn, false);
           return;
         }
 
@@ -1852,6 +2028,7 @@ height:100vh;
 
         document.getElementById("adminPage").style.display =
           "block";
+        setButtonLoading(btn, false);
         showAdminSection(
           "overviewSection",
           document.querySelector(".sidebar-btn")
@@ -1860,9 +2037,58 @@ height:100vh;
         startUltraLiveDashboard();
 
       } catch (err) {
+        setButtonLoading(btn, false);
 
         document.getElementById("loginMsg").innerText =
           "Login failed";
+      }
+    }
+
+    function setButtonLoading(btn, loading, text = "Loading...") {
+
+      if (!btn) return;
+
+      if (loading) {
+
+        btn.dataset.original =
+          btn.innerHTML;
+
+        btn.disabled = true;
+
+        btn.innerHTML = `
+      <span
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+        "
+      >
+        <span
+          style="
+            width:16px;
+            height:16px;
+            border:2px solid rgba(255,255,255,.35);
+            border-top-color:white;
+            border-radius:50%;
+            display:inline-block;
+            animation:spin .8s linear infinite;
+          "
+        ></span>
+
+        ${text}
+      </span>
+    `;
+
+      } else {
+
+        btn.disabled = false;
+
+        if (btn.dataset.original) {
+          btn.innerHTML =
+            btn.dataset.original;
+        }
+
       }
     }
 
