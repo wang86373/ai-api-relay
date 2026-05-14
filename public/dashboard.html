@@ -1,4 +1,3 @@
-ey
 <!DOCTYPE html>
 <html lang="en">
 
@@ -281,6 +280,89 @@ ey
       margin-bottom: 14px;
     }
 
+    .ultra-user-shell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ultra-user-shell::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(56, 189, 248, .16), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(124, 58, 237, .14), transparent 30%),
+        radial-gradient(circle at 50% 90%, rgba(34, 197, 94, .08), transparent 34%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .ultra-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 42, .92), rgba(2, 6, 23, .96));
+      border: 1px solid rgba(56, 189, 248, .14);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, .38),
+        inset 0 1px 0 rgba(255, 255, 255, .05);
+    }
+
+    .ultra-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent, rgba(56, 189, 248, .08), transparent);
+      transform: translateX(-120%);
+      transition: .8s;
+      pointer-events: none;
+    }
+
+    .ultra-card:hover::before {
+      transform: translateX(120%);
+    }
+
+    .ultra-stat-card {
+      position: relative;
+      overflow: hidden;
+      padding: 28px;
+      border-radius: 28px;
+      background:
+        linear-gradient(145deg, rgba(8, 15, 30, .96), rgba(15, 23, 42, .92));
+      border: 1px solid rgba(56, 189, 248, .13);
+      transition: .25s ease;
+    }
+
+    .ultra-stat-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(56, 189, 248, .38);
+      box-shadow: 0 28px 70px rgba(37, 99, 235, .22);
+    }
+
+    .ultra-live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, .12);
+      border: 1px solid rgba(34, 197, 94, .28);
+      color: #4ade80;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ultra-live-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 18px rgba(34, 197, 94, .75);
+    }
+
     @media (max-width: 900px) {
 
       .stats-grid {
@@ -305,7 +387,7 @@ ey
   </style>
 </head>
 
-<body>
+<body class="ultra-user-shell">
 
   <div class="container">
 
@@ -321,32 +403,110 @@ ey
       </div>
     </div>
 
-    <div class="hero">
-      <h1>Developer Dashboard</h1>
-      <p>Manage API keys, monitor usage, and track balance in one place.</p>
+    <div class="hero ultra-card" style="
+  padding:48px;
+  border-radius:36px;
+  margin-bottom:36px;
+  position:relative;
+  overflow:hidden;
+">
+
+      <div style="
+    position:absolute;
+    top:-120px;
+    right:-120px;
+    width:320px;
+    height:320px;
+    border-radius:999px;
+    background:rgba(59,130,246,.18);
+    filter:blur(90px);
+  "></div>
+
+      <div style="
+    position:absolute;
+    bottom:-140px;
+    left:-120px;
+    width:300px;
+    height:300px;
+    border-radius:999px;
+    background:rgba(124,58,237,.18);
+    filter:blur(100px);
+  "></div>
+
+      <div class="ultra-live-pill">
+        SYSTEM ONLINE
+      </div>
+
+      <h1 style="
+    font-size:72px;
+    line-height:1;
+    margin-top:24px;
+    margin-bottom:18px;
+    position:relative;
+    z-index:2;
+  ">
+        Ultra User Console
+      </h1>
+
+      <p style="
+    max-width:760px;
+    color:#94a3b8;
+    font-size:18px;
+    line-height:1.8;
+    position:relative;
+    z-index:2;
+  ">
+        Monitor API activity, manage infrastructure,
+        analyze usage metrics, and control your AI relay
+        platform in one premium command center.
+      </p>
+
+      <div style="
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:28px;
+    position:relative;
+    z-index:2;
+  ">
+
+        <button>
+          Open API Center
+        </button>
+
+        <button style="
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:none;
+    ">
+          Usage Analytics
+        </button>
+
+      </div>
+
     </div>
 
     <div class="stats-grid">
 
-      <div class="card">
+      <div class="card ultra-stat-card">
         <div class="section-label">Today</div>
         <h2 id="todayRequests">0</h2>
         <p class="muted">API Requests Today</p>
       </div>
 
-      <div class="card">
+      <div class="card ultra-stat-card">
         <div class="section-label">Tokens</div>
         <h2 id="tokenUsage">0</h2>
         <p class="muted">Total Tokens Used</p>
       </div>
 
-      <div class="card">
+      <div class="card ultra-stat-card">
         <div class="section-label">Cost</div>
         <h2 id="estimatedCost">$0</h2>
         <p class="muted">Estimated Usage Cost</p>
       </div>
 
-      <div class="card">
+      <div class="card ultra-stat-card">
         <div class="section-label">Keys</div>
         <h2 id="activeKeys">0</h2>
         <p class="muted">Active API Keys</p>
@@ -460,7 +620,7 @@ ey
       <h2>Recharge</h2>
       <div style="
   background: rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.08);
   border-radius:12px;
   padding:14px;
   margin-bottom:16px;
@@ -978,58 +1138,58 @@ ey
     }
 
     function updateKeyPagination(total) {
-  const totalPages =
-    Math.ceil(total / keysPerPage) || 1;
+      const totalPages =
+        Math.ceil(total / keysPerPage) || 1;
 
-  document.getElementById("keyPageText").innerText =
-    `Page ${currentKeyPage} / ${totalPages}`;
-}
-
-function prevKeyPage() {
-  if (currentKeyPage > 1) {
-    currentKeyPage--;
-    loadApiKeys();
-  }
-}
-
-function nextKeyPage() {
-  const keyword =
-    document.getElementById("keySearchInput")
-    ?.value
-    ?.toLowerCase()
-    ?.trim() || "";
-
-  fetch("/get-api-keys", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: localStorage.getItem("email")
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    const filtered = data.keys.filter(keyObj => {
-      const text =
-        (
-          (keyObj.key_name || "") +
-          " " +
-          (keyObj.api_key || "")
-        ).toLowerCase();
-
-      return text.includes(keyword);
-    });
-
-    const totalPages =
-      Math.ceil(filtered.length / keysPerPage);
-
-    if (currentKeyPage < totalPages) {
-      currentKeyPage++;
-      loadApiKeys();
+      document.getElementById("keyPageText").innerText =
+        `Page ${currentKeyPage} / ${totalPages}`;
     }
-  });
-}
+
+    function prevKeyPage() {
+      if (currentKeyPage > 1) {
+        currentKeyPage--;
+        loadApiKeys();
+      }
+    }
+
+    function nextKeyPage() {
+      const keyword =
+        document.getElementById("keySearchInput")
+          ?.value
+          ?.toLowerCase()
+          ?.trim() || "";
+
+      fetch("/get-api-keys", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: localStorage.getItem("email")
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          const filtered = data.keys.filter(keyObj => {
+            const text =
+              (
+                (keyObj.key_name || "") +
+                " " +
+                (keyObj.api_key || "")
+              ).toLowerCase();
+
+            return text.includes(keyword);
+          });
+
+          const totalPages =
+            Math.ceil(filtered.length / keysPerPage);
+
+          if (currentKeyPage < totalPages) {
+            currentKeyPage++;
+            loadApiKeys();
+          }
+        });
+    }
 
     document.getElementById("createKeyBtn").onclick = createApiKey;
     function copyApiKey(apiKey) {
@@ -1234,7 +1394,7 @@ function nextKeyPage() {
           filteredKeys
             .slice(start, end)
             .forEach((keyObj, index) => {
-              
+
               const keyStats = stats[keyObj.api_key] || {
                 requests: 0,
                 tokens: 0,
