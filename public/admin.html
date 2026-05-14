@@ -1722,7 +1722,9 @@ height:100vh;
               </h3>
 
               <div class="muted">
-                Use Stats to view classified analytics: Overview, Users, Models, Activity and Errors.
+                <span data-i18n="overviewDesc">
+                  Use Stats to view classified analytics: Overview, Users, Models, Activity and Errors.
+                </span>
               </div>
 
               <button onclick="showAdminSection('statsSection', document.querySelectorAll('.sidebar-btn')[3])">
@@ -1802,9 +1804,13 @@ height:100vh;
         </div>
         <div class="card admin-section stats-shell" id="statsSection">
 
-          <h2>Realtime Stats</h2>
+          <h2 data-i18n="realtimeStats">
+            Realtime Stats
+          </h2>
           <div class="muted">
-            Ultra classified command analytics for overview, users, models, activity and errors.
+            <div class="muted" data-i18n="statsDesc">
+              Ultra classified command analytics for overview, users, models, activity and errors.
+            </div>
           </div>
 
           <div class="stats-tabs">
@@ -1966,6 +1972,23 @@ height:100vh;
         online: "Online",
         ultra: "Ultra",
         ready: "Ready",
+        overviewDesc: "Use Stats to view classified analytics: Overview, Users, Models, Activity and Errors.",
+        copied: "Copied!",
+        loginFailed: "Login failed",
+        invalidAdminSecret: "Invalid ADMIN_SECRET",
+        realtimeStats: "Realtime Stats",
+        statsDesc: "Ultra classified command analytics for overview, users, models, activity and errors.",
+        revenue: "Revenue",
+        requests: "Requests",
+        tokens: "Tokens",
+        topModels: "Top Models",
+        errorRate: "Error Rate",
+        totalTokens: "Total Tokens",
+        model: "Model",
+        cost: "Cost",
+        providerCost: "Provider Cost",
+        profit: "Profit",
+        time: "Time",
       },
 
       zh: {
@@ -1989,11 +2012,31 @@ height:100vh;
         online: "在线",
         ultra: "超级模式",
         ready: "已就绪",
+        overviewDesc: "使用数据统计查看分类分析：总览、用户、模型、活动和错误。",
+        copied: "已复制！",
+        loginFailed: "登录失败",
+        invalidAdminSecret: "ADMIN_SECRET 无效",
+        realtimeStats: "实时数据统计",
+        statsDesc: "用于总览、用户、模型、活动和错误的高级分类分析。",
+        revenue: "收入",
+        requests: "请求",
+        tokens: "Tokens",
+        topModels: "热门模型",
+        errorRate: "错误率",
+        totalTokens: "总 Tokens",
+        model: "模型",
+        cost: "成本",
+        providerCost: "供应商成本",
+        profit: "利润",
+        time: "时间",
       }
 
     };
+    let currentLang =
+      localStorage.getItem("admin_lang") || "en";
 
     function setLanguage(lang) {
+      currentLang = lang;
 
       localStorage.setItem("admin_lang", lang);
 
@@ -2206,7 +2249,7 @@ height:100vh;
 
     function copyText(text) {
       navigator.clipboard.writeText(text);
-      showToast("Copied!", "success");
+      showToast(LANG[currentLang].copied, "success");
     }
 
     function toggleMobileSidebar() {
@@ -3375,7 +3418,9 @@ padding-right:4px;
       gap:10px;
     ">
       <div class="healthItem">
-        <div class="muted">Error Rate</div>
+        <div class="muted" data-i18n="errorRate">
+  Error Rate
+</div>
         <b id="healthErrorRate">0%</b>
       </div>
 
@@ -5393,9 +5438,9 @@ padding-right:4px;
           margin-bottom:22px;
         ">
 
-          <h2 style="margin:0;">
-            Top Models
-          </h2>
+          <h2 style="margin:0;" data-i18n="topModels">
+  Top Models
+</h2>
 
           <div style="
             display:flex;
@@ -5403,16 +5448,22 @@ padding-right:4px;
           ">
 
             <button class="stats-tab-btn active">
-              Revenue
-            </button>
+  <span data-i18n="revenue">
+    Revenue
+  </span>
+</button>
 
-            <button class="stats-tab-btn">
-              Requests
-            </button>
+<button class="stats-tab-btn">
+  <span data-i18n="requests">
+    Requests
+  </span>
+</button>
 
-            <button class="stats-tab-btn">
-              Tokens
-            </button>
+<button class="stats-tab-btn">
+  <span data-i18n="tokens">
+    Tokens
+  </span>
+</button>
 
           </div>
 
@@ -6138,12 +6189,15 @@ padding-right:4px;
   border-radius:14px;
   font-size:14px;
 ">
-        <div><b>Model:</b> ${log.model}</div>
-        <div><b>Total Tokens:</b> ${log.total_tokens || 0}</div>
-        <div><b>Cost:</b> $${Number(log.cost || 0).toFixed(4)}</div>
-        <div><b>Provider Cost:</b> $${Number(log.provider_cost || 0).toFixed(6)}</div>
-        <div><b>Profit:</b> $${Number(log.profit || 0).toFixed(6)}</div>
-        <div><b>Time:</b> ${new Date(log.created_at).toLocaleString()}</div>
+        <div><b>${LANG[currentLang].model}:</b> ${log.model}</div>
+        <div>
+  <b>${LANG[currentLang].totalTokens}:</b>
+  ${log.total_tokens || 0}
+</div>
+        <div><b>${LANG[currentLang].cost}:</b> $${Number(log.cost || 0).toFixed(4)}</div>
+        <div><b>${LANG[currentLang].providerCost}:</b> $${Number(log.provider_cost || 0).toFixed(6)}</div>
+        <div><b>${LANG[currentLang].profit}:</b> $${Number(log.profit || 0).toFixed(6)}</div>
+        <div><b>${LANG[currentLang].time}:</b> ${new Date(log.created_at).toLocaleString()}</div>
       </div>
     `).join("");
 
