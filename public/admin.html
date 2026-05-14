@@ -1770,14 +1770,14 @@ height:100vh;
               </div>
 
               <select id="keySortSelect" class="ultra-select" onchange="loadKeys()">
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-                <option value="requests_desc">Requests High → Low</option>
-                <option value="requests_asc">Requests Low → High</option>
-                <option value="tokens_desc">Tokens High → Low</option>
-                <option value="tokens_asc">Tokens Low → High</option>
-                <option value="balance_desc">Balance High → Low</option>
-                <option value="balance_asc">Balance Low → High</option>
+                <option value="newest" data-i18n="newest">Newest</option>
+                <option value="oldest" data-i18n="oldest">Oldest</option>
+                <option value="requests_desc" data-i18n="requestsHighLow">Requests High → Low</option>
+                <option value="requests_asc" data-i18n="requestsLowHigh">Requests Low → High</option>
+                <option value="tokens_desc" data-i18n="tokensHighLow">Tokens High → Low</option>
+                <option value="tokens_asc" data-i18n="tokensLowHigh">Tokens Low → High</option>
+                <option value="balance_desc" data-i18n="balanceHighLow">Balance High → Low</option>
+                <option value="balance_asc" data-i18n="balanceLowHigh">Balance Low → High</option>
               </select>
 
               <button class="ultra-btn" onclick="searchKeys()" data-i18n="search">
@@ -1800,7 +1800,7 @@ height:100vh;
           <h2>Usage Logs</h2>
 
           <div id="logsBox">
-            Please select an API Key from API Keys → View Logs
+            <span data-i18n="selectApiKeyForLogs">Please select an API Key from API Keys → View Logs</span>
           </div>
         </div>
         <div class="card admin-section stats-shell" id="statsSection">
@@ -1815,54 +1815,59 @@ height:100vh;
           </div>
 
           <div class="stats-tabs">
-            <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)">Overview</button>
-            <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)">Users</button>
-            <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)">Models</button>
-            <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)">Activity</button>
-            <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)">Errors</button>
+            <button class="stats-tab-btn active" onclick="showStatsTab('statsOverviewTab', this)"
+              data-i18n="overviewTab">Overview</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsUsersTab', this)"
+              data-i18n="usersTab">Users</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsModelsTab', this)"
+              data-i18n="modelsTab">Models</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsActivityTab', this)"
+              data-i18n="activityTab">Activity</button>
+            <button class="stats-tab-btn" onclick="showStatsTab('statsErrorsTab', this)"
+              data-i18n="errorsTab">Errors</button>
           </div>
 
           <div id="statsOverviewTab" class="stats-panel active">
             <div id="statsOverviewBox" class="stats-grid-premium"></div>
 
             <div class="ultra-chart-card">
-              <h3>Requests Trend</h3>
+              <h3 data-i18n="requestsTrend">Requests Trend</h3>
               <canvas id="statsChart" height="120"></canvas>
             </div>
 
             <div class="ultra-chart-card">
-              <h3>Revenue / Tokens / Requests Trend</h3>
+              <h3 data-i18n="revenueTokensRequestsTrend">Revenue / Tokens / Requests Trend</h3>
               <canvas id="revenueChart" height="120"></canvas>
             </div>
 
             <div class="ultra-chart-card">
-              <h3>USDT Revenue Trend</h3>
+              <h3 data-i18n="usdtRevenueTrend">USDT Revenue Trend</h3>
               <canvas id="usdtChart" height="120"></canvas>
             </div>
           </div>
 
           <div id="statsUsersTab" class="stats-panel">
-            <h3>Top Users Performance</h3>
+            <h3 data-i18n="topUsersPerformance">Top Users Performance</h3>
             <div id="statsUsersBox"></div>
           </div>
 
           <div id="statsModelsTab" class="stats-panel">
-            <h3>Top Models / Per Model Usage</h3>
+            <h3 data-i18n="topModelsUsage">Top Models / Per Model Usage</h3>
             <div id="statsModelsBox"></div>
 
             <div class="ultra-chart-card">
-              <h3>Model Usage Share</h3>
+              <h3 data-i18n="modelUsageShare">Model Usage Share</h3>
               <canvas id="modelPieChart" height="120"></canvas>
             </div>
           </div>
 
           <div id="statsActivityTab" class="stats-panel">
-            <h3>Live Activity Feed</h3>
+            <h3 data-i18n="liveActivityFeed">Live Activity Feed</h3>
             <div id="statsActivityBox"></div>
           </div>
 
           <div id="statsErrorsTab" class="stats-panel">
-            <h3>System Errors</h3>
+            <h3 data-i18n="systemErrors">System Errors</h3>
             <div id="statsErrorsBox"></div>
           </div>
 
@@ -1875,21 +1880,22 @@ height:100vh;
               <div>
 
                 <div class="section-eyebrow">
-                  PAYMENT COMMAND CENTER
+                  <span data-i18n="paymentCommandCenter">PAYMENT COMMAND CENTER</span>
                 </div>
 
                 <h2 class="ultra-title">
-                  USDT Payments Dashboard
+                  <span data-i18n="usdtPaymentsDashboard">USDT Payments Dashboard</span>
                 </h2>
 
                 <div class="muted">
-                  Monitor realtime payment activity, confirmations and revenue analytics.
+                  <span data-i18n="paymentsDesc">Monitor realtime payment activity, confirmations and revenue
+                    analytics.</span>
                 </div>
 
               </div>
 
               <div class="keys-live-badge">
-                ● LIVE
+                ● <span data-i18n="live">LIVE</span>
               </div>
 
             </div>
@@ -1899,24 +1905,24 @@ height:100vh;
               <select id="paymentStatusFilter" class="ultra-select" onchange="loadPayments()">
 
                 <option value="all">
-                  All Payments
+                  <span data-i18n="allPayments">All Payments</span>
                 </option>
 
                 <option value="pending">
-                  Pending Only
+                  <span data-i18n="pendingOnly">Pending Only</span>
                 </option>
 
                 <option value="confirmed">
-                  Confirmed Only
+                  <span data-i18n="confirmedOnly">Confirmed Only</span>
                 </option>
 
               </select>
 
-              <input id="paymentSearch" class="ultra-input" placeholder="Search tx hash / api key"
-                oninput="loadPayments()" />
+              <input id="paymentSearch" class="ultra-input" data-i18n-placeholder="paymentSearchPlaceholder"
+                placeholder="Search tx hash / api key" oninput="loadPayments()" />
 
               <button class="ultra-btn" onclick="loadPayments()">
-                Refresh
+                <span data-i18n="refresh">Refresh</span>
               </button>
 
             </div>
@@ -2004,6 +2010,43 @@ height:100vh;
         lastUsed: "Last Used",
         never: "Never",
         totalCost: "Total Cost",
+        selectApiKeyForLogs: "Please select an API Key from API Keys → View Logs",
+
+        overviewTab: "Overview",
+        usersTab: "Users",
+        modelsTab: "Models",
+        activityTab: "Activity",
+        errorsTab: "Errors",
+
+        requestsTrend: "Requests Trend",
+        revenueTokensRequestsTrend: "Revenue / Tokens / Requests Trend",
+        usdtRevenueTrend: "USDT Revenue Trend",
+        topUsersPerformance: "Top Users Performance",
+        topModelsUsage: "Top Models / Per Model Usage",
+        modelUsageShare: "Model Usage Share",
+        liveActivityFeed: "Live Activity Feed",
+        systemErrors: "System Errors",
+
+        paymentCommandCenter: "PAYMENT COMMAND CENTER",
+        usdtPaymentsDashboard: "USDT Payments Dashboard",
+        paymentsDesc: "Monitor realtime payment activity, confirmations and revenue analytics.",
+        allPayments: "All Payments",
+        pendingOnly: "Pending Only",
+        confirmedOnly: "Confirmed Only",
+        paymentSearchPlaceholder: "Search tx hash / api key",
+        refresh: "Refresh",
+        newest: "Newest",
+        oldest: "Oldest",
+        requestsHighLow: "Requests High → Low",
+        requestsLowHigh: "Requests Low → High",
+        tokensHighLow: "Tokens High → Low",
+        tokensLowHigh: "Tokens Low → High",
+        balanceHighLow: "Balance High → Low",
+        balanceLowHigh: "Balance Low → High",
+        disable: "Disable",
+        recharge: "Recharge",
+        viewLogs: "View Logs",
+        delete: "Delete",
       },
 
       zh: {
@@ -2058,6 +2101,43 @@ height:100vh;
         lastUsed: "最后使用",
         never: "从未使用",
         totalCost: "总成本",
+        selectApiKeyForLogs: "请从 API 密钥页面点击查看日志",
+
+        overviewTab: "总览",
+        usersTab: "用户",
+        modelsTab: "模型",
+        activityTab: "活动",
+        errorsTab: "错误",
+
+        requestsTrend: "请求趋势",
+        revenueTokensRequestsTrend: "收入 / Token / 请求趋势",
+        usdtRevenueTrend: "USDT 收入趋势",
+        topUsersPerformance: "用户表现排行",
+        topModelsUsage: "热门模型 / 单模型用量",
+        modelUsageShare: "模型使用占比",
+        liveActivityFeed: "实时活动记录",
+        systemErrors: "系统错误",
+
+        paymentCommandCenter: "支付指挥中心",
+        usdtPaymentsDashboard: "USDT 支付仪表盘",
+        paymentsDesc: "实时监控支付活动、确认状态和收入分析。",
+        allPayments: "全部支付",
+        pendingOnly: "仅待确认",
+        confirmedOnly: "仅已确认",
+        paymentSearchPlaceholder: "搜索交易哈希 / API 密钥",
+        refresh: "刷新",
+        newest: "最新",
+        oldest: "最旧",
+        requestsHighLow: "请求数 高 → 低",
+        requestsLowHigh: "请求数 低 → 高",
+        tokensHighLow: "Token 高 → 低",
+        tokensLowHigh: "Token 低 → 高",
+        balanceHighLow: "余额 高 → 低",
+        balanceLowHigh: "余额 低 → 高",
+        disable: "停用",
+        recharge: "充值",
+        viewLogs: "查看日志",
+        delete: "删除",
       }
 
     };
