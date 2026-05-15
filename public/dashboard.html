@@ -4557,6 +4557,33 @@ box-shadow:
       requestAnimationFrame(frame);
     }
 
+    function renderUltraChart() {
+
+      const chart =
+        document.getElementById("usageSummary");
+
+      if (!chart) return;
+
+      const bars = [];
+
+      for (let i = 0; i < 7; i++) {
+
+        const height =
+          Math.floor(Math.random() * 120) + 40;
+
+        bars.push(`
+      <div
+        class="ultra-chart-bar"
+        style="
+          height:${height}px;
+        ">
+      </div>
+    `);
+      }
+
+      chart.innerHTML = bars.join("");
+    }
+
     async function loadUsageStats() {
 
       const email = localStorage.getItem("email");
@@ -4605,8 +4632,10 @@ box-shadow:
       ?.addEventListener("input", loadApiKeys);
     loadUsageStats();
     loadUsageLogs();
+    renderUltraChart();
 
     setInterval(loadUsageStats, 30000);
+    setInterval(renderUltraChart, 5000);
 
     setInterval(() => {
 
