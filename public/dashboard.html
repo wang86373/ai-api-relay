@@ -4457,9 +4457,23 @@ box-shadow:
 
     async function testApi() {
       const msg = document.getElementById("msg");
+      const statusBox =
+        document.getElementById("playgroundStatus");
+
+      const tokensBox =
+        document.getElementById("playgroundTokens");
+
+      const modelBox =
+        document.getElementById("playgroundModel");
+
+      const currentModel =
+        document.getElementById("modelSelect").value;
       const prompt =
         document.getElementById("playgroundPrompt")?.value?.trim()
         || "Say hello in one short sentence.";
+      statusBox.innerText = "Running";
+      tokensBox.innerText = "0";
+      modelBox.innerText = currentModel;
 
       msg.innerHTML = `
 <div style="
@@ -4505,6 +4519,7 @@ box-shadow:
         const data = await res.json();
 
         if (!res.ok) {
+          statusBox.innerText = "Error";
           const errorMsg =
             data.error?.message || data.error || "API test failed.";
 
@@ -4529,7 +4544,10 @@ box-shadow:
 
         const answer =
           data.choices?.[0]?.message?.content || "API working.";
+        statusBox.innerText = "Success";
 
+        tokensBox.innerText =
+          data.usage?.total_tokens || "0";
         const usage = data.usage
           ? `
 <div style="
@@ -4583,6 +4601,7 @@ box-shadow:
         loadAccount();
 
       } catch (err) {
+        statusBox.innerText = "Error";
         msg.innerHTML = `
 <div style="color:#f87171;font-weight:900;margin-bottom:10px;">
   ● API RESPONSE ERROR
