@@ -1262,6 +1262,116 @@
         inset 0 1px 0 rgba(255, 255, 255, .04);
     }
 
+    .ultra-playground-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .ultra-playground-panel {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .ultra-playground-panel-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .ultra-playground-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .ultra-playground-meta-card {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(2, 6, 23, .72);
+      border: 1px solid rgba(56, 189, 248, .10);
+    }
+
+    .ultra-playground-meta-label {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .ultra-playground-meta-value {
+      color: white;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    @media(max-width:1100px) {
+
+      .ultra-playground-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    .ultra-playground-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .ultra-playground-panel {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .ultra-playground-panel-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .ultra-playground-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .ultra-playground-meta-card {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(2, 6, 23, .72);
+      border: 1px solid rgba(56, 189, 248, .10);
+    }
+
+    .ultra-playground-meta-label {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .ultra-playground-meta-value {
+      color: white;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    @media(max-width: 1100px) {
+      .ultra-playground-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .ultra-playground-top {
       display: flex;
       justify-content: space-between;
@@ -3419,158 +3529,200 @@ padding-top:20px;
           </div>
         </div>
 
-        <select id="modelSelect" class="ultra-select">
-          <option value="gpt-4o-mini">gpt-4o-mini</option>
-          <option value="deepseek-chat">deepseek-chat</option>
-          <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-        </select>
+        <div class="ultra-playground-grid">
 
-        <div id="modelPrice" class="ultra-model-price">
-          GPT-4o-mini selected
-        </div>
+          <div class="ultra-playground-panel">
+            <div class="ultra-playground-panel-title">
+              Request Builder
+            </div>
 
-        <div class="ultra-secret-box">
-          <div class="ultra-secret-label">
-            API SECRET KEY
-          </div>
+            <select id="modelSelect" class="ultra-select">
+              <option value="gpt-4o-mini">gpt-4o-mini</option>
+              <option value="deepseek-chat">deepseek-chat</option>
+              <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+            </select>
 
-          <input class="ultra-secret-input" id="playgroundApiKeyText" readonly />
-        </div>
+            <div id="modelPrice" class="ultra-model-price">
+              GPT-4o-mini selected
+            </div>
 
-        <div class="ultra-secret-box">
-          <div class="ultra-secret-label">
-            PROMPT MESSAGE
-          </div>
+            <div class="ultra-secret-box">
+              <div class="ultra-secret-label">
+                API SECRET KEY
+              </div>
 
-          <textarea id="playgroundPrompt" class="ultra-secret-input" style="
-        min-height:120px;
+              <input class="ultra-secret-input" id="playgroundApiKeyText" readonly />
+            </div>
+
+            <div class="ultra-secret-box">
+              <div class="ultra-secret-label">
+                USER PROMPT
+              </div>
+
+              <textarea id="playgroundPrompt" class="ultra-secret-input" style="
+        min-height:180px;
         resize:vertical;
         line-height:1.7;
       ">Say hello in one short sentence.</textarea>
-        </div>
+            </div>
 
-        <div class="ultra-playground-actions">
-          <button class="ultra-action-btn" onclick="copyKey()">
-            Copy Key
-          </button>
+            <div class="ultra-playground-actions">
+              <button class="ultra-action-btn" onclick="copyKey()">
+                Copy Key
+              </button>
 
-          <button class="ultra-action-btn" id="playgroundRevealKeyBtn">
-            Reveal
-          </button>
+              <button class="ultra-action-btn" id="playgroundRevealKeyBtn">
+                Reveal
+              </button>
 
-          <button class="ultra-action-btn success-action" onclick="testApi()">
-            Run Test
-          </button>
+              <button class="ultra-action-btn success-action" onclick="testApi()">
+                Run Test
+              </button>
 
-          <button class="ultra-action-btn danger-action" onclick="clearPlaygroundConsole()">
-            Clear Console
-          </button>
-        </div>
+              <button class="ultra-action-btn danger-action" onclick="clearPlaygroundConsole()">
+                Clear
+              </button>
+            </div>
+          </div>
 
-        <div class="ultra-console-output" id="msg">
-          API console ready...
+          <div class="ultra-playground-panel">
+            <div class="ultra-playground-panel-title">
+              Live Response
+            </div>
+
+            <div class="ultra-console-output" id="msg">
+              API console ready.
+            </div>
+
+            <div class="ultra-playground-meta">
+              <div class="ultra-playground-meta-card">
+                <div class="ultra-playground-meta-label">
+                  STATUS
+                </div>
+                <div class="ultra-playground-meta-value" id="playgroundStatus">
+                  Ready
+                </div>
+              </div>
+
+              <div class="ultra-playground-meta-card">
+                <div class="ultra-playground-meta-label">
+                  TOKENS
+                </div>
+                <div class="ultra-playground-meta-value" id="playgroundTokens">
+                  0
+                </div>
+              </div>
+
+              <div class="ultra-playground-meta-card">
+                <div class="ultra-playground-meta-label">
+                  MODEL
+                </div>
+                <div class="ultra-playground-meta-value" id="playgroundModel">
+                  gpt-4o-mini
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
-    </div>
 
-  </div>
-
-  <div id="usageSection" class="card ultra-card" style="
+      <div id="usageSection" class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
-    <div class="section-label">
-      Activity Center
-    </div>
+        <div class="section-label">
+          Activity Center
+        </div>
 
-    <h2 style="
+        <h2 style="
   font-size:42px;
   margin:10px 0 16px;
   font-weight:900;
 ">
-      Usage Logs
-    </h2>
+          Usage Logs
+        </h2>
 
-    <p style="
+        <p style="
   color:#94a3b8;
   line-height:1.8;
   max-width:760px;
   margin-bottom:28px;
 ">
-      Monitor real-time API activity,
-      token usage, request analytics,
-      and infrastructure traffic history.
-    </p>
+          Monitor real-time API activity,
+          token usage, request analytics,
+          and infrastructure traffic history.
+        </p>
 
-    <div id="logsContainer" style="
+        <div id="logsContainer" style="
   display:grid;
   gap:16px;
 ">
-      Loading logs...
-    </div>
-  </div>
+          Loading logs...
+        </div>
+      </div>
 
-  <div class="card ultra-card" style="
+      <div class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
 
-    <div class="section-label">
-      Billing Logs
-    </div>
+        <div class="section-label">
+          Billing Logs
+        </div>
 
-    <h2 style="
+        <h2 style="
     font-size:42px;
     margin:10px 0 16px;
     font-weight:900;
   ">
-      Payment History
-    </h2>
+          Payment History
+        </h2>
 
-    <p style="
+        <p style="
     color:#94a3b8;
     line-height:1.8;
     margin-bottom:26px;
   ">
-      Monitor recharge activity,
-      infrastructure payments,
-      blockchain transaction records,
-      and account funding history.
-    </p>
-    <div id="usdtHistoryContainer">
-      Loading USDT history...
+          Monitor recharge activity,
+          infrastructure payments,
+          blockchain transaction records,
+          and account funding history.
+        </p>
+        <div id="usdtHistoryContainer">
+          Loading USDT history...
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
 
-  <div id="billingSection" class="card ultra-card" style="
+    <div id="billingSection" class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
-    <div class="section-label">
-      Billing Center
-    </div>
+      <div class="section-label">
+        Billing Center
+      </div>
 
-    <h2 style="
+      <h2 style="
   font-size:42px;
   margin:10px 0 16px;
   font-weight:900;
 ">
-      Recharge Infrastructure
-    </h2>
+        Recharge Infrastructure
+      </h2>
 
-    <p style="
+      <p style="
   color:#94a3b8;
   line-height:1.8;
   max-width:760px;
   margin-bottom:28px;
 ">
-      Recharge your account balance,
-      maintain API infrastructure uptime,
-      and manage premium AI platform access.
-    </p>
-    <div style="
+        Recharge your account balance,
+        maintain API infrastructure uptime,
+        and manage premium AI platform access.
+      </p>
+      <div style="
       position:relative;
       overflow:hidden;
 
@@ -3592,15 +3744,15 @@ padding-top:20px;
       inset 0 1px 0 rgba(255,255,255,.04);
       ">
 
-      <div style="margin-bottom:8px;">
-        <b>USDT Network:</b> TRC20
-      </div>
+        <div style="margin-bottom:8px;">
+          <b>USDT Network:</b> TRC20
+        </div>
 
-      <div style="margin-bottom:8px;">
-        <b>Wallet Address:</b>
-      </div>
+        <div style="margin-bottom:8px;">
+          <b>Wallet Address:</b>
+        </div>
 
-      <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
+        <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
       width:100%;
 
 background:
@@ -3627,7 +3779,7 @@ box-shadow:
   0 0 24px rgba(56,189,248,.08);
     " />
 
-      <button onclick="copyUsdtAddress()" style="
+        <button onclick="copyUsdtAddress()" style="
   margin-top:18px;
 
   padding:16px 22px;
@@ -3646,12 +3798,12 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-        Copy USDT Address
-      </button>
+          Copy USDT Address
+        </button>
 
-      <div style="margin-top:14px;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-          alt="USDT TRC20 QR Code" style="
+        <div style="margin-top:14px;">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+            alt="USDT TRC20 QR Code" style="
     background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,250,252,.98));
     padding:18px;
     border-radius:24px;
@@ -3663,16 +3815,16 @@ box-shadow:
       0 0 40px rgba(56,189,248,.12);
   " />
 
+        </div>
+
+        <p class=" muted" style="margin-top:10px;">
+          Send USDT via TRC20 network only.
+        </p>
+
       </div>
+      <p class="muted">Stripe and USDT payment will be added next.</p>
 
-      <p class=" muted" style="margin-top:10px;">
-        Send USDT via TRC20 network only.
-      </p>
-
-    </div>
-    <p class="muted">Stripe and USDT payment will be added next.</p>
-
-    <button onclick="stripeCheckout()" style="
+      <button onclick="stripeCheckout()" style="
   margin-top:18px;
   margin-bottom:18px;
 
@@ -3691,9 +3843,9 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-      Pay with Stripe
-    </button>
-    <input id="usdtAmount" placeholder="USDT Amount" style="
+        Pay with Stripe
+      </button>
+      <input id="usdtAmount" placeholder="USDT Amount" style="
   width:100%;
   margin-top:14px;
   padding:18px;
@@ -3704,7 +3856,7 @@ box-shadow:
   outline:none;
   box-sizing:border-box;
 " />
-    <input id="usdtTxHash" placeholder="Transaction Hash" style="
+      <input id="usdtTxHash" placeholder="Transaction Hash" style="
   width:100%;
   margin-top:14px;
   padding:18px;
@@ -3717,7 +3869,7 @@ box-shadow:
   font-family:monospace;
 " />
 
-    <button id="usdtSubmitBtn" onclick="usdtPayment()" style="
+      <button id="usdtSubmitBtn" onclick="usdtPayment()" style="
   margin-top:18px;
   padding:18px 26px;
   border-radius:18px;
@@ -3728,14 +3880,14 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-      Submit USDT Payment
-    </button>
-  </div>
+        Submit USDT Payment
+      </button>
+    </div>
 
-  <div class="card">
-    <h2>Account</h2>
-    <button class="danger" onclick="logout()">Logout</button>
-  </div>
+    <div class="card">
+      <h2>Account</h2>
+      <button class="danger" onclick="logout()">Logout</button>
+    </div>
 
   </div>
 
