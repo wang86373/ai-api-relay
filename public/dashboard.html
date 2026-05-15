@@ -172,16 +172,262 @@
       margin-top: 20px;
 
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 16px;
     }
 
-    .key-item {
-      background: rgba(15, 23, 42, .72);
-      border: 1px solid rgba(255, 255, 255, .06);
+    .ultra-api-card {
+      padding: 20px;
+      border-radius: 22px;
+    }
+
+    .ultra-key-secret {
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+
+    .ultra-key-stats {
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .ultra-mini-stat {
+      padding: 12px;
+      border-radius: 14px;
+    }
+
+    .ultra-mini-value {
+      font-size: 17px;
+    }
+
+    .ultra-key-name {
+      font-size: 17px;
+    }
+
+    .ultra-key-secret {
+      position: relative;
+
+      padding: 14px 16px;
+
       border-radius: 16px;
-      padding: 18px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(2, 6, 23, .92),
+          rgba(15, 23, 42, .88));
+
+      border:
+        1px solid rgba(255, 255, 255, .06);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .03),
+        0 10px 30px rgba(0, 0, 0, .24);
+
+      margin-bottom: 18px;
+
+      overflow: hidden;
+    }
+
+    .ultra-key-secret::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .08),
+          transparent);
+
+      transform: translateX(-120%);
+      transition: .8s ease;
+
+      pointer-events: none;
+    }
+
+    .ultra-key-secret:hover::before {
+      transform: translateX(120%);
+    }
+
+    .ultra-secret-label {
+      color: #38bdf8;
+
+      font-size: 11px;
+      font-weight: 900;
+
+      letter-spacing: .14em;
+
+      text-transform: uppercase;
+
+      margin-bottom: 8px;
+    }
+
+    .ultra-secret-value {
+      color: #e2e8f0;
+
+      font-family: monospace;
+
+      font-size: 14px;
+
+      word-break: break-all;
+
+      letter-spacing: .04em;
+    }
+
+    .ultra-key-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      margin-top: 18px;
+    }
+
+    .ultra-action-btn {
+      position: relative;
+      overflow: hidden;
+
+      padding: 10px 14px;
+
+      border-radius: 14px;
+
+      border:
+        1px solid rgba(255, 255, 255, .08);
+
+      background:
+        linear-gradient(180deg,
+          rgba(255, 255, 255, .06),
+          rgba(255, 255, 255, .03));
+
+      color: white;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform .2s ease,
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .ultra-action-btn:hover {
+      transform: translateY(-2px);
+
+      border-color:
+        rgba(56, 189, 248, .26);
+
+      background:
+        rgba(56, 189, 248, .10);
+
+      box-shadow:
+        0 12px 30px rgba(56, 189, 248, .12);
+    }
+
+    .ultra-action-btn::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(255, 255, 255, .10),
+          transparent);
+
+      transform: translateX(-120%);
+      transition: .7s ease;
+
+      pointer-events: none;
+    }
+
+    .ultra-action-btn:hover::before {
+      transform: translateX(120%);
+    }
+
+    .danger-action {
+      background:
+        rgba(239, 68, 68, .12);
+
+      border-color:
+        rgba(239, 68, 68, .24);
+
+      color: #fca5a5;
+    }
+
+    .danger-action:hover {
+      background:
+        rgba(239, 68, 68, .18);
+
+      border-color:
+        rgba(239, 68, 68, .42);
+
+      box-shadow:
+        0 12px 30px rgba(239, 68, 68, .16);
+    }
+
+    .key-item {
+      position: relative;
+      overflow: hidden;
+
+      background:
+        linear-gradient(145deg,
+          rgba(15, 23, 42, .96),
+          rgba(2, 6, 23, .98));
+
+      border:
+        1px solid rgba(56, 189, 248, .10);
+
+      border-radius: 22px;
+
+      padding: 20px;
+
       margin-bottom: 14px;
+
+      transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, .35);
+    }
+
+    .key-item:hover {
+      transform: translateY(-5px);
+
+      border-color:
+        rgba(56, 189, 248, .26);
+
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, .45),
+        0 0 40px rgba(56, 189, 248, .12);
+    }
+
+    .key-item::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .08),
+          transparent);
+
+      transform: translateX(-120%);
+      transition: .8s ease;
+
+      pointer-events: none;
+    }
+
+    .key-item:hover::before {
+      transform: translateX(120%);
     }
 
     .key-top {
@@ -483,26 +729,58 @@
     }
 
     .ultra-key-card {
-      transition: .25s ease;
+      position: relative;
+      overflow: hidden;
+
+      padding: 20px;
+
+      border-radius: 22px;
+
+      background:
+        linear-gradient(145deg,
+          rgba(8, 15, 30, .96),
+          rgba(15, 23, 42, .92));
+
+      border:
+        1px solid rgba(56, 189, 248, .12);
+
+      transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, .35),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    .ultra-key-card:hover {
+      transform: translateY(-5px);
+
+      border-color:
+        rgba(56, 189, 248, .28);
+
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, .45),
+        0 0 40px rgba(56, 189, 248, .12);
     }
 
     .ultra-key-card::before {
       content: "";
+
       position: absolute;
       inset: 0;
+
       background:
-        linear-gradient(120deg, transparent, rgba(56, 189, 248, .12), transparent);
+        linear-gradient(120deg,
+          transparent,
+          rgba(56, 189, 248, .08),
+          transparent);
+
       transform: translateX(-120%);
       transition: .8s ease;
-      pointer-events: none;
-    }
 
-    .ultra-key-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(56, 189, 248, .42) !important;
-      box-shadow:
-        0 28px 70px rgba(37, 99, 235, .24),
-        inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+      pointer-events: none;
     }
 
     .ultra-key-card:hover::before {
@@ -510,7 +788,120 @@
     }
 
     .ultra-log-card {
-      transition: .25s ease;
+      position: relative;
+      overflow: hidden;
+
+      padding: 20px;
+
+      border-radius: 22px;
+
+      background:
+        linear-gradient(145deg,
+          rgba(8, 15, 30, .96),
+          rgba(15, 23, 42, .92));
+
+      border:
+        1px solid rgba(16, 185, 129, .12);
+
+      transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, .30),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    .ultra-log-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 16px;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 18px;
+    }
+
+    .ultra-log-model {
+      color: white;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .ultra-log-label {
+      color: #38bdf8;
+
+      font-size: 12px;
+
+      font-weight: 900;
+
+      letter-spacing: .14em;
+
+      text-transform: uppercase;
+
+      margin-bottom: 8px;
+    }
+
+    .ultra-log-status {
+      padding: 8px 13px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(34, 197, 94, .12);
+
+      border:
+        1px solid rgba(34, 197, 94, .28);
+
+      color: #4ade80;
+
+      font-size: 12px;
+
+      font-weight: 900;
+    }
+
+    .ultra-log-stats {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(160px, 1fr));
+
+      gap: 14px;
+    }
+
+    .ultra-log-stat {
+      padding: 14px 16px;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255, 255, 255, .03);
+
+      border:
+        1px solid rgba(255, 255, 255, .05);
+    }
+
+    .ultra-log-stat-label {
+      color: #94a3b8;
+
+      font-size: 12px;
+
+      margin-bottom: 8px;
+
+      text-transform: uppercase;
+
+      letter-spacing: .08em;
+    }
+
+    .ultra-log-stat-value {
+      color: white;
+
+      font-size: 18px;
+
+      font-weight: 800;
     }
 
     .ultra-log-card::before {
@@ -524,16 +915,42 @@
       pointer-events: none;
     }
 
+    .ultra-log-card::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(circle at top right,
+          rgba(16, 185, 129, .16),
+          transparent 34%);
+
+      opacity: 0;
+
+      transition: .25s ease;
+
+      pointer-events: none;
+    }
+
     .ultra-log-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(16, 185, 129, .38) !important;
+      transform: translateY(-6px);
+
+      border-color:
+        rgba(16, 185, 129, .38);
+
       box-shadow:
         0 26px 60px rgba(16, 185, 129, .16),
-        inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+        0 0 40px rgba(16, 185, 129, .10),
+        inset 0 1px 0 rgba(255, 255, 255, .06);
     }
 
     .ultra-log-card:hover::before {
       transform: translateX(120%);
+    }
+
+    .ultra-log-card:hover::after {
+      opacity: 1;
     }
 
     .ultra-live-pill {
@@ -799,6 +1216,120 @@
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
+      }
+    }
+
+    .ultra-modal-backdrop {
+      position: fixed;
+      inset: 0;
+
+      background:
+        rgba(2, 6, 23, .72);
+
+      backdrop-filter: blur(10px);
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+
+      z-index: 12000;
+    }
+
+    .ultra-modal-backdrop.show {
+      display: flex;
+    }
+
+    .ultra-modal {
+      width: 100%;
+      max-width: 520px;
+
+      padding: 32px;
+
+      border-radius: 32px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .96),
+          rgba(2, 6, 23, .98));
+
+      border:
+        1px solid rgba(255, 255, 255, .06);
+
+      box-shadow:
+        0 40px 120px rgba(0, 0, 0, .55),
+        0 0 60px rgba(56, 189, 248, .12);
+
+      animation:
+        ultraModalIn .22s ease;
+    }
+
+    .ultra-modal h2 {
+      margin-top: 10px;
+      margin-bottom: 14px;
+
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .ultra-modal-actions {
+      display: flex;
+      gap: 14px;
+
+      justify-content: flex-end;
+
+      margin-top: 32px;
+    }
+
+    .ultra-modal-actions button {
+      border: none;
+
+      padding: 14px 20px;
+
+      border-radius: 16px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition: .22s;
+    }
+
+    .ultra-modal-actions button:hover {
+      transform: translateY(-2px);
+    }
+
+    #confirmCancelBtn {
+      background:
+        rgba(255, 255, 255, .06);
+
+      color: white;
+    }
+
+    #confirmOkBtn {
+      background:
+        linear-gradient(135deg,
+          #ef4444,
+          #dc2626);
+
+      color: white;
+
+      box-shadow:
+        0 16px 40px rgba(239, 68, 68, .28);
+    }
+
+    @keyframes ultraModalIn {
+      from {
+        opacity: 0;
+        transform:
+          translateY(14px) scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0) scale(1);
       }
     }
 
@@ -1852,6 +2383,57 @@ box-shadow:
       }, 3200);
     }
 
+    function ultraConfirm({
+      title = "Are you sure?",
+      message = "This action cannot be undone.",
+      okText = "Confirm",
+      cancelText = "Cancel"
+    }) {
+
+      return new Promise((resolve) => {
+
+        const modal =
+          document.getElementById("confirmModal");
+
+        const titleEl =
+          document.getElementById("confirmTitle");
+
+        const messageEl =
+          document.getElementById("confirmMessage");
+
+        const okBtn =
+          document.getElementById("confirmOkBtn");
+
+        const cancelBtn =
+          document.getElementById("confirmCancelBtn");
+
+        titleEl.innerText = title;
+        messageEl.innerText = message;
+
+        okBtn.innerText = okText;
+        cancelBtn.innerText = cancelText;
+
+        modal.classList.add("show");
+
+        const cleanup = () => {
+          modal.classList.remove("show");
+
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+        };
+
+        okBtn.onclick = () => {
+          cleanup();
+          resolve(true);
+        };
+
+        cancelBtn.onclick = () => {
+          cleanup();
+          resolve(false);
+        };
+      });
+    }
+
     function setButtonLoading(button, loading, text) {
       if (!button) return;
 
@@ -1911,9 +2493,7 @@ box-shadow:
       try {
 
         const submitBtn = document.getElementById("usdtSubmitBtn");
-        submitBtn.disabled = true;
-        submitBtn.innerHTML =
-          '<span class="spinner"></span>Verifying...';
+        setButtonLoading(submitBtn, true, "Verifying...");
 
         const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
           method: "POST",
@@ -1951,10 +2531,7 @@ box-shadow:
         const submitBtn =
           document.getElementById("usdtSubmitBtn");
 
-        submitBtn.disabled = false;
-
-        submitBtn.innerText =
-          "Submit USDT Payment";
+        setButtonLoading(submitBtn, false);
       }
     }
 
@@ -2522,7 +3099,12 @@ box-shadow:
     async function deleteApiKey(apiKey) {
       const btn = event?.target;
 
-      const ok = confirm("Delete this API key?");
+      const ok = await ultraConfirm({
+        title: "Delete API Key?",
+        message: "This API key will be permanently deleted. This action cannot be undone.",
+        okText: "Delete",
+        cancelText: "Cancel"
+      });
 
       if (!ok) return;
 
@@ -2555,14 +3137,15 @@ box-shadow:
         loadUsageLogs();
 
       } catch (err) {
+        console.error(err);
 
         showToast("Delete failed", "error");
 
-        } finally {
-          setButtonLoading(btn, false);
-        }
-
+      } finally {
+        setButtonLoading(btn, false);
       }
+
+    }
 
     let stats = {};
     async function loadApiKeys() {
@@ -2632,93 +3215,65 @@ box-shadow:
               };
 
               list.innerHTML += `
-  <div class="ultra-key-card" style="
-    position:relative;
-    overflow:hidden;
-    padding:24px;
-    border-radius:26px;
-    background:
-      linear-gradient(145deg,rgba(8,15,30,.96),rgba(15,23,42,.92));
-    border:1px solid rgba(56,189,248,.16);
-    box-shadow:
-      0 20px 55px rgba(0,0,0,.34),
-      inset 0 1px 0 rgba(255,255,255,.04);
-  ">
+  <div class="ultra-key-card">
 
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      margin-bottom:18px;
-    ">
+    <div class="ultra-key-top">
       <div>
-        <div style="
-          color:#38bdf8;
-          font-size:12px;
-          font-weight:900;
-          letter-spacing:.14em;
-          text-transform:uppercase;
-          margin-bottom:8px;
-        ">
-          API KEY
-        </div>
+        <div class="ultra-key-status">
+  <div class="ultra-key-dot"></div>
+  ACTIVE
+</div>
 
-        <div style="
-          color:white;
-          font-size:22px;
-          font-weight:900;
-        ">
+        <div class="ultra-key-name">
           ${keyObj.key_name || "API Key " + (index + 1)}
         </div>
       </div>
-
-      <div class="ultra-status-pill" style="
-        padding:8px 13px;
-        border-radius:999px;
-        background:rgba(34,197,94,.12);
-        border:1px solid rgba(34,197,94,.28);
-        color:#4ade80;
-        font-size:12px;
-        font-weight:900;
-      ">
-        ACTIVE
-      </div>
     </div>
 
-    <div class="key-meta real-key" style="
-      padding:14px 16px;
-      border-radius:16px;
-      background:rgba(2,6,23,.72);
-      border:1px solid rgba(255,255,255,.06);
-      color:#bfdbfe;
-      font-family:monospace;
-      margin-bottom:18px;
-    ">
-      ${keyObj.api_key.slice(0, 12)}********
-    </div>
+    <div class="ultra-key-secret">
+  <div class="ultra-secret-label">
+    LIVE SECRET KEY
+  </div>
 
-    <div style="
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-      gap:14px;
-      margin-bottom:18px;
-    ">
-      <div class="key-meta">Requests<br><b style="color:white">${keyStats.requests}</b></div>
-      <div class="key-meta">Tokens<br><b style="color:white">${keyStats.tokens}</b></div>
-      <div class="key-meta">Cost<br><b style="color:white">$${keyStats.cost.toFixed(4)}</b></div>
-      <div class="key-meta">Last Used<br><b style="color:white">${keyStats.lastUsedAt ? new Date(keyStats.lastUsedAt).toLocaleString() : "Never"}</b></div>
-    </div>
+  <div class="ultra-secret-value">
+    ${keyObj.api_key.slice(0, 12)}********
+  </div>
+</div>
 
-    <div class="key-actions" style="
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    ">
-      <button onclick="copyApiKey('${keyObj.api_key}')">Copy</button>
-      <button onclick="revealApiKey(this, '${keyObj.api_key}')">Reveal</button>
-      <button onclick="renameApiKey('${keyObj.api_key}', '${String(keyObj.key_name || "").replace(/'/g, "\\'")}')">Rename</button>
-      <button class="danger" onclick="deleteApiKey('${keyObj.api_key}')">Delete</button>
+    <div class="ultra-key-stats">
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">Requests</div>
+    <div class="ultra-mini-value">${keyStats.requests}</div>
+  </div>
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">Tokens</div>
+    <div class="ultra-mini-value">${keyStats.tokens}</div>
+  </div>
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">Cost</div>
+    <div class="ultra-mini-value">$${keyStats.cost.toFixed(4)}</div>
+  </div>
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">Last Used</div>
+    <div class="ultra-mini-value">
+      ${keyStats.lastUsedAt ? new Date(keyStats.lastUsedAt).toLocaleString() : "Never"}
+    </div>
+  </div>
+
+</div>
+
+    <div class="ultra-key-actions">
+      <button class="ultra-action-btn" onclick="copyApiKey('${keyObj.api_key}')">Copy</button>
+
+<button class="ultra-action-btn" onclick="revealApiKey(this, '${keyObj.api_key}')">Reveal</button>
+
+<button class="ultra-action-btn" onclick="renameApiKey('${keyObj.api_key}', '${String(keyObj.key_name || "").replace(/'/g, "\\'")}')">Rename</button>
+
+<button class="ultra-action-btn danger-action" onclick="deleteApiKey('${keyObj.api_key}')">Delete</button>
     </div>
 
   </div>
@@ -2790,94 +3345,67 @@ box-shadow:
         data.logs.forEach(log => {
 
           container.innerHTML += `
-  <div class="ultra-log-card" style="
-    position:relative;
-    overflow:hidden;
-    padding:22px;
-    border-radius:24px;
-    background:
-      linear-gradient(145deg,rgba(8,15,30,.96),rgba(15,23,42,.92));
-    border:1px solid rgba(56,189,248,.14);
-    box-shadow:
-      0 18px 45px rgba(0,0,0,.28),
-      inset 0 1px 0 rgba(255,255,255,.04);
-  ">
+      <div class="ultra-log-card">
 
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      flex-wrap:wrap;
-      margin-bottom:16px;
-    ">
+    <div class="ultra-log-top">
       <div>
-        <div style="
-          color:#38bdf8;
-          font-size:12px;
-          font-weight:900;
-          letter-spacing:.14em;
-          text-transform:uppercase;
-          margin-bottom:8px;
-        ">
+        <div class="ultra-log-label">
           MODEL
         </div>
 
-        <div style="
-          font-size:22px;
-          font-weight:900;
-          color:white;
-        ">
-          ${log.model || "GPT-4"}
-        </div>
+        <div class="ultra-log-model">
+  ${log.model || "GPT-4"}
+</div>
       </div>
 
-      <div class="ultra-status-pill" style="
-        padding:8px 13px;
-        border-radius:999px;
-        background:rgba(34,197,94,.12);
-        border:1px solid rgba(34,197,94,.28);
-        color:#4ade80;
-        font-size:12px;
-        font-weight:900;
-      ">
-        SUCCESS
-      </div>
+      <div class="ultra-log-status">
+  SUCCESS
+</div>
     </div>
 
-    <div style="
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-      gap:14px;
-    ">
-      <div class="key-meta">
-        Tokens<br>
-        <b style="color:white;font-size:18px;">
-          ${Number(log.total_tokens || 0).toLocaleString()}
-        </b>
-      </div>
+    <div class="ultra-log-stats">
 
-      <div class="key-meta">
-        Cost<br>
-        <b style="color:white;font-size:18px;">
-          $${Number(log.cost || 0).toFixed(4)}
-        </b>
-      </div>
+  <div class="ultra-log-stat">
+    <div class="ultra-log-stat-label">
+      Tokens
+    </div>
 
-      <div class="key-meta">
-        API Key<br>
-        <b style="color:#bfdbfe;font-size:15px;">
-          ****${String(log.api_key || "").slice(-6)}
-        </b>
-      </div>
-
-      <div class="key-meta">
-        Time<br>
-        <b style="color:white;font-size:15px;">
-          ${new Date(log.created_at).toLocaleString()}
-        </b>
-      </div>
+    <div class="ultra-log-stat-value">
+      ${Number(log.total_tokens || 0).toLocaleString()}
+    </div>
   </div>
+
+  <div class="ultra-log-stat">
+    <div class="ultra-log-stat-label">
+      Cost
+    </div>
+
+    <div class="ultra-log-stat-value">
+      $${Number(log.cost || 0).toFixed(4)}
+    </div>
+  </div>
+
+  <div class="ultra-log-stat">
+    <div class="ultra-log-stat-label">
+      API Key
+    </div>
+
+    <div class="ultra-log-stat-value">
+      ****${String(log.api_key || "").slice(-6)}
+    </div>
+  </div>
+
+  <div class="ultra-log-stat">
+    <div class="ultra-log-stat-label">
+      Time
+    </div>
+
+    <div class="ultra-log-stat-value">
+      ${new Date(log.created_at).toLocaleString()}
+    </div>
+  </div>
+
+</div>
 `;
 
         });
@@ -2979,6 +3507,32 @@ box-shadow:
   </script>
 
   <div id="toast" class="ultra-toast">
+  </div>
+
+  <div id="confirmModal" class="ultra-modal-backdrop">
+    <div class="ultra-modal">
+      <div class="section-label">
+        Confirm Action
+      </div>
+
+      <h2 id="confirmTitle">
+        Are you sure?
+      </h2>
+
+      <p id="confirmMessage" class="muted">
+        This action cannot be undone.
+      </p>
+
+      <div class="ultra-modal-actions">
+        <button id="confirmCancelBtn">
+          Cancel
+        </button>
+
+        <button id="confirmOkBtn" class="danger">
+          Confirm
+        </button>
+      </div>
+    </div>
   </div>
 
 </body>
