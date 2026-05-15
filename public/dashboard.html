@@ -1285,7 +1285,7 @@
 
     .ultra-playground-meta {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       margin-top: 14px;
     }
@@ -1341,7 +1341,7 @@
 
     .ultra-playground-meta {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       margin-top: 14px;
     }
@@ -3594,6 +3594,18 @@ padding-top:20px;
               API console ready.
             </div>
 
+            <div class="ultra-playground-actions" style="
+  margin-top:18px;
+">
+              <button class="ultra-action-btn" onclick="copyResponse()">
+                Copy Response
+              </button>
+
+              <button class="ultra-action-btn danger-action" onclick="clearPlaygroundConsole()">
+                Clear Response
+              </button>
+            </div>
+
             <div class="ultra-playground-meta">
               <div class="ultra-playground-meta-card">
                 <div class="ultra-playground-meta-label">
@@ -3619,6 +3631,15 @@ padding-top:20px;
                 </div>
                 <div class="ultra-playground-meta-value" id="playgroundModel">
                   gpt-4o-mini
+                </div>
+              </div>
+              <div class="ultra-playground-meta-card">
+                <div class="ultra-playground-meta-label">
+                  LATENCY
+                </div>
+
+                <div class="ultra-playground-meta-value" id="playgroundLatency">
+                  -
                 </div>
               </div>
             </div>
@@ -4475,6 +4496,10 @@ box-shadow:
 
       const currentModel =
         document.getElementById("modelSelect").value;
+      const latencyBox =
+        document.getElementById("playgroundLatency");
+
+      const startTime = Date.now();
       const prompt =
         document.getElementById("playgroundPrompt")?.value?.trim()
         || "Say hello in one short sentence.";
@@ -4555,6 +4580,11 @@ box-shadow:
 
         tokensBox.innerText =
           data.usage?.total_tokens || "0";
+        const latency =
+          Date.now() - startTime;
+
+        latencyBox.innerText =
+          latency + " ms";
         const usage = data.usage
           ? `
 <div style="
@@ -4619,6 +4649,20 @@ box-shadow:
 </div>
 `;
       }
+    }
+
+    function copyResponse() {
+
+      const msg =
+        document.getElementById("msg");
+
+      if (!msg) return;
+
+      navigator.clipboard.writeText(
+        msg.innerText
+      );
+
+      showToast("Response copied");
     }
 
     function clearPlaygroundConsole() {
