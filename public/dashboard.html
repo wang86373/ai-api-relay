@@ -4270,10 +4270,18 @@ box-shadow:
     loadUsdtHistory();
 
     function copyKey() {
-      navigator.clipboard.writeText(
-        document.getElementById("apiKeyText").value
-      );
-      document.getElementById("msg").innerText = "API key copied.";
+
+      const fullKey =
+        document.getElementById("playgroundApiKeyText")
+          ?.dataset
+          ?.fullkey;
+
+      if (!fullKey) return;
+
+      navigator.clipboard.writeText(fullKey);
+
+      document.getElementById("msg").innerText =
+        "API key copied.";
     }
 
     const modelPrices = {
@@ -5197,6 +5205,29 @@ box-shadow:
     document
       .getElementById("keySearchInput")
       ?.addEventListener("input", loadApiKeys);
+    const playgroundRevealBtn =
+      document.getElementById("playgroundRevealKeyBtn");
+
+    if (playgroundRevealBtn) {
+      playgroundRevealBtn.onclick = function () {
+        const input =
+          document.getElementById("playgroundApiKeyText");
+
+        const fullKey =
+          input.dataset.fullkey;
+
+        if (!fullKey) return;
+
+        if (input.value.includes("********")) {
+          input.value = fullKey;
+          this.innerText = "Hide";
+        } else {
+          input.value =
+            fullKey.slice(0, 12) + "********";
+          this.innerText = "Reveal";
+        }
+      };
+    }
     loadUsageStats();
     loadUsageLogs();
     renderUltraChart();
