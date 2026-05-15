@@ -684,27 +684,27 @@
 
     <div class="sidebar-nav">
 
-      <button class="sidebar-link active">
+      <button class="sidebar-link active" data-target="overviewSection">
         Dashboard
       </button>
 
-      <button class="sidebar-link">
+      <button class="sidebar-link" data-target="apiKeysSection">
         API Keys
       </button>
 
-      <button class="sidebar-link">
+      <button class="sidebar-link" data-target="usageSection">
         Usage
       </button>
 
-      <button class="sidebar-link">
+      <button class="sidebar-link" data-target="billingSection">
         Billing
       </button>
 
-      <button class="sidebar-link">
+      <button class="sidebar-link" data-target="playgroundSection">
         Playground
       </button>
 
-      <button class="sidebar-link">
+      <button class="sidebar-link" data-target="settingsSection">
         Settings
       </button>
 
@@ -776,7 +776,7 @@
       </div>
     </div>
 
-    <div class="hero ultra-card" style="
+    <div id="overviewSection" class="hero ultra-card" style="
   padding:48px;
   border-radius:36px;
   margin-bottom:36px;
@@ -784,29 +784,13 @@
   overflow:hidden;
 ">
 
-      <div style="
-    position:absolute;
-    top:-120px;
-    right:-120px;
-    width:320px;
-    height:320px;
-    border-radius:999px;
-    background:rgba(59,130,246,.18);
-    filter:blur(90px);
-  "></div>
+      <div style=" position:absolute; top:-120px; right:-120px; width:320px; height:320px; border-radius:999px;
+      background:rgba(59,130,246,.18); filter:blur(90px); "></div>
 
-      <div style="
-    position:absolute;
-    bottom:-140px;
-    left:-120px;
-    width:300px;
-    height:300px;
-    border-radius:999px;
-    background:rgba(124,58,237,.18);
-    filter:blur(100px);
-  "></div>
+      <div style=" position:absolute; bottom:-140px; left:-120px; width:300px; height:300px; border-radius:999px;
+      background:rgba(124,58,237,.18); filter:blur(100px); "></div>
 
-      <div class="ultra-live-pill">
+      <div class=" ultra-live-pill">
         SYSTEM ONLINE
       </div>
 
@@ -962,7 +946,7 @@
       </div>
     </div>
 
-    <div class="card ultra-card" style="
+    <div id="apiKeysSection" class="card ultra-card" style="
   border-radius:32px;
   overflow:hidden;
 ">
@@ -1064,36 +1048,37 @@ padding-top:20px;
           Next →
         </button>
       </div>
+    </div>
 
-      <div class="card ultra-card" style="
+    <div id="playgroundSection" class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
-        <div class="section-label">
-          Developer Access
-        </div>
+      <div class="section-label">
+        Developer Access
+      </div>
 
-        <h2 style="
+      <h2 style="
   font-size:42px;
   margin:10px 0 16px;
   font-weight:900;
 ">
-          API Access Console
-        </h2>
+        API Access Console
+      </h2>
 
-        <p style="
+      <p style="
   color:#94a3b8;
   max-width:760px;
   line-height:1.8;
   margin-bottom:28px;
 ">
-          Access your infrastructure key,
-          test endpoints, manage models,
-          and integrate AI services into
-          your production systems.
-        </p>
+        Access your infrastructure key,
+        test endpoints, manage models,
+        and integrate AI services into
+        your production systems.
+      </p>
 
-        <select id="modelSelect" class="api-box" style="
+      <select id="modelSelect" class="api-box" style="
   margin-bottom:18px;
   border-radius:18px;
   padding:18px;
@@ -1103,12 +1088,12 @@ padding-top:20px;
   color:white;
   font-size:15px;
 ">
-          <option value="gpt-4o-mini">gpt-4o-mini</option>
-          <option value="deepseek-chat">deepseek-chat</option>
-          <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-        </select>
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="deepseek-chat">deepseek-chat</option>
+        <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+      </select>
 
-        <div id="modelPrice" class="muted" style="
+      <div id="modelPrice" class="muted" style="
   margin-top:10px;
   margin-bottom:18px;
   padding:14px 18px;
@@ -1116,17 +1101,17 @@ padding-top:20px;
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.06);
 ">
-          Price: GPT-4o-mini
-        </div>
+        Price: GPT-4o-mini
+      </div>
 
-        <div class="api-actions" style="
+      <div class="api-actions" style="
   display:flex;
   gap:16px;
   align-items:center;
   flex-wrap:wrap;
   margin-top:20px;
 ">
-          <input class="api-box" id="apiKeyText" style="
+        <input class="api-box" id="apiKeyText" style="
   flex:1;
   min-width:320px;
   border-radius:18px;
@@ -1138,24 +1123,24 @@ padding-top:20px;
   font-size:15px;
 " />
 
-          <button onclick="copyKey()" style="
+        <button onclick="copyKey()" style="
   border-radius:16px;
   padding:14px 18px;
 ">
-            Copy API Key
-          </button>
+          Copy API Key
+        </button>
 
-          <button id="revealKeyBtn" style="
+        <button id="revealKeyBtn" style="
   border-radius:16px;
   padding:14px 18px;
   background:
     linear-gradient(135deg,#0f172a,#1e293b);
   border:1px solid rgba(255,255,255,.08);
 ">
-            Reveal
-          </button>
+          Reveal
+        </button>
 
-          <button onclick="testApi()" style="
+        <button onclick="testApi()" style="
   border-radius:16px;
   padding:14px 18px;
   background:
@@ -1163,111 +1148,110 @@ padding-top:20px;
   box-shadow:
     0 14px 34px rgba(16,185,129,.24);
 ">
-            Test API
-          </button>
-        </div>
-
-        <div class="msg" id="msg"></div>
+          Test API
+        </button>
       </div>
 
+      <div class="msg" id="msg"></div>
     </div>
 
-    <div class="card ultra-card" style="
+  </div>
+
+  <div id="usageSection" class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
-      <div class="section-label">
-        Activity Center
-      </div>
+    <div class="section-label">
+      Activity Center
+    </div>
 
-      <h2 style="
+    <h2 style="
   font-size:42px;
   margin:10px 0 16px;
   font-weight:900;
 ">
-        Usage Logs
-      </h2>
+      Usage Logs
+    </h2>
 
-      <p style="
+    <p style="
   color:#94a3b8;
   line-height:1.8;
   max-width:760px;
   margin-bottom:28px;
 ">
-        Monitor real-time API activity,
-        token usage, request analytics,
-        and infrastructure traffic history.
-      </p>
+      Monitor real-time API activity,
+      token usage, request analytics,
+      and infrastructure traffic history.
+    </p>
 
-      <div id="logsContainer" style="
+    <div id="logsContainer" style="
   display:grid;
   gap:16px;
 ">
-        Loading logs...
-      </div>
+      Loading logs...
     </div>
+  </div>
 
-    <div class="card">
-      <div class="card ultra-card" style="
+  <div class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
 
-        <div class="section-label">
-          Billing Logs
-        </div>
+    <div class="section-label">
+      Billing Logs
+    </div>
 
-        <h2 style="
+    <h2 style="
     font-size:42px;
     margin:10px 0 16px;
     font-weight:900;
   ">
-          Payment History
-        </h2>
+      Payment History
+    </h2>
 
-        <p style="
+    <p style="
     color:#94a3b8;
     line-height:1.8;
     margin-bottom:26px;
   ">
-          Monitor recharge activity,
-          infrastructure payments,
-          blockchain transaction records,
-          and account funding history.
-        </p>
-        <div id="usdtHistoryContainer">
-          Loading USDT history...
-        </div>
-      </div>
+      Monitor recharge activity,
+      infrastructure payments,
+      blockchain transaction records,
+      and account funding history.
+    </p>
+    <div id="usdtHistoryContainer">
+      Loading USDT history...
     </div>
+  </div>
+  </div>
 
-    <div class="card ultra-card" id="rechargeSection" style="
+  <div id="billingSection" class="card ultra-card" style="
   border-radius:32px;
   margin-top:28px;
 ">
-      <div class="section-label">
-        Billing Center
-      </div>
+    <div class="section-label">
+      Billing Center
+    </div>
 
-      <h2 style="
+    <h2 style="
   font-size:42px;
   margin:10px 0 16px;
   font-weight:900;
 ">
-        Recharge Infrastructure
-      </h2>
+      Recharge Infrastructure
+    </h2>
 
-      <p style="
+    <p style="
   color:#94a3b8;
   line-height:1.8;
   max-width:760px;
   margin-bottom:28px;
 ">
-        Recharge your account balance,
-        maintain API infrastructure uptime,
-        and manage premium AI platform access.
-      </p>
-      <div style="
+      Recharge your account balance,
+      maintain API infrastructure uptime,
+      and manage premium AI platform access.
+    </p>
+    <div style="
       position:relative;
       overflow:hidden;
 
@@ -1289,15 +1273,15 @@ padding-top:20px;
       inset 0 1px 0 rgba(255,255,255,.04);
       ">
 
-        <div style="margin-bottom:8px;">
-          <b>USDT Network:</b> TRC20
-        </div>
+      <div style="margin-bottom:8px;">
+        <b>USDT Network:</b> TRC20
+      </div>
 
-        <div style="margin-bottom:8px;">
-          <b>Wallet Address:</b>
-        </div>
+      <div style="margin-bottom:8px;">
+        <b>Wallet Address:</b>
+      </div>
 
-        <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
+      <input value="TFR985wAFGgtw7W55dHHWiu8UyWxKM768v" readonly style="
       width:100%;
 
 background:
@@ -1324,7 +1308,7 @@ box-shadow:
   0 0 24px rgba(56,189,248,.08);
     " />
 
-        <button onclick="copyUsdtAddress()" style="
+      <button onclick="copyUsdtAddress()" style="
   margin-top:18px;
 
   padding:16px 22px;
@@ -1343,12 +1327,12 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-          Copy USDT Address
-        </button>
+        Copy USDT Address
+      </button>
 
-        <div style="margin-top:14px;">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-            alt="USDT TRC20 QR Code" style="
+      <div style="margin-top:14px;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
+          alt="USDT TRC20 QR Code" style="
     background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,250,252,.98));
     padding:18px;
     border-radius:24px;
@@ -1360,16 +1344,16 @@ box-shadow:
       0 0 40px rgba(56,189,248,.12);
   " />
 
-        </div>
-
-        <p class=" muted" style="margin-top:10px;">
-          Send USDT via TRC20 network only.
-        </p>
-
       </div>
-      <p class="muted">Stripe and USDT payment will be added next.</p>
 
-      <button onclick="stripeCheckout()" style="
+      <p class=" muted" style="margin-top:10px;">
+        Send USDT via TRC20 network only.
+      </p>
+
+    </div>
+    <p class="muted">Stripe and USDT payment will be added next.</p>
+
+    <button onclick="stripeCheckout()" style="
   margin-top:18px;
   margin-bottom:18px;
 
@@ -1388,9 +1372,9 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-        Pay with Stripe
-      </button>
-      <input id="usdtAmount" placeholder="USDT Amount" style="
+      Pay with Stripe
+    </button>
+    <input id="usdtAmount" placeholder="USDT Amount" style="
   width:100%;
   margin-top:14px;
   padding:18px;
@@ -1401,7 +1385,7 @@ box-shadow:
   outline:none;
   box-sizing:border-box;
 " />
-      <input id="usdtTxHash" placeholder="Transaction Hash" style="
+    <input id="usdtTxHash" placeholder="Transaction Hash" style="
   width:100%;
   margin-top:14px;
   padding:18px;
@@ -1414,7 +1398,7 @@ box-shadow:
   font-family:monospace;
 " />
 
-      <button id="usdtSubmitBtn" onclick="usdtPayment()" style="
+    <button id="usdtSubmitBtn" onclick="usdtPayment()" style="
   margin-top:18px;
   padding:18px 26px;
   border-radius:18px;
@@ -1425,20 +1409,41 @@ box-shadow:
   font-size:15px;
   font-weight:900;
 ">
-        Submit USDT Payment
-      </button>
-    </div>
+      Submit USDT Payment
+    </button>
+  </div>
 
-    <div class="card">
-      <h2>Account</h2>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
+  <div class="card">
+    <h2>Account</h2>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 
   </div>
 
   <script>
     window.history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
+
+    document.querySelectorAll(".sidebar-link").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.target;
+        const target = document.getElementById(targetId);
+
+        if (!target) return;
+
+        document.querySelectorAll(".sidebar-link").forEach(item => {
+          item.classList.remove("active");
+        });
+
+        btn.classList.add("active");
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+    });
+
     function showToast(message, type = "success") {
       const toast = document.getElementById("toast");
 
