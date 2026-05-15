@@ -909,6 +909,36 @@
       margin-top: 16px;
     }
 
+    .ultra-key-status-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 12px;
+    }
+
+    .ultra-key-health {
+      padding: 6px 10px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(34, 197, 94, .12);
+
+      border:
+        1px solid rgba(34, 197, 94, .22);
+
+      color: #4ade80;
+
+      font-size: 11px;
+      font-weight: 900;
+
+      letter-spacing: .08em;
+
+      box-shadow:
+        0 0 18px rgba(34, 197, 94, .12);
+    }
+
     .ultra-mini-stat {
       padding: 12px;
       border-radius: 14px;
@@ -982,15 +1012,72 @@
     }
 
     .ultra-secret-value {
-      color: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+
+      padding: 18px 18px;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(145deg,
+          rgba(2, 6, 23, .96),
+          rgba(15, 23, 42, .92));
+
+      border:
+        1px solid rgba(56, 189, 248, .12);
+
+      color: #22d3ee;
 
       font-family: monospace;
 
       font-size: 14px;
+      font-weight: 700;
 
       word-break: break-all;
 
-      letter-spacing: .04em;
+      letter-spacing: .05em;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .04),
+        0 0 30px rgba(34, 211, 238, .06);
+
+      transition:
+        border-color .22s ease,
+        box-shadow .22s ease,
+        transform .22s ease;
+    }
+
+    .ultra-secret-value:hover {
+      transform: translateY(-2px);
+
+      border-color:
+        rgba(34, 211, 238, .32);
+
+      box-shadow:
+        0 0 40px rgba(34, 211, 238, .16);
+    }
+
+    .ultra-secret-value::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(255, 255, 255, .08),
+          transparent);
+
+      transform: translateX(-120%);
+      transition: .9s ease;
+
+      pointer-events: none;
+    }
+
+    .ultra-secret-value:hover::before {
+      transform: translateX(120%);
     }
 
     .ultra-key-actions {
@@ -4599,9 +4686,17 @@ box-shadow:
 
     <div class="ultra-key-top">
       <div>
-        <div class="ultra-key-status">
-  <div class="ultra-key-dot"></div>
-  ACTIVE
+        <div class="ultra-key-status-wrap">
+
+  <div class="ultra-key-status">
+    <div class="ultra-key-dot"></div>
+    ACTIVE
+  </div>
+
+  <div class="ultra-key-health">
+    HEALTHY
+  </div>
+
 </div>
 
         <div class="ultra-key-name">
@@ -4647,14 +4742,36 @@ box-shadow:
 </div>
 
     <div class="ultra-key-actions">
-      <button class="ultra-action-btn" onclick="copyApiKey('${keyObj.api_key}')">Copy</button>
 
-<button class="ultra-action-btn" onclick="revealApiKey(this, '${keyObj.api_key}')">Reveal</button>
+  <button
+    class="ultra-action-btn"
+    onclick="copyApiKey('${keyObj.api_key}')"
+  >
+    Copy
+  </button>
 
-<button class="ultra-action-btn" onclick="renameApiKey('${keyObj.api_key}', '${String(keyObj.key_name || "").replace(/'/g, "\\'")}')">Rename</button>
+  <button
+    class="ultra-action-btn"
+    onclick="revealApiKey(this, '${keyObj.api_key}')"
+  >
+    Reveal
+  </button>
 
-<button class="ultra-action-btn danger-action" onclick="deleteApiKey('${keyObj.api_key}')">Delete</button>
-    </div>
+  <button
+    class="ultra-action-btn"
+    onclick="renameApiKey('${keyObj.api_key}', '${String(keyObj.key_name || "").replace(/'/g, "\\'")}')"
+  >
+    Rename
+  </button>
+
+  <button
+    class="ultra-action-btn danger-action"
+    onclick="deleteApiKey('${keyObj.api_key}')"
+  >
+    Delete
+  </button>
+
+</div>
 
   </div>
 `;
