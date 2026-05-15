@@ -62,8 +62,9 @@
     }
 
     .container {
-      max-width: 1100px;
-      margin: auto;
+      width: calc(100% - 320px);
+      margin-left: 300px;
+      padding-right: 20px;
     }
 
     .card {
@@ -499,6 +500,113 @@
       box-shadow: 0 0 18px rgba(34, 197, 94, .75);
     }
 
+    .ultra-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 260px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(2, 6, 23, .96),
+          rgba(15, 23, 42, .98));
+
+      border-right:
+        1px solid rgba(255, 255, 255, .06);
+
+      padding: 28px 20px;
+
+      z-index: 999;
+
+      backdrop-filter: blur(18px);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      margin-bottom: 36px;
+    }
+
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+
+      border-radius: 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(135deg, #2563eb, #7c3aed);
+
+      font-weight: 900;
+      font-size: 20px;
+
+      box-shadow:
+        0 0 30px rgba(37, 99, 235, .35);
+    }
+
+    .logo-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .logo-sub {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-link {
+      width: 100%;
+
+      padding: 16px 18px;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(255, 255, 255, .05);
+
+      background:
+        rgba(255, 255, 255, .02);
+
+      color: white;
+
+      text-align: left;
+
+      font-weight: 700;
+
+      transition: .22s;
+    }
+
+    .sidebar-link:hover {
+      transform: translateX(6px);
+
+      border-color:
+        rgba(56, 189, 248, .24);
+
+      background:
+        rgba(56, 189, 248, .08);
+    }
+
+    .sidebar-link.active {
+      background:
+        linear-gradient(135deg, #2563eb, #4f46e5);
+
+      box-shadow:
+        0 12px 30px rgba(37, 99, 235, .28);
+    }
+
     @media (max-width: 900px) {
 
       .stats-grid {
@@ -558,6 +666,51 @@
 </head>
 
 <body class="ultra-user-shell">
+  <div class="ultra-sidebar">
+
+    <div class="sidebar-logo">
+      <div class="logo-icon">AI</div>
+
+      <div>
+        <div class="logo-title">
+          AI API Relay
+        </div>
+
+        <div class="logo-sub">
+          Ultra Console
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+
+      <button class="sidebar-link active">
+        Dashboard
+      </button>
+
+      <button class="sidebar-link">
+        API Keys
+      </button>
+
+      <button class="sidebar-link">
+        Usage
+      </button>
+
+      <button class="sidebar-link">
+        Billing
+      </button>
+
+      <button class="sidebar-link">
+        Playground
+      </button>
+
+      <button class="sidebar-link">
+        Settings
+      </button>
+
+    </div>
+
+  </div>
 
   <div class="container">
 
@@ -1055,9 +1208,36 @@ padding-top:20px;
     </div>
 
     <div class="card">
-      <h2>USDT Payment History</h2>
-      <div id="usdtHistoryContainer">
-        Loading USDT history...
+      <div class="card ultra-card" style="
+  border-radius:32px;
+  margin-top:28px;
+">
+
+        <div class="section-label">
+          Billing Logs
+        </div>
+
+        <h2 style="
+    font-size:42px;
+    margin:10px 0 16px;
+    font-weight:900;
+  ">
+          Payment History
+        </h2>
+
+        <p style="
+    color:#94a3b8;
+    line-height:1.8;
+    margin-bottom:26px;
+  ">
+          Monitor recharge activity,
+          infrastructure payments,
+          blockchain transaction records,
+          and account funding history.
+        </p>
+        <div id="usdtHistoryContainer">
+          Loading USDT history...
+        </div>
       </div>
     </div>
 
@@ -1168,191 +1348,249 @@ box-shadow:
 
         <div style="margin-top:14px;">
           <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TFR985wAFGgtw7W55dHHWiu8UyWxKM768v"
-            background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98)); padding:18px;
-            border-radius:24px; width:240px; height:240px; border:1px solid rgba(255,255,255,.08); box-shadow: 0 20px
-            55px rgba(0,0,0,.28), 0 0 40px rgba(56,189,248,.12); " />
+            alt="USDT TRC20 QR Code" style="
+    background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(248,250,252,.98));
+    padding:18px;
+    border-radius:24px;
+    width:240px;
+    height:240px;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:
+      0 20px 55px rgba(0,0,0,.28),
+      0 0 40px rgba(56,189,248,.12);
+  " />
+
         </div>
 
         <p class=" muted" style="margin-top:10px;">
           Send USDT via TRC20 network only.
-          </p>
+        </p>
 
-        </div>
-        <p class="muted">Stripe and USDT payment will be added next.</p>
-
-        <button onclick="stripeCheckout()">
-          Pay with Stripe
-        </button>
-        <input id="usdtAmount" placeholder="USDT Amount" />
-        <input id="usdtTxHash" placeholder="Transaction Hash" />
-
-        <button id="usdtSubmitBtn" onclick="usdtPayment()">
-          Submit USDT Payment
-        </button>
       </div>
+      <p class="muted">Stripe and USDT payment will be added next.</p>
 
-      <div class="card">
-        <h2>Account</h2>
-        <button class="danger" onclick="logout()">Logout</button>
-      </div>
+      <button onclick="stripeCheckout()" style="
+  margin-top:18px;
+  margin-bottom:18px;
 
+  padding:18px 26px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(135deg,
+      #635bff,
+      #7c3aed);
+
+  box-shadow:
+    0 18px 45px rgba(99,91,255,.32);
+
+  font-size:15px;
+  font-weight:900;
+">
+        Pay with Stripe
+      </button>
+      <input id="usdtAmount" placeholder="USDT Amount" style="
+  width:100%;
+  margin-top:14px;
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(56,189,248,.18);
+  background:rgba(2,6,23,.72);
+  color:white;
+  outline:none;
+  box-sizing:border-box;
+" />
+      <input id="usdtTxHash" placeholder="Transaction Hash" style="
+  width:100%;
+  margin-top:14px;
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(56,189,248,.18);
+  background:rgba(2,6,23,.72);
+  color:white;
+  outline:none;
+  box-sizing:border-box;
+  font-family:monospace;
+" />
+
+      <button id="usdtSubmitBtn" onclick="usdtPayment()" style="
+  margin-top:18px;
+  padding:18px 26px;
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,#059669,#10b981);
+  box-shadow:
+    0 18px 45px rgba(16,185,129,.28);
+  font-size:15px;
+  font-weight:900;
+">
+        Submit USDT Payment
+      </button>
     </div>
 
-    <script>
-      window.history.scrollRestoration = "manual";
-      window.scrollTo(0, 0);
-      function showToast(message, type = "success") {
-        const toast = document.getElementById("toast");
+    <div class="card">
+      <h2>Account</h2>
+      <button class="danger" onclick="logout()">Logout</button>
+    </div>
 
-        toast.innerText = message;
-        toast.style.display = "block";
-        toast.style.background =
-          type === "error" ? "#7f1d1d" : "#064e3b";
+  </div>
 
-        setTimeout(() => {
-          toast.style.display = "none";
-        }, 3000);
+  <script>
+    window.history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+
+      toast.innerText = message;
+      toast.style.display = "block";
+      toast.style.background =
+        type === "error" ? "#7f1d1d" : "#064e3b";
+
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    const apiKey = localStorage.getItem("api_key");
+    let currentKeyPage = 1;
+    const keysPerPage = 6;
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.get("top") === "1") {
+      window.scrollTo({
+        top: 0,
+        behavior: "instant"
+      });
+    }
+    const email = localStorage.getItem("email");
+    if (!apiKey || apiKey.includes("cfezsdkavv9mwv59qxkhtn")) {
+      localStorage.removeItem("api_key");
+      window.location.href = "/register.html";
+    }
+
+    if (!apiKey) {
+      window.location.href = "/register.html";
+    }
+
+    document.getElementById("emailText").innerText = email ? "Account: " + email : "";
+    document.getElementById("apiKeyText").value = apiKey;
+
+    async function usdtPayment() {
+
+      const amount =
+        document.getElementById("usdtAmount").value;
+
+      const tx_hash =
+        document.getElementById("usdtTxHash").value;
+
+      if (!amount || !tx_hash) {
+        showToast("Please enter amount and tx hash", "error");
+        return;
       }
+      try {
 
-      const apiKey = localStorage.getItem("api_key");
-      let currentKeyPage = 1;
-      const keysPerPage = 6;
-      const urlParams = new URLSearchParams(window.location.search);
+        const submitBtn = document.getElementById("usdtSubmitBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML =
+          '<span class="spinner"></span>Verifying...';
 
-      if (urlParams.get("top") === "1") {
-        window.scrollTo({
-          top: 0,
-          behavior: "instant"
+        const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey,
+            amount,
+            tx_hash
+          })
         });
-      }
-      const email = localStorage.getItem("email");
-      if (!apiKey || apiKey.includes("cfezsdkavv9mwv59qxkhtn")) {
-        localStorage.removeItem("api_key");
-        window.location.href = "/register.html";
-      }
 
-      if (!apiKey) {
-        window.location.href = "/register.html";
-      }
+        const data = await res.json();
 
-      document.getElementById("emailText").innerText = email ? "Account: " + email : "";
-      document.getElementById("apiKeyText").value = apiKey;
-
-      async function usdtPayment() {
-
-        const amount =
-          document.getElementById("usdtAmount").value;
-
-        const tx_hash =
-          document.getElementById("usdtTxHash").value;
-
-        if (!amount || !tx_hash) {
-          showToast("Please enter amount and tx hash", "error");
+        if (!res.ok) {
+          showToast(data.error?.message || "Submit failed", "error");
           return;
         }
-        try {
 
-          const submitBtn = document.getElementById("usdtSubmitBtn");
-          submitBtn.disabled = true;
-          submitBtn.innerHTML =
-            '<span class="spinner"></span>Verifying...';
+        showToast(data.message || "Payment confirmed");
 
-          const res = await fetch("https://ai-api-relay.onrender.com/usdt/submit", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              api_key: apiKey,
-              amount,
-              tx_hash
-            })
-          });
+        document.getElementById("usdtAmount").value = "";
+        document.getElementById("usdtTxHash").value = "";
 
-          const data = await res.json();
+        loadAccount();
+        loadLogs();
 
-          if (!res.ok) {
-            showToast(data.error?.message || "Submit failed", "error");
-            return;
-          }
+      } catch (err) {
 
-          showToast(data.message || "Payment confirmed");
+        showToast("USDT submit failed", "error");
 
-          document.getElementById("usdtAmount").value = "";
-          document.getElementById("usdtTxHash").value = "";
+      } finally {
 
-          loadAccount();
-          loadLogs();
+        const submitBtn =
+          document.getElementById("usdtSubmitBtn");
 
-        } catch (err) {
+        submitBtn.disabled = false;
 
-          showToast("USDT submit failed", "error");
-
-        } finally {
-
-          const submitBtn =
-            document.getElementById("usdtSubmitBtn");
-
-          submitBtn.disabled = false;
-
-          submitBtn.innerText =
-            "Submit USDT Payment";
-        }
+        submitBtn.innerText =
+          "Submit USDT Payment";
       }
+    }
 
-      async function loadAccount() {
-        try {
-          const res = await fetch("/key/" + encodeURIComponent(apiKey));
-          const data = await res.json();
+    async function loadAccount() {
+      try {
+        const res = await fetch("/key/" + encodeURIComponent(apiKey));
+        const data = await res.json();
 
-          if (!res.ok) {
-            document.getElementById("balanceText").innerText = "$0";
-            return;
-          }
-
-          const balanceEl =
-            document.getElementById("balanceText");
-
-          balanceEl.innerText =
-            "$" + Number(data.balance || 0).toFixed(4);
-
-          balanceEl.style.transform = "scale(1.08)";
-          balanceEl.style.transition = "0.25s";
-
-          setTimeout(() => {
-            balanceEl.style.transform = "scale(1)";
-          }, 250);
-          if (Number(data.balance || 0) < 0.01) {
-            document.getElementById("balanceText").style.color = "#ef4444";
-          } else {
-            document.getElementById("balanceText").style.color = "#22c55e";
-          }
-
-        } catch (err) {
+        if (!res.ok) {
           document.getElementById("balanceText").innerText = "$0";
+          return;
         }
+
+        const balanceEl =
+          document.getElementById("balanceText");
+
+        balanceEl.innerText =
+          "$" + Number(data.balance || 0).toFixed(4);
+
+        balanceEl.style.transform = "scale(1.08)";
+        balanceEl.style.transition = "0.25s";
+
+        setTimeout(() => {
+          balanceEl.style.transform = "scale(1)";
+        }, 250);
+        if (Number(data.balance || 0) < 0.01) {
+          document.getElementById("balanceText").style.color = "#ef4444";
+        } else {
+          document.getElementById("balanceText").style.color = "#22c55e";
+        }
+
+      } catch (err) {
+        document.getElementById("balanceText").innerText = "$0";
       }
+    }
 
-      loadAccount();
-      async function loadLogs() {
-        try {
-          const res = await fetch("/logs/" + encodeURIComponent(apiKey));
-          const data = await res.json();
+    loadAccount();
+    async function loadLogs() {
+      try {
+        const res = await fetch("/logs/" + encodeURIComponent(apiKey));
+        const data = await res.json();
 
-          if (!res.ok) {
-            document.getElementById("logsContainer").innerHTML =
-              "Failed to load logs";
-            return;
-          }
-
-          if (!data.logs || data.logs.length === 0) {
-            document.getElementById("logsContainer").innerHTML =
-              "No usage yet";
-            return;
-          }
-
+        if (!res.ok) {
           document.getElementById("logsContainer").innerHTML =
-            data.logs.map(log => `
+            "Failed to load logs";
+          return;
+        }
+
+        if (!data.logs || data.logs.length === 0) {
+          document.getElementById("logsContainer").innerHTML =
+            "No usage yet";
+          return;
+        }
+
+        document.getElementById("logsContainer").innerHTML =
+          data.logs.map(log => `
         <div style="
   padding:16px;
   border:1px solid rgba(255,255,255,0.08);
@@ -1367,35 +1605,35 @@ box-shadow:
         </div>
       `).join("");
 
-        } catch (err) {
-          document.getElementById("logsContainer").innerHTML =
-            "Failed to load logs";
-        }
+      } catch (err) {
+        document.getElementById("logsContainer").innerHTML =
+          "Failed to load logs";
       }
+    }
 
-      loadLogs();
+    loadLogs();
 
-      async function loadUsageSummary() {
-        try {
+    async function loadUsageSummary() {
+      try {
 
-          const res = await fetch(
-            "https://ai-api-relay.onrender.com/logs/" +
-            encodeURIComponent(apiKey)
-          );
+        const res = await fetch(
+          "https://ai-api-relay.onrender.com/logs/" +
+          encodeURIComponent(apiKey)
+        );
 
-          const data = await res.json();
+        const data = await res.json();
 
-          if (!res.ok || !data.logs) {
-            return;
-          }
+        if (!res.ok || !data.logs) {
+          return;
+        }
 
-          const totalRequests = data.logs.length;
+        const totalRequests = data.logs.length;
 
-          const totalTokens = data.logs.reduce((sum, log) => {
-            return sum + Number(log.total_tokens || 0);
-          }, 0);
+        const totalTokens = data.logs.reduce((sum, log) => {
+          return sum + Number(log.total_tokens || 0);
+        }, 0);
 
-          document.getElementById("usageSummary").innerHTML = `
+        document.getElementById("usageSummary").innerHTML = `
   <div style="
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -1441,40 +1679,40 @@ box-shadow:
   </div>
 `;
 
-        } catch (err) {
+      } catch (err) {
 
-          document.getElementById("usageSummary").innerHTML =
-            "Failed to load usage summary";
+        document.getElementById("usageSummary").innerHTML =
+          "Failed to load usage summary";
 
-        }
       }
+    }
 
-      loadUsageSummary();
+    loadUsageSummary();
 
-      async function loadUsdtHistory() {
-        try {
+    async function loadUsdtHistory() {
+      try {
 
-          const res = await fetch(
-            "https://ai-api-relay.onrender.com/usdt/history/" +
-            encodeURIComponent(apiKey)
-          );
+        const res = await fetch(
+          "https://ai-api-relay.onrender.com/usdt/history/" +
+          encodeURIComponent(apiKey)
+        );
 
-          const data = await res.json();
+        const data = await res.json();
 
-          if (!res.ok) {
-            document.getElementById("usdtHistoryContainer").innerHTML =
-              "Failed to load USDT history";
-            return;
-          }
-
-          if (!data.payments || data.payments.length === 0) {
-            document.getElementById("usdtHistoryContainer").innerHTML =
-              "No USDT payments yet";
-            return;
-          }
-
+        if (!res.ok) {
           document.getElementById("usdtHistoryContainer").innerHTML =
-            data.payments.map(p => `
+            "Failed to load USDT history";
+          return;
+        }
+
+        if (!data.payments || data.payments.length === 0) {
+          document.getElementById("usdtHistoryContainer").innerHTML =
+            "No USDT payments yet";
+          return;
+        }
+
+        document.getElementById("usdtHistoryContainer").innerHTML =
+          data.payments.map(p => `
         <div style="
           padding:12px;
           border:1px solid rgba(255,255,255,0.08);
@@ -1492,13 +1730,13 @@ box-shadow:
     font-weight:bold;
     background:
       ${p.status === "confirmed"
-                ? "rgba(34,197,94,0.18)"
-                : "rgba(234,179,8,0.18)"};
+              ? "rgba(34,197,94,0.18)"
+              : "rgba(234,179,8,0.18)"};
 
     color:
       ${p.status === "confirmed"
-                ? "#22c55e"
-                : "#eab308"};
+              ? "#22c55e"
+              : "#eab308"};
   ">
     ${p.status}
   </span>
@@ -1516,10 +1754,10 @@ box-shadow:
     color:#93c5fd;
   ">
     ${p.tx_hash
-                ? p.tx_hash.slice(0, 10) + "..." +
-                p.tx_hash.slice(-8)
-                : ""
-              }
+              ? p.tx_hash.slice(0, 10) + "..." +
+              p.tx_hash.slice(-8)
+              : ""
+            }
   </span>
 
   <button
@@ -1541,140 +1779,364 @@ box-shadow:
         </div>
       `).join("");
 
-        } catch (err) {
+      } catch (err) {
 
-          document.getElementById("usdtHistoryContainer").innerHTML =
-            "Failed to load USDT history";
+        document.getElementById("usdtHistoryContainer").innerHTML =
+          "Failed to load USDT history";
 
-        }
       }
+    }
 
-      loadUsdtHistory();
+    loadUsdtHistory();
 
-      function copyKey() {
-        navigator.clipboard.writeText(
-          document.getElementById("apiKeyText").value
-        );
-        document.getElementById("msg").innerText = "API key copied.";
-      }
+    function copyKey() {
+      navigator.clipboard.writeText(
+        document.getElementById("apiKeyText").value
+      );
+      document.getElementById("msg").innerText = "API key copied.";
+    }
 
-      const modelPrices = {
-        "gpt-4o-mini": "$0.01 / 1K tokens",
-        "deepseek-chat": "$0.002 / 1K tokens",
-        "claude-3-5-sonnet": "$0.03 / 1K tokens"
-      };
+    const modelPrices = {
+      "gpt-4o-mini": "$0.01 / 1K tokens",
+      "deepseek-chat": "$0.002 / 1K tokens",
+      "claude-3-5-sonnet": "$0.03 / 1K tokens"
+    };
 
-      function updateModelPrice() {
-        const model = document.getElementById("modelSelect").value;
+    function updateModelPrice() {
+      const model = document.getElementById("modelSelect").value;
 
-        document.getElementById("modelPrice").innerText =
-          "Price: " + modelPrices[model];
-      }
+      document.getElementById("modelPrice").innerText =
+        "Price: " + modelPrices[model];
+    }
 
-      document
-        .getElementById("modelSelect")
-        .addEventListener("change", updateModelPrice);
+    document
+      .getElementById("modelSelect")
+      .addEventListener("change", updateModelPrice);
 
-      updateModelPrice();
+    updateModelPrice();
 
-      async function testApi() {
-        const msg = document.getElementById("msg");
-        msg.innerText = "Testing API...";
+    async function testApi() {
+      const msg = document.getElementById("msg");
+      msg.innerText = "Testing API...";
 
-        try {
-          const res = await fetch("https://ai-api-relay.onrender.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer " + document.getElementById("apiKeyText").dataset.fullkey
-            },
-            body: JSON.stringify({
-              model: document.getElementById("modelSelect").value,
-              messages: [
-                {
-                  role: "user",
-                  content: "Say hello in one short sentence."
-                }
-              ]
-            })
-          });
+      try {
+        const res = await fetch("https://ai-api-relay.onrender.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + document.getElementById("apiKeyText").dataset.fullkey
+          },
+          body: JSON.stringify({
+            model: document.getElementById("modelSelect").value,
+            messages: [
+              {
+                role: "user",
+                content: "Say hello in one short sentence."
+              }
+            ]
+          })
+        });
 
-          const data = await res.json();
+        const data = await res.json();
 
-          if (!res.ok) {
-            const errorMsg = data.error?.message || data.error || "API test failed.";
+        if (!res.ok) {
+          const errorMsg = data.error?.message || data.error || "API test failed.";
 
-            msg.innerText = errorMsg;
+          msg.innerText = errorMsg;
 
-            if (errorMsg.includes("Insufficient balance")) {
-              msg.innerText = "Insufficient balance. Please recharge.";
-              document.getElementById("rechargeSection")?.scrollIntoView({
-                behavior: "smooth"
-              });
-            }
-
-            return;
+          if (errorMsg.includes("Insufficient balance")) {
+            msg.innerText = "Insufficient balance. Please recharge.";
+            document.getElementById("rechargeSection")?.scrollIntoView({
+              behavior: "smooth"
+            });
           }
 
-          msg.innerText = data.choices?.[0]?.message?.content || "API working.";
-          loadAccount();
-
-        } catch (err) {
-          msg.innerText = err.message;
-        }
-      }
-
-      async function stripeCheckout() {
-
-        try {
-
-          const res = await fetch("https://ai-api-relay.onrender.com/create-checkout-session", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              api_key: apiKey
-            })
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            showToast(data.error?.message || "Stripe error", "error");
-            return;
-          }
-
-          window.location.href = data.url;
-
-        } catch (err) {
-
-          showToast("Stripe checkout failed", "error");
-
-        }
-      }
-
-      function copyUsdtAddress() {
-        navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
-        showToast("USDT address copied");
-      }
-
-      function logout() {
-        localStorage.removeItem("api_key");
-        localStorage.removeItem("email");
-        localStorage.removeItem("balance");
-        window.location.href = "/register.html";
-      }
-
-      async function createApiKey() {
-        const email = localStorage.getItem("email");
-
-        if (!email) {
-          showToast("Please login first", "error");
           return;
         }
 
-        const res = await fetch("/create-api-key", {
+        msg.innerText = data.choices?.[0]?.message?.content || "API working.";
+        loadAccount();
+
+      } catch (err) {
+        msg.innerText = err.message;
+      }
+    }
+
+    async function stripeCheckout() {
+
+      try {
+
+        const res = await fetch("https://ai-api-relay.onrender.com/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error?.message || "Stripe error", "error");
+          return;
+        }
+
+        window.location.href = data.url;
+
+      } catch (err) {
+
+        showToast("Stripe checkout failed", "error");
+
+      }
+    }
+
+    function copyUsdtAddress() {
+      navigator.clipboard.writeText("TFR985wAFGgtw7W55dHHWiu8UyWxKM768v");
+      showToast("USDT address copied");
+    }
+
+    function logout() {
+      localStorage.removeItem("api_key");
+      localStorage.removeItem("email");
+      localStorage.removeItem("balance");
+      window.location.href = "/register.html";
+    }
+
+    async function createApiKey() {
+      const email = localStorage.getItem("email");
+
+      if (!email) {
+        showToast("Please login first", "error");
+        return;
+      }
+
+      const res = await fetch("/create-api-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showToast(data.error || "Failed to create API key", "error");
+        return;
+      }
+      loadApiKeys();
+      loadUsageLogs();
+    }
+
+    function updateKeyPagination(total) {
+      const totalPages =
+        Math.ceil(total / keysPerPage) || 1;
+
+      document.getElementById("keyPageText").innerText =
+        `Page ${currentKeyPage} / ${totalPages}`;
+    }
+
+    function prevKeyPage() {
+      if (currentKeyPage > 1) {
+        currentKeyPage--;
+        loadApiKeys();
+      }
+    }
+
+    function nextKeyPage() {
+      const keyword =
+        document.getElementById("keySearchInput")
+          ?.value
+          ?.toLowerCase()
+          ?.trim() || "";
+
+      fetch("/get-api-keys", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: localStorage.getItem("email")
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          const filtered = data.keys.filter(keyObj => {
+            const text =
+              (
+                (keyObj.key_name || "") +
+                " " +
+                (keyObj.api_key || "")
+              ).toLowerCase();
+
+            return text.includes(keyword);
+          });
+
+          const totalPages =
+            Math.ceil(filtered.length / keysPerPage);
+
+          if (currentKeyPage < totalPages) {
+            currentKeyPage++;
+            loadApiKeys();
+          }
+        });
+    }
+
+    document.getElementById("createKeyBtn").onclick = createApiKey;
+    function copyApiKey(apiKey) {
+      navigator.clipboard.writeText(apiKey);
+      showToast("API key copied");
+    }
+
+    document.getElementById("toggleKeysBtn").onclick = function () {
+
+      const list = document.getElementById("apiKeyList");
+      const arrow = document.getElementById("keysArrow");
+
+      if (list.style.display === "none") {
+
+        list.style.display = "block";
+        arrow.innerText = "▼";
+
+      } else {
+
+        list.style.display = "none";
+        arrow.innerText = "▶";
+
+      }
+
+    };
+
+    document.getElementById("revealKeyBtn").onclick = function () {
+
+      const text = document.getElementById("apiKeyText");
+
+      if (text.dataset.fullkey) {
+
+        if (text.value.includes("********")) {
+
+          text.value = text.dataset.fullkey;
+          this.innerText = "Hide";
+
+        } else {
+
+          text.value =
+            text.dataset.fullkey.slice(0, 12) + "********";
+
+          this.innerText = "Reveal";
+        }
+
+      }
+
+    };
+
+    function revealApiKey(btn, apiKey) {
+
+      const text =
+        btn.parentElement.parentElement.querySelector(".real-key");
+
+      if (btn.innerText === "Reveal") {
+
+        text.innerText = apiKey;
+
+        btn.innerText = "Hide";
+
+      } else {
+
+        text.innerText =
+          apiKey.slice(0, 12) + "********";
+
+        btn.innerText = "Reveal";
+
+      }
+
+    }
+
+    async function renameApiKey(apiKey, oldName) {
+      const keyName = prompt("Enter new key name", oldName || "My API Key");
+
+      if (!keyName) return;
+
+      try {
+        const res = await fetch("/rename-api-key", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey,
+            key_name: keyName
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || "Rename failed", "error");
+          return;
+        }
+
+        showToast("API key renamed");
+        loadApiKeys();
+
+      } catch (err) {
+        showToast("Rename failed", "error");
+      }
+    }
+
+    async function deleteApiKey(apiKey) {
+
+      const ok = confirm("Delete this API key?");
+
+      if (!ok) return;
+
+      try {
+
+        const res = await fetch("/delete-api-key", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            api_key: apiKey
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+
+          showToast(data.error || "Delete failed", "error");
+
+          return;
+
+        }
+
+        showToast("API key deleted");
+
+        loadApiKeys();
+        loadUsageLogs();
+
+      } catch (err) {
+
+        showToast("Delete failed", "error");
+
+      }
+
+    }
+
+    let stats = {};
+    async function loadApiKeys() {
+
+      const email = localStorage.getItem("email");
+
+      if (!email) return;
+
+      try {
+
+        const res = await fetch("/get-api-keys", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1684,48 +2146,29 @@ box-shadow:
 
         const data = await res.json();
 
-        if (!res.ok) {
-          showToast(data.error || "Failed to create API key", "error");
-          return;
-        }
-        loadApiKeys();
-        loadUsageLogs();
-      }
+        if (!res.ok) return;
 
-      function updateKeyPagination(total) {
-        const totalPages =
-          Math.ceil(total / keysPerPage) || 1;
+        if (data.keys && data.keys.length > 0) {
 
-        document.getElementById("keyPageText").innerText =
-          `Page ${currentKeyPage} / ${totalPages}`;
-      }
+          document.getElementById("apiKeyText").value =
+            data.keys[0].api_key.slice(0, 12) + "********";
+          document.getElementById("revealKeyBtn").innerText =
+            "Reveal";
 
-      function prevKeyPage() {
-        if (currentKeyPage > 1) {
-          currentKeyPage--;
-          loadApiKeys();
-        }
-      }
+          document.getElementById("apiKeyText").dataset.fullkey =
+            data.keys[0].api_key;
 
-      function nextKeyPage() {
-        const keyword =
-          document.getElementById("keySearchInput")
-            ?.value
-            ?.toLowerCase()
-            ?.trim() || "";
+          const list = document.getElementById("apiKeyList");
 
-        fetch("/get-api-keys", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: localStorage.getItem("email")
-          })
-        })
-          .then(res => res.json())
-          .then(data => {
-            const filtered = data.keys.filter(keyObj => {
+          list.innerHTML = "";
+          const keyword =
+            document
+              .getElementById("keySearchInput")
+              ?.value
+              ?.toLowerCase()
+              ?.trim() || "";
+          const filteredKeys = data.keys
+            .filter(keyObj => {
               const text =
                 (
                   (keyObj.key_name || "") +
@@ -1735,228 +2178,23 @@ box-shadow:
 
               return text.includes(keyword);
             });
-
-            const totalPages =
-              Math.ceil(filtered.length / keysPerPage);
-
-            if (currentKeyPage < totalPages) {
-              currentKeyPage++;
-              loadApiKeys();
-            }
-          });
-      }
-
-      document.getElementById("createKeyBtn").onclick = createApiKey;
-      function copyApiKey(apiKey) {
-        navigator.clipboard.writeText(apiKey);
-        showToast("API key copied");
-      }
-
-      document.getElementById("toggleKeysBtn").onclick = function () {
-
-        const list = document.getElementById("apiKeyList");
-        const arrow = document.getElementById("keysArrow");
-
-        if (list.style.display === "none") {
-
-          list.style.display = "block";
-          arrow.innerText = "▼";
-
-        } else {
-
-          list.style.display = "none";
-          arrow.innerText = "▶";
-
-        }
-
-      };
-
-      document.getElementById("revealKeyBtn").onclick = function () {
-
-        const text = document.getElementById("apiKeyText");
-
-        if (text.dataset.fullkey) {
-
-          if (text.value.includes("********")) {
-
-            text.value = text.dataset.fullkey;
-            this.innerText = "Hide";
-
-          } else {
-
-            text.value =
-              text.dataset.fullkey.slice(0, 12) + "********";
-
-            this.innerText = "Reveal";
-          }
-
-        }
-
-      };
-
-      function revealApiKey(btn, apiKey) {
-
-        const text =
-          btn.parentElement.parentElement.querySelector(".real-key");
-
-        if (btn.innerText === "Reveal") {
-
-          text.innerText = apiKey;
-
-          btn.innerText = "Hide";
-
-        } else {
-
-          text.innerText =
-            apiKey.slice(0, 12) + "********";
-
-          btn.innerText = "Reveal";
-
-        }
-
-      }
-
-      async function renameApiKey(apiKey, oldName) {
-        const keyName = prompt("Enter new key name", oldName || "My API Key");
-
-        if (!keyName) return;
-
-        try {
-          const res = await fetch("/rename-api-key", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              api_key: apiKey,
-              key_name: keyName
-            })
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            showToast(data.error || "Rename failed", "error");
-            return;
-          }
-
-          showToast("API key renamed");
-          loadApiKeys();
-
-        } catch (err) {
-          showToast("Rename failed", "error");
-        }
-      }
-
-      async function deleteApiKey(apiKey) {
-
-        const ok = confirm("Delete this API key?");
-
-        if (!ok) return;
-
-        try {
-
-          const res = await fetch("/delete-api-key", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              api_key: apiKey
-            })
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-
-            showToast(data.error || "Delete failed", "error");
-
-            return;
-
-          }
-
-          showToast("API key deleted");
-
-          loadApiKeys();
-          loadUsageLogs();
-
-        } catch (err) {
-
-          showToast("Delete failed", "error");
-
-        }
-
-      }
-
-      let stats = {};
-      async function loadApiKeys() {
-
-        const email = localStorage.getItem("email");
-
-        if (!email) return;
-
-        try {
-
-          const res = await fetch("/get-api-keys", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email })
-          });
-
-          const data = await res.json();
           animateNumber("activeKeys", filteredKeys.length);
 
-          if (!res.ok) return;
+          const start = (currentKeyPage - 1) * keysPerPage;
+          const end = start + keysPerPage;
+          updateKeyPagination(filteredKeys.length);
+          filteredKeys
+            .slice(start, end)
+            .forEach((keyObj, index) => {
 
-          if (data.keys && data.keys.length > 0) {
+              const keyStats = stats[keyObj.api_key] || {
+                requests: 0,
+                tokens: 0,
+                cost: 0,
+                lastUsedAt: null
+              };
 
-            document.getElementById("apiKeyText").value =
-              data.keys[0].api_key.slice(0, 12) + "********";
-            document.getElementById("revealKeyBtn").innerText =
-              "Reveal";
-
-            document.getElementById("apiKeyText").dataset.fullkey =
-              data.keys[0].api_key;
-
-            const list = document.getElementById("apiKeyList");
-
-            list.innerHTML = "";
-            const keyword =
-              document
-                .getElementById("keySearchInput")
-                ?.value
-                ?.toLowerCase()
-                ?.trim() || "";
-            const filteredKeys = data.keys
-              .filter(keyObj => {
-                const text =
-                  (
-                    (keyObj.key_name || "") +
-                    " " +
-                    (keyObj.api_key || "")
-                  ).toLowerCase();
-
-                return text.includes(keyword);
-              });
-
-            const start = (currentKeyPage - 1) * keysPerPage;
-            const end = start + keysPerPage;
-            updateKeyPagination(filteredKeys.length);
-            filteredKeys
-              .slice(start, end)
-              .forEach((keyObj, index) => {
-
-                const keyStats = stats[keyObj.api_key] || {
-                  requests: 0,
-                  tokens: 0,
-                  cost: 0,
-                  lastUsedAt: null
-                };
-
-                list.innerHTML += `
+              list.innerHTML += `
   <div class="ultra-key-card" style="
     position:relative;
     overflow:hidden;
@@ -2048,73 +2286,73 @@ box-shadow:
 
   </div>
 `;
-              });
-          }
-
-        } catch (err) {
-          console.error(err);
+            });
         }
+
+      } catch (err) {
+        console.error(err);
       }
+    }
 
-      async function loadUsageLogs() {
+    async function loadUsageLogs() {
 
-        const email = localStorage.getItem("email");
+      const email = localStorage.getItem("email");
 
-        if (!email) return;
+      if (!email) return;
 
-        try {
+      try {
 
-          const res = await fetch("/usage-logs", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email })
-          });
+        const res = await fetch("/usage-logs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-          const data = await res.json();
+        const data = await res.json();
 
-          if (!res.ok) return;
+        if (!res.ok) return;
 
-          const container =
-            document.getElementById("logsContainer");
+        const container =
+          document.getElementById("logsContainer");
 
-          container.innerHTML = "";
+        container.innerHTML = "";
 
-          stats = {};
+        stats = {};
 
-          data.logs.forEach(log => {
+        data.logs.forEach(log => {
 
-            if (!stats[log.api_key]) {
+          if (!stats[log.api_key]) {
 
-              stats[log.api_key] = {
-                requests: 0,
-                tokens: 0,
-                cost: 0,
-                lastUsedAt: null
-              };
-
-            }
-
-            stats[log.api_key].requests += 1;
-            stats[log.api_key].tokens += Number(log.total_tokens || 0);
-            stats[log.api_key].cost += Number(log.cost || 0);
-            stats[log.api_key].lastUsedAt = log.created_at;
-
-          });
-
-          if (!data.logs || data.logs.length === 0) {
-
-            container.innerHTML =
-              "<div class='muted'>No usage logs yet.</div>";
-
-            return;
+            stats[log.api_key] = {
+              requests: 0,
+              tokens: 0,
+              cost: 0,
+              lastUsedAt: null
+            };
 
           }
 
-          data.logs.forEach(log => {
+          stats[log.api_key].requests += 1;
+          stats[log.api_key].tokens += Number(log.total_tokens || 0);
+          stats[log.api_key].cost += Number(log.cost || 0);
+          stats[log.api_key].lastUsedAt = log.created_at;
 
-            container.innerHTML += `
+        });
+
+        if (!data.logs || data.logs.length === 0) {
+
+          container.innerHTML =
+            "<div class='muted'>No usage logs yet.</div>";
+
+          return;
+
+        }
+
+        data.logs.forEach(log => {
+
+          container.innerHTML += `
   <div class="ultra-log-card" style="
     position:relative;
     overflow:hidden;
@@ -2205,105 +2443,105 @@ box-shadow:
   </div>
 `;
 
-          });
+        });
 
-        } catch (err) {
+      } catch (err) {
 
-          console.error(err);
-
-        }
+        console.error(err);
 
       }
 
-      function animateNumber(id, target, options = {}) {
-        const el = document.getElementById(id);
-        if (!el) return;
+    }
 
-        const prefix = options.prefix || "";
-        const suffix = options.suffix || "";
-        const decimals = options.decimals || 0;
+    function animateNumber(id, target, options = {}) {
+      const el = document.getElementById(id);
+      if (!el) return;
 
-        const start = Number(el.dataset.value || 0);
-        const end = Number(target || 0);
-        const duration = 700;
-        const startTime = performance.now();
+      const prefix = options.prefix || "";
+      const suffix = options.suffix || "";
+      const decimals = options.decimals || 0;
 
-        el.dataset.value = end;
+      const start = Number(el.dataset.value || 0);
+      const end = Number(target || 0);
+      const duration = 700;
+      const startTime = performance.now();
 
-        function frame(now) {
-          const progress = Math.min((now - startTime) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = start + (end - start) * eased;
+      el.dataset.value = end;
 
-          el.innerText =
-            prefix +
-            current.toLocaleString(undefined, {
-              minimumFractionDigits: decimals,
-              maximumFractionDigits: decimals
-            }) +
-            suffix;
+      function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (end - start) * eased;
 
-          if (progress < 1) {
-            requestAnimationFrame(frame);
-          }
+        el.innerText =
+          prefix +
+          current.toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+          }) +
+          suffix;
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
         }
-
-        requestAnimationFrame(frame);
       }
 
-      async function loadUsageStats() {
+      requestAnimationFrame(frame);
+    }
 
-        const email = localStorage.getItem("email");
+    async function loadUsageStats() {
 
-        if (!email) return;
+      const email = localStorage.getItem("email");
 
-        try {
+      if (!email) return;
 
-          const res = await fetch("/usage-stats", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email })
-          });
+      try {
 
-          const data = await res.json();
+        const res = await fetch("/usage-stats", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-          if (!res.ok) return;
+        const data = await res.json();
 
-          animateNumber("todayRequests", data.totalRequests);
+        if (!res.ok) return;
 
-          animateNumber("tokenUsage", data.totalTokens);
+        animateNumber("todayRequests", data.totalRequests);
 
-          animateNumber("estimatedCost", Number(data.totalCost), {
-            prefix: "$",
-            decimals: 4
-          });
+        animateNumber("tokenUsage", data.totalTokens);
 
-        } catch (err) {
+        animateNumber("estimatedCost", Number(data.totalCost), {
+          prefix: "$",
+          decimals: 4
+        });
 
-          console.error(err);
+      } catch (err) {
 
-        }
+        console.error(err);
 
       }
-      loadApiKeys().then(() => {
-        if (window.location.hash === "#keys") {
-          document.getElementById("apiKeysSection")
-            ?.scrollIntoView({ behavior: "instant" });
-        }
-      });
-      document
-        .getElementById("keySearchInput")
-        ?.addEventListener("input", loadApiKeys);
-      loadUsageStats();
-      loadUsageLogs();
 
-      setInterval(loadUsageStats, 30000);
+    }
+    loadApiKeys().then(() => {
+      if (window.location.hash === "#keys") {
+        document.getElementById("apiKeysSection")
+          ?.scrollIntoView({ behavior: "instant" });
+      }
+    });
+    document
+      .getElementById("keySearchInput")
+      ?.addEventListener("input", loadApiKeys);
+    loadUsageStats();
+    loadUsageLogs();
 
-    </script>
+    setInterval(loadUsageStats, 30000);
 
-    <div id="toast" style="
+  </script>
+
+  <div id="toast" style="
   position:fixed;
   right:24px;
   bottom:24px;
@@ -2317,7 +2555,7 @@ box-shadow:
   z-index:9999;
   font-weight:bold;
 ">
-    </div>
+  </div>
 
 </body>
 

@@ -942,46 +942,6 @@ app.post("/admin/toggle-key", async (req, res) => {
   }
 });
 
-app.post("/admin/delete-key", async (req, res) => {
-  if (!checkAdmin(req, res)) return;
-
-  try {
-    const { api_key } = req.body;
-
-    if (!api_key) {
-      return res.status(400).json({
-        error: {
-          message: "api_key is required"
-        }
-      });
-    }
-
-    const { error } = await supabase
-      .from("api_keys")
-      .delete()
-      .eq("api_key", api_key);
-
-    if (error) {
-      return res.status(500).json({
-        error: {
-          message: error.message
-        }
-      });
-    }
-
-    return res.json({
-      success: true
-    });
-
-  } catch (err) {
-    return res.status(500).json({
-      error: {
-        message: err.message
-      }
-    });
-  }
-});
-
 app.post("/admin/recharge", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
@@ -1611,41 +1571,6 @@ app.post("/usdt/submit", async (req, res) => {
   }
 });
 
-app.get("/usdt/history/:apiKey", async (req, res) => {
-  try {
-
-    const apiKey = req.params.apiKey;
-
-    const { data, error } = await supabase
-      .from("usdt_payments")
-      .select("*")
-      .eq("api_key", apiKey)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      return res.status(500).json({
-        error: {
-          message: error.message
-        }
-      });
-    }
-
-    res.json({
-      success: true,
-      payments: data
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: {
-        message: err.message
-      }
-    });
-
-  }
-});
-
 app.get("/admin/usdt-payments", async (req, res) => {
   if (!checkAdmin(req, res)) return;
 
@@ -1740,40 +1665,6 @@ app.post("/admin/confirm-usdt", async (req, res) => {
     res.json({
       success: true,
       balance: newBalance
-    });
-
-  } catch (err) {
-
-    res.status(500).json({
-      error: {
-        message: err.message
-      }
-    });
-
-  }
-});
-
-app.get("/admin/usdt-payments", async (req, res) => {
-
-  if (!checkAdmin(req, res)) return;
-
-  try {
-
-    const { data, error } = await supabase
-      .from("usdt_payments")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      return res.status(500).json({
-        error: {
-          message: error.message
-        }
-      });
-    }
-
-    res.json({
-      payments: data
     });
 
   } catch (err) {
