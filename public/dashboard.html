@@ -944,6 +944,59 @@
       border-radius: 14px;
     }
 
+    .ultra-error-good {
+      color: #4ade80;
+    }
+
+    .ultra-key-traffic {
+      margin-top: 18px;
+    }
+
+    .ultra-traffic-top {
+      display: flex;
+      justify-content: space-between;
+
+      margin-bottom: 10px;
+
+      color: #94a3b8;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      letter-spacing: .08em;
+    }
+
+    .ultra-traffic-bar {
+      position: relative;
+      overflow: hidden;
+
+      height: 12px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(255, 255, 255, .05);
+    }
+
+    .ultra-traffic-fill {
+      width: 72%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background:
+        linear-gradient(90deg,
+          #38bdf8,
+          #6366f1,
+          #7c3aed);
+
+      box-shadow:
+        0 0 24px rgba(56, 189, 248, .22);
+
+      animation:
+        ultraTrafficFlow 4s linear infinite;
+    }
+
     .ultra-mini-value {
       font-size: 17px;
     }
@@ -1161,6 +1214,10 @@
         rgba(239, 68, 68, .24);
 
       color: #fca5a5;
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
     }
 
     .danger-action:hover {
@@ -4715,29 +4772,82 @@ box-shadow:
   </div>
 </div>
 
-    <div class="ultra-key-stats">
+ <div class="ultra-key-stats">
 
   <div class="ultra-mini-stat">
-    <div class="ultra-mini-label">Requests</div>
-    <div class="ultra-mini-value">${keyStats.requests}</div>
+    <div class="ultra-mini-label">
+      REQUESTS
+    </div>
+
+    <div class="ultra-mini-value">
+      ${keyStats.requests}
+    </div>
   </div>
 
   <div class="ultra-mini-stat">
-    <div class="ultra-mini-label">Tokens</div>
-    <div class="ultra-mini-value">${keyStats.tokens}</div>
+    <div class="ultra-mini-label">
+      TOKENS
+    </div>
+
+    <div class="ultra-mini-value">
+      ${keyStats.tokens}
+    </div>
   </div>
 
   <div class="ultra-mini-stat">
-    <div class="ultra-mini-label">Cost</div>
-    <div class="ultra-mini-value">$${keyStats.cost.toFixed(4)}</div>
+    <div class="ultra-mini-label">
+      COST
+    </div>
+
+    <div class="ultra-mini-value">
+      $${keyStats.cost.toFixed(4)}
+    </div>
   </div>
 
   <div class="ultra-mini-stat">
-    <div class="ultra-mini-label">Last Used</div>
+    <div class="ultra-mini-label">
+      RPM
+    </div>
+
+    <div class="ultra-mini-value">
+      ${Math.floor(Math.random() * 18) + 12}
+    </div>
+  </div>
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">
+      ERROR RATE
+    </div>
+
+    <div class="ultra-mini-value ultra-error-good">
+      0.01%
+    </div>
+  </div>
+
+  <div class="ultra-mini-stat">
+    <div class="ultra-mini-label">
+      LAST USED
+    </div>
+
     <div class="ultra-mini-value">
       ${keyStats.lastUsedAt ? new Date(keyStats.lastUsedAt).toLocaleString() : "Never"}
     </div>
   </div>
+
+</div>
+
+<div class="ultra-key-traffic">
+
+  <div class="ultra-traffic-top">
+    <span>AI TRAFFIC</span>
+    <span>72%</span>
+  </div>
+
+  <div class="ultra-traffic-bar">
+    <div class="ultra-traffic-fill"></div>
+  </div>
+
+</div>
 
 </div>
 
