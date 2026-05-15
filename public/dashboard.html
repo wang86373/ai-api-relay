@@ -541,6 +541,38 @@
       }
     }
 
+    .ultra-loading-dot {
+      width: 10px;
+      height: 10px;
+
+      border-radius: 999px;
+
+      background: #38bdf8;
+
+      box-shadow:
+        0 0 16px rgba(56, 189, 248, .9);
+
+      animation:
+        ultraLoadingPulse 1s infinite;
+    }
+
+    @keyframes ultraLoadingPulse {
+      0% {
+        transform: scale(.8);
+        opacity: .5;
+      }
+
+      50% {
+        transform: scale(1.3);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(.8);
+        opacity: .5;
+      }
+    }
+
     .key-item {
       position: relative;
       overflow: hidden;
@@ -2971,7 +3003,18 @@ box-shadow:
 
     async function testApi() {
       const msg = document.getElementById("msg");
-      msg.innerText = "Testing API...";
+      msg.innerHTML = `
+<div style="
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#38bdf8;
+  font-weight:800;
+">
+  <div class="ultra-loading-dot"></div>
+  Testing infrastructure...
+</div>
+`;
 
       try {
         const res = await fetch("https://ai-api-relay.onrender.com/v1/chat/completions", {
@@ -3014,7 +3057,14 @@ box-shadow:
 `;
 
           if (errorMsg.includes("Insufficient balance")) {
-            msg.innerText = "Insufficient balance. Please recharge.";
+            msg.innerHTML = `
+<div style="
+  color:#fca5a5;
+  font-weight:800;
+">
+  Insufficient balance. Please recharge.
+</div>
+`;
             document.getElementById("rechargeSection")?.scrollIntoView({
               behavior: "smooth"
             });
