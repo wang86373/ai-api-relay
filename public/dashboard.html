@@ -869,7 +869,7 @@
       display: grid;
 
       grid-template-columns:
-        repeat(auto-fill, minmax(420px, 1fr));
+        repeat(auto-fill, minmax(720px, 1fr));
 
       gap: 20px;
 
@@ -894,8 +894,9 @@
     }
 
     .ultra-api-card {
-      padding: 20px;
-      border-radius: 22px;
+      padding: 18px;
+      border-radius: 18px;
+      min-height: auto;
     }
 
     .ultra-key-secret {
@@ -1068,7 +1069,7 @@
       position: relative;
       overflow: hidden;
 
-      padding: 18px 18px;
+      padding: 12px 14px;
 
       border-radius: 18px;
 
@@ -1084,7 +1085,7 @@
 
       font-family: monospace;
 
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
 
       word-break: break-all;
@@ -1135,27 +1136,29 @@
 
     .ultra-key-actions {
       display: flex;
+      align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
 
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .ultra-action-btn {
       position: relative;
       overflow: hidden;
 
-      padding: 10px 14px;
+      height: 40px;
+      min-width: 88px;
 
-      border-radius: 14px;
+      padding: 0 16px;
+
+      border-radius: 10px;
 
       border:
         1px solid rgba(255, 255, 255, .08);
 
       background:
-        linear-gradient(180deg,
-          rgba(255, 255, 255, .06),
-          rgba(255, 255, 255, .03));
+        rgba(255, 255, 255, .04);
 
       color: white;
 
@@ -1165,10 +1168,10 @@
       cursor: pointer;
 
       transition:
-        transform .2s ease,
-        border-color .2s ease,
-        background .2s ease,
-        box-shadow .2s ease;
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
     }
 
     .ultra-action-btn:hover {
@@ -1585,8 +1588,8 @@
     }
 
     .ultra-mini-value {
-      font-size: 26px;
-      font-weight: 900;
+      font-size: 15px;
+      font-weight: 800;
     }
 
     .ultra-create-key-btn {
