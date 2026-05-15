@@ -63,48 +63,22 @@
         transform .25s ease,
         border-color .25s ease,
         box-shadow .25s ease;
+
+      cursor: pointer;
     }
 
     .ultra-metric-card:hover {
-      transform: translateY(-6px);
 
-      border-color: rgba(56, 189, 248, .24);
-
-      box-shadow:
-        0 20px 60px rgba(56, 189, 248, .14);
-    }
-
-    .ultra-metric-card::before {
-      content: "";
-
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(120deg,
-          transparent,
-          rgba(255, 255, 255, .08),
-          transparent);
-
-      transform: translateX(-120%);
-      transition: .9s ease;
-
-      pointer-events: none;
-    }
-
-    .ultra-metric-card:hover::before {
-      transform: translateX(120%);
-    }
-
-    .ultra-metric-card:hover {
-      transform: translateY(-4px);
+      transform:
+        translateY(-8px) scale(1.015);
 
       border-color:
         rgba(56, 189, 248, .28);
 
       box-shadow:
-        0 24px 60px rgba(56, 189, 248, .12),
-        inset 0 1px 0 rgba(255, 255, 255, .06);
+        0 26px 70px rgba(0, 0, 0, .42),
+        0 0 40px rgba(56, 189, 248, .16);
+
     }
 
     .ultra-metric-card::before {
@@ -118,6 +92,8 @@
           transparent,
           rgba(255, 255, 255, .08),
           transparent);
+      mix-blend-mode: screen;
+      opacity: .7;
 
       transform: translateX(-120%);
       transition: .9s ease;
@@ -127,6 +103,23 @@
 
     .ultra-metric-card:hover::before {
       transform: translateX(120%);
+    }
+
+    .ultra-metric-card::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background-image:
+        radial-gradient(rgba(255, 255, 255, .05) 1px,
+          transparent 1px);
+
+      background-size: 4px 4px;
+
+      opacity: .045;
+
+      pointer-events: none;
     }
 
     .ultra-metric-label {
@@ -165,6 +158,8 @@
       color: white;
       padding: 40px;
       min-height: 100vh;
+      background-attachment: fixed;
+      overflow-x: hidden;
     }
 
     body::before {
@@ -270,6 +265,54 @@
       100% {
         box-shadow:
           0 12px 30px rgba(37, 99, 235, .22);
+      }
+
+    }
+
+    body::before {
+      content: "";
+
+      position: fixed;
+      inset: -20%;
+
+      background:
+        radial-gradient(circle at 20% 20%,
+          rgba(56, 189, 248, .12),
+          transparent 32%),
+
+        radial-gradient(circle at 80% 30%,
+          rgba(99, 102, 241, .12),
+          transparent 34%),
+
+        radial-gradient(circle at 50% 80%,
+          rgba(16, 185, 129, .10),
+          transparent 30%);
+
+      pointer-events: none;
+
+      z-index: -2;
+
+      filter: blur(40px);
+
+      animation:
+        ultraAuroraMove 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes ultraAuroraMove {
+
+      0% {
+        transform:
+          translate3d(0, 0, 0) scale(1);
+      }
+
+      50% {
+        transform:
+          translate3d(-2%, 2%, 0) scale(1.04);
+      }
+
+      100% {
+        transform:
+          translate3d(2%, -2%, 0) scale(1.08);
       }
 
     }
