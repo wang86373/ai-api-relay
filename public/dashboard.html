@@ -4938,11 +4938,16 @@ box-shadow:
 
           document.getElementById("apiKeyText").dataset.fullkey =
             data.keys[0].api_key;
-          document.getElementById("playgroundApiKeyText").value =
-            data.keys[0].api_key.slice(0, 12) + "********";
+          const playgroundKeyInput =
+            document.getElementById("playgroundApiKeyText");
 
-          document.getElementById("playgroundApiKeyText").dataset.fullkey =
-            data.keys[0].api_key;
+          if (playgroundKeyInput) {
+            playgroundKeyInput.value =
+              data.keys[0].api_key.slice(0, 12) + "********";
+
+            playgroundKeyInput.dataset.fullkey =
+              data.keys[0].api_key;
+          }
 
           const list = document.getElementById("apiKeyList");
 
