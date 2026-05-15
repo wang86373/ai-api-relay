@@ -400,6 +400,19 @@
         inset 0 1px 0 rgba(255, 255, 255, .05);
     }
 
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity .55s ease,
+        transform .55s ease;
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .ultra-card::before {
       content: "";
       position: absolute;
@@ -727,6 +740,91 @@
       transform: translateX(120%);
     }
 
+    .ultra-toast {
+      position: fixed;
+      right: 26px;
+      bottom: 26px;
+
+      min-width: 260px;
+      max-width: 380px;
+
+      padding: 16px 18px;
+
+      border-radius: 18px;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .96),
+          rgba(2, 6, 23, .98));
+
+      border: 1px solid rgba(56, 189, 248, .18);
+
+      color: white;
+
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, .45),
+        0 0 36px rgba(56, 189, 248, .16);
+
+      display: none;
+
+      z-index: 99999;
+
+      font-weight: 800;
+
+      backdrop-filter: blur(18px);
+
+      animation: toastIn .28s ease both;
+    }
+
+    .ultra-toast.success {
+      border-color: rgba(34, 197, 94, .36);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, .45),
+        0 0 36px rgba(34, 197, 94, .18);
+    }
+
+    .ultra-toast.error {
+      border-color: rgba(239, 68, 68, .42);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, .45),
+        0 0 36px rgba(239, 68, 68, .2);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .btn-loading {
+      pointer-events: none;
+      opacity: .78;
+    }
+
+    .btn-loading::before {
+      content: "";
+      display: inline-block;
+
+      width: 14px;
+      height: 14px;
+
+      margin-right: 8px;
+
+      border: 2px solid rgba(255, 255, 255, .35);
+      border-top-color: white;
+      border-radius: 999px;
+
+      vertical-align: -2px;
+
+      animation: spin .8s linear infinite;
+    }
+
     @media (max-width: 900px) {
 
       .stats-grid {
@@ -782,10 +880,97 @@
       }
 
     }
+
+    #mobileSidebarToggle {
+      display: none;
+    }
+
+    #mobileSidebarBackdrop {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+
+      #mobileSidebarToggle {
+        display: flex;
+
+        position: fixed;
+        top: 18px;
+        left: 18px;
+
+        width: 52px;
+        height: 52px;
+
+        border: none;
+        border-radius: 18px;
+
+        align-items: center;
+        justify-content: center;
+
+        font-size: 26px;
+        font-weight: 900;
+
+        color: white;
+
+        background:
+          linear-gradient(135deg,
+            #2563eb,
+            #4f46e5);
+
+        box-shadow:
+          0 12px 30px rgba(37, 99, 235, .35);
+
+        z-index: 1200;
+      }
+
+      #mobileSidebarBackdrop {
+        display: block;
+
+        position: fixed;
+        inset: 0;
+
+        background:
+          rgba(2, 6, 23, .72);
+
+        backdrop-filter: blur(6px);
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition: .25s ease;
+
+        z-index: 998;
+      }
+
+      #mobileSidebarBackdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .ultra-sidebar {
+        transform: translateX(-110%);
+        transition: .28s ease;
+      }
+
+      .ultra-sidebar.show {
+        transform: translateX(0);
+      }
+
+      .container {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-left: 24px !important;
+      }
+    }
   </style>
 </head>
 
 <body class="ultra-user-shell">
+  <button id="mobileSidebarToggle">
+    ☰
+  </button>
+
+  <div id="mobileSidebarBackdrop"></div>
   <div class="ultra-sidebar">
 
     <div class="sidebar-logo">
@@ -1544,6 +1729,49 @@ box-shadow:
     window.history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
 
+    const mobileSidebar =
+      document.querySelector(".ultra-sidebar");
+
+    const mobileSidebarToggle =
+      document.getElementById("mobileSidebarToggle");
+
+    const mobileSidebarBackdrop =
+      document.getElementById("mobileSidebarBackdrop");
+
+    mobileSidebarToggle?.addEventListener("click", () => {
+      mobileSidebar.classList.toggle("show");
+      mobileSidebarBackdrop.classList.toggle("show");
+    });
+
+    mobileSidebarBackdrop?.addEventListener("click", () => {
+      mobileSidebar.classList.remove("show");
+      mobileSidebarBackdrop.classList.remove("show");
+    });
+
+    const revealItems =
+      document.querySelectorAll(
+        ".ultra-card, .ultra-stat-card"
+      );
+
+    revealItems.forEach(item => {
+      item.classList.add("reveal-item");
+    });
+
+    const revealObserver =
+      new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      }, {
+        threshold: 0.12
+      });
+
+    revealItems.forEach(item => {
+      revealObserver.observe(item);
+    });
+
     document.querySelectorAll(".sidebar-link").forEach(btn => {
       btn.addEventListener("click", () => {
         const targetId = btn.dataset.target;
@@ -1561,6 +1789,8 @@ box-shadow:
           behavior: "smooth",
           block: "start"
         });
+        mobileSidebar?.classList.remove("show");
+        mobileSidebarBackdrop?.classList.remove("show");
       });
     });
 
@@ -1609,14 +1839,37 @@ box-shadow:
     function showToast(message, type = "success") {
       const toast = document.getElementById("toast");
 
+      if (!toast) return;
+
+      toast.className = "ultra-toast " + type;
       toast.innerText = message;
       toast.style.display = "block";
-      toast.style.background =
-        type === "error" ? "#7f1d1d" : "#064e3b";
 
-      setTimeout(() => {
+      clearTimeout(window.__toastTimer);
+
+      window.__toastTimer = setTimeout(() => {
         toast.style.display = "none";
-      }, 3000);
+      }, 3200);
+    }
+
+    function setButtonLoading(button, loading, text) {
+      if (!button) return;
+
+      if (loading) {
+        button.dataset.originalText = button.innerText;
+        button.classList.add("btn-loading");
+        button.disabled = true;
+
+        if (text) {
+          button.innerText = text;
+        }
+      } else {
+        button.classList.remove("btn-loading");
+        button.disabled = false;
+
+        button.innerText =
+          button.dataset.originalText || button.innerText;
+      }
     }
 
     const apiKey = localStorage.getItem("api_key");
@@ -2073,28 +2326,41 @@ box-shadow:
 
     async function createApiKey() {
       const email = localStorage.getItem("email");
+      const btn = document.getElementById("createKeyBtn");
 
       if (!email) {
         showToast("Please login first", "error");
         return;
       }
 
-      const res = await fetch("/create-api-key", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email })
-      });
+      try {
+        setButtonLoading(btn, true, "Creating...");
 
-      const data = await res.json();
+        const res = await fetch("/create-api-key", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
 
-      if (!res.ok) {
-        showToast(data.error || "Failed to create API key", "error");
-        return;
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.error || "Failed to create API key", "error");
+          return;
+        }
+
+        showToast("API key created");
+        loadApiKeys();
+        loadUsageLogs();
+
+      } catch (err) {
+        showToast("Failed to create API key", "error");
+
+      } finally {
+        setButtonLoading(btn, false);
       }
-      loadApiKeys();
-      loadUsageLogs();
     }
 
     function updateKeyPagination(total) {
@@ -2254,12 +2520,14 @@ box-shadow:
     }
 
     async function deleteApiKey(apiKey) {
+      const btn = event?.target;
 
       const ok = confirm("Delete this API key?");
 
       if (!ok) return;
 
       try {
+        setButtonLoading(btn, true, "Deleting...");
 
         const res = await fetch("/delete-api-key", {
           method: "POST",
@@ -2290,9 +2558,11 @@ box-shadow:
 
         showToast("Delete failed", "error");
 
-      }
+        } finally {
+          setButtonLoading(btn, false);
+        }
 
-    }
+      }
 
     let stats = {};
     async function loadApiKeys() {
@@ -2708,20 +2978,7 @@ box-shadow:
 
   </script>
 
-  <div id="toast" style="
-  position:fixed;
-  right:24px;
-  bottom:24px;
-  background:#111827;
-  color:white;
-  padding:14px 18px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,0.12);
-  box-shadow:0 10px 30px rgba(0,0,0,0.35);
-  display:none;
-  z-index:9999;
-  font-weight:bold;
-">
+  <div id="toast" class="ultra-toast">
   </div>
 
 </body>
