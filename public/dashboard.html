@@ -248,10 +248,44 @@
     }
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 800;
+
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       margin-bottom: 40px;
+      padding: 18px 0;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .92),
+          rgba(15, 23, 42, .72));
+
+      backdrop-filter: blur(18px);
+
+      border-bottom:
+        1px solid rgba(255, 255, 255, .06);
+    }
+
+    .topbar::before {
+      content: "";
+      position: absolute;
+      left: -40px;
+      right: -40px;
+      top: 0;
+      bottom: 0;
+
+      background:
+        linear-gradient(180deg,
+          rgba(15, 23, 42, .88),
+          rgba(15, 23, 42, .42));
+
+      backdrop-filter: blur(20px);
+
+      z-index: -1;
     }
 
     .brand {
@@ -827,11 +861,11 @@
     z-index:2;
   ">
 
-        <button>
+        <button onclick="scrollToSection('apiKeysSection')">
           Open API Center
         </button>
 
-        <button style="
+        <button onclick="scrollToSection('usageSection')" style="
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.08);
       box-shadow:none;
@@ -1443,6 +1477,17 @@ box-shadow:
         });
       });
     });
+
+    function scrollToSection(sectionId) {
+      const target = document.getElementById(sectionId);
+
+      if (!target) return;
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
 
     const sidebarSections = [
       "overviewSection",
