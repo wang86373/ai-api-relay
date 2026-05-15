@@ -3434,7 +3434,7 @@ padding-top:20px;
             API SECRET KEY
           </div>
 
-          <input class="ultra-secret-input" id="apiKeyText" readonly />
+          <input class="ultra-secret-input" id="playgroundApiKeyText" readonly />
         </div>
 
         <div class="ultra-secret-box">
@@ -3454,7 +3454,7 @@ padding-top:20px;
             Copy Key
           </button>
 
-          <button class="ultra-action-btn" id="revealKeyBtn">
+          <button class="ultra-action-btn" id="playgroundRevealKeyBtn">
             Reveal
           </button>
 
@@ -4329,7 +4329,7 @@ box-shadow:
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + document.getElementById("apiKeyText").dataset.fullkey
+            "Authorization": "Bearer " + document.getElementById("playgroundApiKeyText").dataset.fullkey
           },
           body: JSON.stringify({
             model: document.getElementById("modelSelect").value,
@@ -4758,6 +4758,11 @@ box-shadow:
             "Reveal";
 
           document.getElementById("apiKeyText").dataset.fullkey =
+            data.keys[0].api_key;
+          document.getElementById("playgroundApiKeyText").value =
+            data.keys[0].api_key.slice(0, 12) + "********";
+
+          document.getElementById("playgroundApiKeyText").dataset.fullkey =
             data.keys[0].api_key;
 
           const list = document.getElementById("apiKeyList");
