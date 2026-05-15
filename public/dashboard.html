@@ -720,6 +720,17 @@
       }
     }
 
+    @keyframes ultraBtnFlow {
+
+      0% {
+        transform: translateX(-120%);
+      }
+
+      100% {
+        transform: translateX(120%);
+      }
+    }
+
     ::-webkit-scrollbar {
       width: 10px;
     }
@@ -852,6 +863,34 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 16px;
+    }
+
+    .ultra-vault-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fill, minmax(420px, 1fr));
+
+      gap: 20px;
+
+      max-height: 950px;
+      overflow-y: auto;
+
+      padding-right: 6px;
+      margin-top: 24px;
+    }
+
+    .ultra-vault-grid::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .ultra-vault-grid::-webkit-scrollbar-thumb {
+      background:
+        linear-gradient(180deg,
+          #2563eb,
+          #7c3aed);
+
+      border-radius: 999px;
     }
 
     .ultra-api-card {
@@ -1404,6 +1443,131 @@
     .ultra-mini-value {
       font-size: 26px;
       font-weight: 900;
+    }
+
+    .ultra-create-key-btn {
+      position: relative;
+      overflow: hidden;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+
+      width: 100%;
+
+      padding: 18px 26px;
+      margin-bottom: 18px;
+
+      border: none;
+      border-radius: 22px;
+
+      background:
+        linear-gradient(135deg,
+          #2563eb,
+          #4f46e5,
+          #7c3aed);
+
+      color: white;
+
+      font-size: 15px;
+      font-weight: 900;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 18px 50px rgba(37, 99, 235, .32);
+
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease;
+    }
+
+    .ultra-create-key-btn:hover {
+      transform:
+        translateY(-4px) scale(1.01);
+
+      box-shadow:
+        0 24px 70px rgba(79, 70, 229, .42);
+    }
+
+    .ultra-btn-icon {
+      font-size: 18px;
+    }
+
+    .ultra-btn-glow {
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(120deg,
+          transparent,
+          rgba(255, 255, 255, .18),
+          transparent);
+
+      transform: translateX(-120%);
+      animation:
+        ultraBtnFlow 3.5s linear infinite;
+    }
+
+    .ultra-search-wrap {
+      position: relative;
+
+      margin-top: 18px;
+      margin-bottom: 18px;
+    }
+
+    .ultra-search-icon {
+      position: absolute;
+
+      left: 18px;
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      color: #38bdf8;
+
+      font-size: 18px;
+      font-weight: 900;
+
+      pointer-events: none;
+    }
+
+    .ultra-search-input {
+      width: 100%;
+
+      padding: 18px 20px 18px 52px;
+
+      border-radius: 20px;
+
+      border:
+        1px solid rgba(56, 189, 248, .16);
+
+      background:
+        rgba(2, 6, 23, .72);
+
+      color: white;
+
+      outline: none;
+
+      font-size: 15px;
+
+      transition:
+        border-color .22s ease,
+        box-shadow .22s ease,
+        transform .22s ease;
+
+      box-sizing: border-box;
+    }
+
+    .ultra-search-input:focus {
+      transform: translateY(-2px);
+
+      border-color:
+        rgba(56, 189, 248, .42);
+
+      box-shadow:
+        0 0 30px rgba(56, 189, 248, .16);
     }
 
     .key-item {
@@ -3002,43 +3166,29 @@
         <span id="keysArrow">▼</span>
       </div>
 
-      <button id="createKeyBtn" style="
-  padding:16px 26px;
-  border-radius:18px;
-  font-size:15px;
-  font-weight:900;
-  background:
-    linear-gradient(135deg,#2563eb,#4f46e5,#7c3aed);
-  box-shadow:
-    0 18px 40px rgba(37,99,235,.32);
-">
-        + Create New API Key
+      <button id="createKeyBtn" class="ultra-create-key-btn">
+        <span class="ultra-btn-glow"></span>
+
+        <span class="ultra-btn-icon">
+          ✦
+        </span>
+
+        <span>
+          Create New API Key
+        </span>
       </button>
 
-      <input id="keySearchInput" placeholder="Search API key / name..." style="
-  margin-top:18px;
-  width:100%;
-  padding:18px 20px;
-  border-radius:18px;
-  border:1px solid rgba(56,189,248,.18);
-  background:rgba(2,6,23,.72);
-  color:white;
-  outline:none;
-  font-size:15px;
-  box-sizing:border-box;
-" />
+      <div class="ultra-search-wrap">
 
-      <div id="apiKeyList" class="key-list" style="
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
-  gap:18px;
+        <div class="ultra-search-icon">
+          ⌕
+        </div>
 
-  max-height:950px;
-  overflow-y:auto;
+        <input id="keySearchInput" class="ultra-search-input" placeholder="Search API key / vault name..." />
 
-  padding-right:6px;
-  margin-top:24px;
-"></div>
+      </div>
+
+      <div id="apiKeyList" class="key-list ultra-vault-grid"></div>
 
       <div id="keyPagination" style="
   display:flex;
