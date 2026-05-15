@@ -3292,26 +3292,27 @@ box-shadow:
 
     };
 
-    function revealApiKey(btn, apiKey) {
+    function revealApiKey(btn, fullKey) {
+      const card = btn.closest(".ultra-key-card");
 
-      const text =
-        btn.parentElement.parentElement.querySelector(".real-key");
+      if (!card) return;
 
-      if (btn.innerText === "Reveal") {
+      const value = card.querySelector(".ultra-secret-value");
 
-        text.innerText = apiKey;
+      if (!value) return;
 
-        btn.innerText = "Hide";
+      const isRevealed =
+        value.dataset.revealed === "true";
 
-      } else {
-
-        text.innerText =
-          apiKey.slice(0, 12) + "********";
-
+      if (isRevealed) {
+        value.innerText = fullKey.slice(0, 12) + "********";
+        value.dataset.revealed = "false";
         btn.innerText = "Reveal";
-
+      } else {
+        value.innerText = fullKey;
+        value.dataset.revealed = "true";
+        btn.innerText = "Hide";
       }
-
     }
 
     async function renameApiKey(apiKey, oldName) {
