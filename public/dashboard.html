@@ -420,16 +420,53 @@
       overflow: hidden;
       padding: 28px;
       border-radius: 28px;
+
       background:
-        linear-gradient(145deg, rgba(8, 15, 30, .96), rgba(15, 23, 42, .92));
+        linear-gradient(145deg,
+          rgba(8, 15, 30, .96),
+          rgba(15, 23, 42, .92));
+
       border: 1px solid rgba(56, 189, 248, .13);
+
+      box-shadow:
+        0 20px 55px rgba(0, 0, 0, .32),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+
+      transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+    }
+
+    .ultra-stat-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(circle at top right,
+          rgba(56, 189, 248, .16),
+          transparent 34%);
+
+      opacity: 0;
       transition: .25s ease;
+      pointer-events: none;
     }
 
     .ultra-stat-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(56, 189, 248, .38);
-      box-shadow: 0 28px 70px rgba(37, 99, 235, .22);
+      transform: translateY(-8px) scale(1.01);
+
+      border-color:
+        rgba(56, 189, 248, .42);
+
+      box-shadow:
+        0 32px 80px rgba(37, 99, 235, .26),
+        0 0 42px rgba(56, 189, 248, .12),
+        inset 0 1px 0 rgba(255, 255, 255, .06);
+    }
+
+    .ultra-stat-card:hover::after {
+      opacity: 1;
     }
 
     .ultra-key-card {
