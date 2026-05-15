@@ -122,6 +122,42 @@
       pointer-events: none;
     }
 
+    .ultra-metric-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .ultra-metric-icon {
+      width: 38px;
+      height: 38px;
+
+      border-radius: 14px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(135deg,
+          rgba(56, 189, 248, .16),
+          rgba(99, 102, 241, .14));
+
+      border:
+        1px solid rgba(56, 189, 248, .18);
+
+      color: #7dd3fc;
+
+      font-size: 18px;
+      font-weight: 900;
+
+      box-shadow:
+        0 0 24px rgba(56, 189, 248, .14);
+    }
+
     .ultra-metric-label {
       color: #38bdf8;
 
@@ -2277,25 +2313,65 @@
     <div class="ultra-dashboard-grid">
 
       <div class="ultra-metric-card">
-        <div class="ultra-metric-label">REQUESTS TODAY</div>
+        <div class="ultra-metric-head">
+
+          <div class="ultra-metric-label">
+            REQUESTS TODAY
+          </div>
+
+          <div class="ultra-metric-icon">
+            ↗
+          </div>
+
+        </div>
         <h2 id="todayRequests">0</h2>
         <p>Live API calls today</p>
       </div>
 
       <div class="ultra-metric-card">
-        <div class="ultra-metric-label">TOKENS</div>
+        <div class="ultra-metric-head">
+
+          <div class="ultra-metric-label">
+            TOKENS
+          </div>
+
+          <div class="ultra-metric-icon">
+            ◉
+          </div>
+
+        </div>
         <h2 id="tokenUsage">0</h2>
         <p>Total tokens consumed</p>
       </div>
 
       <div class="ultra-metric-card">
-        <div class="ultra-metric-label">COST</div>
+        <div class="ultra-metric-head">
+
+          <div class="ultra-metric-label">
+            COST
+          </div>
+
+          <div class="ultra-metric-icon">
+            $
+          </div>
+
+        </div>
         <h2 id="estimatedCost">$0</h2>
         <p>Estimated platform cost</p>
       </div>
 
       <div class="ultra-metric-card">
-        <div class="ultra-metric-label">ACTIVE KEYS</div>
+        <div class="ultra-metric-head">
+
+          <div class="ultra-metric-label">
+            ACTIVE KEYS
+          </div>
+
+          <div class="ultra-metric-icon">
+            ⌘
+          </div>
+
+        </div>
         <h2 id="activeKeys">0</h2>
         <p>Enabled API keys</p>
       </div>
