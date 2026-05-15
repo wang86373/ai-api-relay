@@ -1914,81 +1914,67 @@ padding-top:20px;
         your production systems.
       </p>
 
-      <select id="modelSelect" class="api-box" style="
-  margin-bottom:18px;
-  border-radius:18px;
-  padding:18px;
-  background:
-    linear-gradient(180deg,rgba(15,23,42,.92),rgba(2,6,23,.98));
-  border:1px solid rgba(56,189,248,.18);
-  color:white;
-  font-size:15px;
-">
-        <option value="gpt-4o-mini">gpt-4o-mini</option>
-        <option value="deepseek-chat">deepseek-chat</option>
-        <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-      </select>
+      <div class="ultra-playground">
 
-      <div id="modelPrice" class="muted" style="
-  margin-top:10px;
-  margin-bottom:18px;
-  padding:14px 18px;
-  border-radius:16px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.06);
-">
-        Price: GPT-4o-mini
+        <div class="ultra-playground-top">
+
+          <div>
+            <div class="ultra-playground-label">
+              ACTIVE MODEL
+            </div>
+
+            <div class="ultra-playground-title">
+              API Playground
+            </div>
+          </div>
+
+          <div class="ultra-live-pill">
+            ● LIVE
+          </div>
+
+        </div>
+
+        <select id="modelSelect" class="ultra-select">
+          <option value="gpt-4o-mini">gpt-4o-mini</option>
+          <option value="deepseek-chat">deepseek-chat</option>
+          <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
+        </select>
+
+        <div id="modelPrice" class="ultra-model-price">
+          GPT-4o-mini selected
+        </div>
+
+        <div class="ultra-secret-box">
+
+          <div class="ultra-secret-label">
+            API SECRET KEY
+          </div>
+
+          <input class="ultra-secret-input" id="apiKeyText" />
+
+        </div>
+
+        <div class="ultra-playground-actions">
+
+          <button class="ultra-action-btn" onclick="copyKey()">
+            Copy Key
+          </button>
+
+          <button class="ultra-action-btn" id="revealKeyBtn">
+            Reveal
+          </button>
+
+          <button class="ultra-action-btn success-action" onclick="testApi()">
+            Test API
+          </button>
+
+        </div>
+
+        <div class="ultra-console-output" id="msg">
+          API console ready...
+        </div>
+
       </div>
-
-      <div class="api-actions" style="
-  display:flex;
-  gap:16px;
-  align-items:center;
-  flex-wrap:wrap;
-  margin-top:20px;
-">
-        <input class="api-box" id="apiKeyText" style="
-  flex:1;
-  min-width:320px;
-  border-radius:18px;
-  padding:18px;
-  background:
-    linear-gradient(180deg,rgba(15,23,42,.92),rgba(2,6,23,.98));
-  border:1px solid rgba(56,189,248,.18);
-  color:#f8fafc;
-  font-size:15px;
-" />
-
-        <button onclick="copyKey()" style="
-  border-radius:16px;
-  padding:14px 18px;
-">
-          Copy API Key
-        </button>
-
-        <button id="revealKeyBtn" style="
-  border-radius:16px;
-  padding:14px 18px;
-  background:
-    linear-gradient(135deg,#0f172a,#1e293b);
-  border:1px solid rgba(255,255,255,.08);
-">
-          Reveal
-        </button>
-
-        <button onclick="testApi()" style="
-  border-radius:16px;
-  padding:14px 18px;
-  background:
-    linear-gradient(135deg,#059669,#10b981);
-  box-shadow:
-    0 14px 34px rgba(16,185,129,.24);
-">
-          Test API
-        </button>
-      </div>
-
-      <div class="msg" id="msg"></div>
     </div>
 
   </div>
