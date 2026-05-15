@@ -4779,29 +4779,6 @@ box-shadow:
 
     };
 
-    document.getElementById("revealKeyBtn").onclick = function () {
-
-      const text = document.getElementById("apiKeyText");
-
-      if (text.dataset.fullkey) {
-
-        if (text.value.includes("********")) {
-
-          text.value = text.dataset.fullkey;
-          this.innerText = "Hide";
-
-        } else {
-
-          text.value =
-            text.dataset.fullkey.slice(0, 12) + "********";
-
-          this.innerText = "Reveal";
-        }
-
-      }
-
-    };
-
     function revealApiKey(btn, fullKey) {
       const card = btn.closest(".ultra-key-card");
 
@@ -4931,13 +4908,7 @@ box-shadow:
 
         if (data.keys && data.keys.length > 0) {
 
-          document.getElementById("apiKeyText").value =
-            data.keys[0].api_key.slice(0, 12) + "********";
-          document.getElementById("revealKeyBtn").innerText =
-            "Reveal";
-
-          document.getElementById("apiKeyText").dataset.fullkey =
-            data.keys[0].api_key;
+          
           const playgroundKeyInput =
             document.getElementById("playgroundApiKeyText");
 
