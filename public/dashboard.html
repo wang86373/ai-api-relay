@@ -1444,6 +1444,37 @@ box-shadow:
       });
     });
 
+    const sidebarSections = [
+      "overviewSection",
+      "apiKeysSection",
+      "usageSection",
+      "billingSection",
+      "playgroundSection"
+    ];
+
+    window.addEventListener("scroll", () => {
+      let currentSection = "overviewSection";
+
+      sidebarSections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+
+        if (!section) return;
+
+        const rect = section.getBoundingClientRect();
+
+        if (rect.top <= 160) {
+          currentSection = sectionId;
+        }
+      });
+
+      document.querySelectorAll(".sidebar-link").forEach(btn => {
+        btn.classList.toggle(
+          "active",
+          btn.dataset.target === currentSection
+        );
+      });
+    });
+
     function showToast(message, type = "success") {
       const toast = document.getElementById("toast");
 
