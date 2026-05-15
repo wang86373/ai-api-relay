@@ -370,6 +370,177 @@
         0 12px 30px rgba(239, 68, 68, .16);
     }
 
+    .ultra-playground {
+      padding: 24px;
+
+      border-radius: 26px;
+
+      background:
+        linear-gradient(145deg,
+          rgba(8, 15, 30, .96),
+          rgba(15, 23, 42, .92));
+
+      border:
+        1px solid rgba(56, 189, 248, .14);
+
+      box-shadow:
+        0 22px 60px rgba(0, 0, 0, .34),
+        inset 0 1px 0 rgba(255, 255, 255, .04);
+    }
+
+    .ultra-playground-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+
+      margin-bottom: 20px;
+    }
+
+    .ultra-playground-label {
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+    }
+
+    .ultra-playground-title {
+      margin-top: 6px;
+      color: white;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .ultra-select,
+    .ultra-secret-input {
+      width: 100%;
+      box-sizing: border-box;
+
+      padding: 16px 18px;
+
+      border-radius: 18px;
+
+      border:
+        1px solid rgba(56, 189, 248, .18);
+
+      background:
+        linear-gradient(180deg,
+          rgba(2, 6, 23, .92),
+          rgba(15, 23, 42, .98));
+
+      color: white;
+
+      font-size: 15px;
+
+      outline: none;
+    }
+
+    .ultra-model-price {
+      margin-top: 14px;
+      margin-bottom: 18px;
+
+      padding: 14px 18px;
+
+      border-radius: 16px;
+
+      background:
+        rgba(255, 255, 255, .04);
+
+      border:
+        1px solid rgba(255, 255, 255, .06);
+
+      color: #94a3b8;
+    }
+
+    .ultra-secret-box {
+      margin-top: 18px;
+
+      padding: 18px;
+
+      border-radius: 20px;
+
+      background:
+        rgba(255, 255, 255, .03);
+
+      border:
+        1px solid rgba(255, 255, 255, .06);
+    }
+
+    .ultra-secret-input {
+      margin-top: 10px;
+      font-family: monospace;
+      color: #e2e8f0;
+    }
+
+    .ultra-playground-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      margin-top: 18px;
+    }
+
+    .success-action {
+      background:
+        rgba(16, 185, 129, .14);
+
+      border-color:
+        rgba(16, 185, 129, .32);
+
+      color: #86efac;
+    }
+
+    .ultra-console-output {
+      margin-top: 20px;
+
+      padding: 18px;
+
+      min-height: 58px;
+
+      border-radius: 18px;
+
+      background:
+        rgba(2, 6, 23, .8);
+
+      border:
+        1px solid rgba(56, 189, 248, .12);
+
+      color: #cbd5e1;
+
+      font-family: monospace;
+      line-height: 1.7;
+      position: relative;
+      overflow: hidden;
+
+      box-shadow: inset 0 0 30px rgba(56, 189, 248, .04),
+        0 0 20px rgba(56, 189, 248, .06);
+    }
+
+
+    .ultra-console-output::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(180deg,
+          transparent,
+          rgba(56, 189, 248, .05),
+          transparent);
+
+      transform: translateY(-100%);
+      animation: ultraConsoleScan 4s linear infinite;
+
+      pointer-events: none;
+    }
+
+    @keyframes ultraConsoleScan {
+      to {
+        transform: translateY(100%);
+      }
+    }
+
     .key-item {
       position: relative;
       overflow: hidden;
@@ -2825,7 +2996,22 @@ box-shadow:
         if (!res.ok) {
           const errorMsg = data.error?.message || data.error || "API test failed.";
 
-          msg.innerText = errorMsg;
+          msg.innerHTML = `
+<div style="
+  color:#f87171;
+  font-weight:800;
+  margin-bottom:10px;
+">
+  ● API RESPONSE ERROR
+</div>
+
+<div style="
+  color:#fecaca;
+  line-height:1.7;
+">
+  ${errorMsg}
+</div>
+`;
 
           if (errorMsg.includes("Insufficient balance")) {
             msg.innerText = "Insufficient balance. Please recharge.";
@@ -2837,11 +3023,42 @@ box-shadow:
           return;
         }
 
-        msg.innerText = data.choices?.[0]?.message?.content || "API working.";
+        msg.innerHTML = `
+<div style="
+  color:#4ade80;
+  font-weight:800;
+  margin-bottom:10px;
+">
+  ● API RESPONSE SUCCESS
+</div>
+
+<div style="
+  color:#cbd5e1;
+  line-height:1.7;
+  white-space:pre-wrap;
+">
+  ${data.choices?.[0]?.message?.content || "API working."}
+</div>
+`;
         loadAccount();
 
       } catch (err) {
-        msg.innerText = err.message;
+        msg.innerHTML = `
+<div style="
+  color:#f87171;
+  font-weight:800;
+  margin-bottom:10px;
+">
+  ● API RESPONSE ERROR
+</div>
+
+<div style="
+  color:#fecaca;
+  line-height:1.7;
+">
+  ${err.message}
+</div>
+`;
       }
     }
 
